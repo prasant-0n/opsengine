@@ -1,0 +1,11 @@
+# ADR-0010: Monorepo alignment to PRD §9 code organization
+
+**Date:** 2026-10-19
+**Status:** Accepted
+**Context:** Implemented features #1–#5 using the working, earlier repo layout (no `src/` under `apps/web`, flat `lib/`, single `packages/contracts`, `services/auth-service`). The PRD (§9.1–§9.3) specifies a target structure (apps/web/src + `features/<domain>`, `packages/api-contracts`, `services/identity-service`, `docs/`, `infra/`, `.nvmrc`). We must stay consistent with the “Required Code Organization” without losing delivered functionality or tests.
+
+**Decision:** Restructure to PRD §9 now for all delivered code, keep feature stage Markdown files at the root `features/` (unchanged per instructions), move root docs to `docs/` tree, rename `packages/contracts → api-contracts`, `services/auth-service → identity-service`, migrate `apps/web` into `src/` (app/components/features/lib/tests), extract delivered domain pages into `src/features/{dashboard,organization,recruitment,admin}`, create `src/features/<planned>/README.md` placeholders, add `infra/`, `docs/`, `.nvmrc`, `.github/workflows/ci.yml`, and `README.md`. Fix all imports (including the vitest `@/` constraint by using relative imports inside domain library files under `src/features/*/lib` that are imported by unit tests). Proxy stays at `apps/web/src/proxy.ts` (Next 16 supports `src/proxy.ts`).
+
+**Rationale:** Aligns to the binding rules about structure and makes future vertical slices predictable. Features/ stage docs remain root to preserve the audit trail of planning/approve stages. Import fixes balance the PRD’s `@/` convention for app code with the existing test setup (no `@/` alias in Vitest config for library files tested directly). No new business logic introduced.
+
+**Consequences:** Move-sensitive files (tailwind.config paths, tsconfig paths `@/* → ./src/*`, all internal import strings) were updated. Vitest 41/41, tsc clean, curl smokes 33/33+19/19, Chrome verify-hrms 17/17 and verify-ats 24/24 still pass. Service/package names updated in workspace + imports; pnpm lockfile relinked. Historical references left in feature stage docs remain as-is (those docs were approved at approval time); operational docs updated to new paths.

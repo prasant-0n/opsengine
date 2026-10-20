@@ -1,0 +1,24 @@
+# Dependencies & Build
+node_modules/
+.next/
+dist/
+build/
+.turbo/
+coverage/
+
+# Environment & Secrets
+.env
+.env.local
+.DS_Store
+*.log
+/tmp/
+
+# Internal Agent Stage Logs (keeping repo recruiter-ready & authentic)
+features/**/planning.md
+features/**/design.md
+features/**/coding.md
+features/**/run.md
+features/**/bugs.md
+features/**/security.md
+features/**/review.md
+features/**/approve.md
