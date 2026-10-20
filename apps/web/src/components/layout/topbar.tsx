@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_GROUPS } from "./nav-config";
 import { NotificationDropdown } from "@/features/notifications";
+import { GlobalSearch } from "./global-search";
 import { useShell } from "./shell-context";
 
 function breadcrumbFor(pathname: string): string {
@@ -33,13 +34,7 @@ export function Topbar() {
       </div>
 
       <div className="shell-topbar-actions">
-        <input
-          type="search"
-          className="input input-sm shell-search"
-          placeholder="Search (coming soon)"
-          aria-label="Global search"
-          disabled
-        />
+        <GlobalSearch />
         <NotificationDropdown />
 
         <div className="shell-user">

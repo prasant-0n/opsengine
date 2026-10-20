@@ -117,7 +117,8 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "Resource Planning",
         href: "/dashboard/resource-planning",
         icon: "calendar_month",
-        soon: true,
+        permission: "resource_planning.read",
+        behavior: "hide",
       },
     ],
   },
@@ -161,7 +162,7 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       {
         label: "Probation",
-        href: "/dashboard/onboarding",
+        href: "/dashboard/onboarding?tab=probation",
         icon: "fact_check",
         permission: "onboarding.probation.read",
         behavior: "hide",

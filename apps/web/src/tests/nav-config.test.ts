@@ -40,6 +40,7 @@ describe("filterNavGroups (navigation = usability only)", () => {
     expect(hrefs).toContain("/dashboard/assistant");
     expect(hrefs).toContain("/dashboard/releases");
     expect(hrefs).toContain("/dashboard/presales");
+    expect(hrefs).toContain("/dashboard/resource-planning");
     expect(hrefs.length).toBe(26);
   });
 
