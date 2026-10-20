@@ -1051,3 +1051,43 @@ model Notification {
   @@index([tenantId, recipientUserId, readAt], map: "idx_notifications_recipient_read")
   @@map("notifications")
 }
+
+model Release {
+  id              String        @id @default(uuid()) @db.Uuid
+  tenantId        String        @db.Uuid @map("tenant_id")
+  number          String        // e.g. REL-2026-0001
+  title           String
+  targetEnv       String        @map("target_env") // staging | production
+  status          String        @default("draft") // draft | review | approved | deployed | rolled_back | cancelled
+  ownerEmployeeId String?       @db.Uuid @map("owner_employee_id")
+  changeWindow    String?       @map("change_window")
+  rollbackPlan    String?       @map("rollback_plan") @db.Text
+  qaEvidenceRef   String?       @map("qa_evidence_ref")
+  securityStatus  String        @default("pending") // pending | passed | failed
+  deployedAt      DateTime?     @db.Timestamptz(6) @map("deployed_at")
+  approvedBy      String?       @db.Uuid @map("approved_by")
+  approvedAt      DateTime?     @db.Timestamptz(6) @map("approved_at")
+  createdBy       String?       @db.Uuid @map("created_by")
+  createdAt       DateTime      @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(6) @map("updated_at")
+  gates           ReleaseGate[]
+
+  @@unique([tenantId, number], map: "uq_release_tenant_number")
+  @@index([tenantId, status, createdAt], map: "idx_release_tenant_status")
+  @@map("releases")
+}
+
+model ReleaseGate {
+  id          String    @id @default(uuid()) @db.Uuid
+  tenantId    String    @db.Uuid @map("tenant_id")
+  releaseId   String    @db.Uuid @map("release_id")
+  gateType    String    @map("gate_type") // qa | security | change_management | technical
+  status      String    @default("pending") // pending | passed | failed | waived
+  checkedBy   String?   @db.Uuid @map("checked_by")
+  checkedAt   DateTime? @db.Timestamptz(6) @map("checked_at")
+  notes       String?   @db.Text
+  release     Release   @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, releaseId], map: "idx_release_gate_tenant_release")
+  @@map("release_gates")
+}

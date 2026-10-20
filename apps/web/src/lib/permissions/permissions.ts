@@ -103,6 +103,11 @@ export const PERMISSIONS = {
   // AI Assistant (Module 15)
   ASSISTANT_USE: "assistant.use",
   ASSISTANT_MANAGE: "assistant.manage",
+  // Release & Deployment Gates (Module 8)
+  RELEASE_READ: "release.read",
+  RELEASE_CREATE: "release.create",
+  RELEASE_GATE_MANAGE: "release.gate.manage",
+  RELEASE_APPROVE: "release.approve",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -226,6 +231,11 @@ export const ROLE_TEMPLATES: Record<
     // AI Assistant (Module 15)
     { permissionKey: PERMISSIONS.ASSISTANT_USE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ASSISTANT_MANAGE, scopeType: "TENANT" },
+    // Release & Deployment Gates (Module 8)
+    { permissionKey: PERMISSIONS.RELEASE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RELEASE_CREATE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RELEASE_GATE_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RELEASE_APPROVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_UPDATE, scopeType: "TENANT" },
