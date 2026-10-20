@@ -108,6 +108,10 @@ export const PERMISSIONS = {
   RELEASE_CREATE: "release.create",
   RELEASE_GATE_MANAGE: "release.gate.manage",
   RELEASE_APPROVE: "release.approve",
+  // Presales & Proposal Estimation (Module 10)
+  PRESALES_PROPOSAL_READ: "presales.proposal.read",
+  PRESALES_PROPOSAL_CREATE: "presales.proposal.create",
+  PRESALES_PROPOSAL_APPROVE: "presales.proposal.approve",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -236,6 +240,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.RELEASE_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RELEASE_GATE_MANAGE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RELEASE_APPROVE, scopeType: "TENANT" },
+    // Presales & Proposal Estimation (Module 10)
+    { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_CREATE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_APPROVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_UPDATE, scopeType: "TENANT" },

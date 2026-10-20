@@ -1091,3 +1091,41 @@ model ReleaseGate {
   @@index([tenantId, releaseId], map: "idx_release_gate_tenant_release")
   @@map("release_gates")
 }
+
+model PresalesProposal {
+  id               String                 @id @default(uuid()) @db.Uuid
+  tenantId         String                 @db.Uuid @map("tenant_id")
+  number           String                 // e.g. PROP-2026-0001
+  title            String
+  opportunityId    String?                @db.Uuid @map("opportunity_id")
+  status           String                 @default("draft") // draft | submitted | approved | rejected | expired
+  totalAmountCents BigInt                 @default(0) @db.BigInt @map("total_amount_cents")
+  currency         String                 @default("USD")
+  marginPct        Float                  @default(0.0) @map("margin_pct")
+  validUntil       DateTime?              @db.Timestamptz(6) @map("valid_until")
+  notes            String?                @db.Text
+  approvedBy       String?                @db.Uuid @map("approved_by")
+  approvedAt       DateTime?              @db.Timestamptz(6) @map("approved_at")
+  createdBy        String?                @db.Uuid @map("created_by")
+  createdAt        DateTime               @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime               @updatedAt @db.Timestamptz(6) @map("updated_at")
+  lines            PresalesEstimateLine[]
+
+  @@unique([tenantId, number], map: "uq_presales_tenant_number")
+  @@index([tenantId, status, createdAt], map: "idx_presales_tenant_status")
+  @@map("presales_proposals")
+}
+
+model PresalesEstimateLine {
+  id              String           @id @default(uuid()) @db.Uuid
+  tenantId        String           @db.Uuid @map("tenant_id")
+  proposalId      String           @db.Uuid @map("proposal_id")
+  roleTitle       String           @map("role_title")
+  hours           Int              @default(0)
+  hourlyRateCents BigInt           @default(0) @db.BigInt @map("hourly_rate_cents")
+  totalCents      BigInt           @default(0) @db.BigInt @map("total_cents")
+  proposal        PresalesProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, proposalId], map: "idx_presales_line_tenant_proposal")
+  @@map("presales_estimate_lines")
+}

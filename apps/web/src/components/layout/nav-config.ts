@@ -106,7 +106,13 @@ export const NAV_GROUPS: NavGroup[] = [
         permission: "crm.opportunity.read",
         behavior: "lock",
       },
-      { label: "Presales", href: "/dashboard/presales", icon: "science", soon: true },
+      {
+        label: "Presales",
+        href: "/dashboard/presales",
+        icon: "science",
+        permission: "presales.proposal.read",
+        behavior: "hide",
+      },
       {
         label: "Resource Planning",
         href: "/dashboard/resource-planning",
