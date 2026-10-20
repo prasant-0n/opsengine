@@ -1,0 +1,1053 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TenantWorkspace {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  name      String
+  slug      String
+  domain    String?
+  isActive  Boolean  @default(true)
+  aiEnabled Boolean  @default(false) @map("ai_enabled")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([tenantId, slug], map: "idx_tenant_workspaces_tenant_slug")
+  @@index([tenantId, domain], map: "idx_tenant_workspaces_tenant_domain")
+  @@map("tenant_workspaces")
+}
+
+model AuthUser {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid
+  email            String
+  passwordHash     String?  @map("password_hash")
+  isRootAdmin      Boolean  @default(false) @map("is_root_admin")
+  isSuperadmin     Boolean  @default(false) @map("is_superadmin")
+  breakGlassEnabled Boolean @default(false) @map("break_glass_enabled")
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([tenantId, email], map: "idx_auth_users_tenant_email")
+  @@map("auth_users")
+}
+
+model OtpCode {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  userId    String   @db.Uuid @map("user_id")
+  code      String
+  purpose   String
+  expiresAt DateTime @db.Timestamptz(6) @map("expires_at")
+  usedAt    DateTime? @db.Timestamptz(6) @map("used_at")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId, userId, purpose], map: "idx_otp_codes_tenant_user_purpose")
+  @@index([expiresAt], map: "idx_otp_codes_expires_at")
+  @@map("otp_codes")
+}
+
+model Session {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid @map("user_id")
+  tenantId  String    @db.Uuid
+  token     String    @unique
+  expiresAt DateTime  @db.Timestamptz(6) @map("expires_at")
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  revokedAt DateTime? @db.Timestamptz(6) @map("revoked_at")
+  revokedBy String?   @db.Uuid @map("revoked_by")
+  userAgent String?   @map("user_agent")
+  ip        String?
+
+  @@index([token], map: "idx_sessions_token")
+  @@index([tenantId], map: "idx_sessions_tenant_id")
+  @@index([tenantId, userId, revokedAt], map: "idx_sessions_tenant_user_active")
+  @@map("sessions")
+}
+
+model ResetToken {
+  token      String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid @map("user_id")
+  tenantId   String   @db.Uuid
+  expiresAt  DateTime @db.Timestamptz(6) @map("expires_at")
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  usedAt     DateTime? @db.Timestamptz(6) @map("used_at")
+
+  @@index([tenantId], map: "idx_reset_tokens_tenant_id")
+  @@map("reset_tokens")
+}
+
+// ---------- Feature #2: Authorization Core (authz-core) ----------
+
+model TenantMembership {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenantId   String    @db.Uuid @map("tenant_id")
+  userId     String    @db.Uuid @map("user_id")
+  employeeId String?   @db.Uuid @map("employee_id")
+  status     String    @default("active") // active | suspended | left
+  joinedAt   DateTime  @default(now()) @db.Timestamptz(6) @map("joined_at")
+  leftAt     DateTime? @db.Timestamptz(6) @map("left_at")
+
+  @@unique([tenantId, userId], map: "uq_tenant_memberships_tenant_user")
+  @@index([tenantId, status], map: "idx_tenant_memberships_tenant_status")
+  @@map("tenant_memberships")
+}
+
+// ---------- Feature #4: Employee & HRMS core (Module 2 slice) ----------
+// employmentStatus values: preboarding | active | probation | notice | exited
+// plus legacy: on_leave | terminated (accepted, never rejected)
+
+model Employee {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid @map("tenant_id")
+  userId           String?   @db.Uuid @map("user_id")
+  displayName      String    @map("display_name")
+  employeeNumber   String?   @map("employee_number")
+  workEmail        String?   @map("work_email")
+  jobTitle         String?   @map("job_title")
+  jobFamily        String?   @map("job_family")
+  grade            String?
+  seniority        String?
+  department       String?
+  sbuId            String?   @db.Uuid @map("sbu_id")
+  employmentType   String?   @map("employment_type") // full_time | part_time | contract | intern
+  location         String?
+  startDate        DateTime? @db.Timestamptz(6) @map("start_date")
+  probationEndsAt  DateTime? @db.Timestamptz(6) @map("probation_ends_at")
+  employmentStatus String    @default("active") @map("employment_status")
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6)
+
+  @@unique([tenantId, employeeNumber], map: "uq_employees_tenant_number")
+  @@index([tenantId, userId], map: "idx_employees_tenant_user")
+  @@index([tenantId, employmentStatus], map: "idx_employees_tenant_status")
+  @@map("employees")
+}
+
+model Team {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @db.Uuid @map("tenant_id")
+  name          String
+  teamType      String?   @map("team_type")
+  parentTeamId  String?   @db.Uuid @map("parent_team_id")
+  sbuId         String?   @db.Uuid @map("sbu_id")
+  validFrom     DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo       DateTime? @db.Timestamptz(6) @map("valid_to")
+
+  @@index([tenantId, name], map: "idx_teams_tenant_name")
+  @@map("teams")
+}
+
+model EmployeeTeamMembership {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid @map("tenant_id")
+  employeeId     String    @db.Uuid @map("employee_id")
+  teamId         String    @db.Uuid @map("team_id")
+  membershipType String    @default("primary") @map("membership_type") // primary | secondary | project | temporary
+  responsibility String    @default("member") // member | coordinator | team_lead
+  validFrom      DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo        DateTime? @db.Timestamptz(6) @map("valid_to")
+
+  @@index([tenantId, employeeId, validFrom], map: "idx_etm_tenant_employee")
+  @@index([tenantId, teamId, responsibility], map: "idx_etm_tenant_team")
+  @@map("employee_team_memberships")
+}
+
+model ReportingRelationship {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid @map("tenant_id")
+  managerEmployeeId  String    @db.Uuid @map("manager_employee_id")
+  reportEmployeeId   String    @db.Uuid @map("report_employee_id")
+  relationshipType   String    @default("direct") @map("relationship_type") // direct | dotted | acting | project
+  scope              String?
+  validFrom          DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo            DateTime? @db.Timestamptz(6) @map("valid_to")
+
+  @@index([tenantId, managerEmployeeId, validFrom], map: "idx_rr_tenant_manager")
+  @@index([tenantId, reportEmployeeId, validFrom], map: "idx_rr_tenant_report")
+  @@map("reporting_relationships")
+}
+
+model AccessGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  name      String
+  purpose   String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId, name], map: "idx_access_groups_tenant_name")
+  @@map("access_groups")
+}
+
+model AccessGroupMembership {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenantId   String    @db.Uuid @map("tenant_id")
+  groupId    String    @db.Uuid @map("group_id")
+  employeeId String    @db.Uuid @map("employee_id")
+  source     String    @default("manual") // manual | rule
+  validFrom  DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo    DateTime? @db.Timestamptz(6) @map("valid_to")
+
+  @@index([tenantId, groupId, employeeId], map: "idx_agm_tenant_group")
+  @@map("access_group_memberships")
+}
+
+model RoleGrant {
+  id                   String    @id @default(uuid()) @db.Uuid
+  tenantId             String    @db.Uuid @map("tenant_id")
+  principalUserId      String    @db.Uuid @map("principal_user_id")
+  principalEmployeeId  String?   @db.Uuid @map("principal_employee_id")
+  roleKey              String    @map("role_key")
+  scopeType            String    @map("scope_type") // SELF | TEAM | REPORTING_TREE | SBU | PROJECT | GROUP | ASSIGNED_CASE | TENANT
+  scopeId              String?   @db.Uuid @map("scope_id")
+  validFrom            DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo              DateTime? @db.Timestamptz(6) @map("valid_to")
+  grantedBy            String?   @db.Uuid @map("granted_by")
+  reason               String?
+  auditRef             String?   @map("audit_ref")
+
+  @@index([tenantId, principalUserId, roleKey], map: "idx_role_grants_tenant_principal")
+  @@map("role_grants")
+}
+
+model PermissionGrant {
+  id                   String    @id @default(uuid()) @db.Uuid
+  tenantId             String    @db.Uuid @map("tenant_id")
+  principalUserId      String    @db.Uuid @map("principal_user_id")
+  principalEmployeeId  String?   @db.Uuid @map("principal_employee_id")
+  permissionKey        String    @map("permission_key")
+  scopeType            String    @map("scope_type")
+  scopeId              String?   @db.Uuid @map("scope_id")
+  validFrom            DateTime  @default(now()) @db.Timestamptz(6) @map("valid_from")
+  validTo              DateTime? @db.Timestamptz(6) @map("valid_to")
+  grantedBy            String?   @db.Uuid @map("granted_by")
+  reason               String?
+  auditRef             String?   @map("audit_ref")
+
+  @@index([tenantId, principalUserId, permissionKey], map: "idx_perm_grants_tenant_principal")
+  @@map("permission_grants")
+}
+
+model PolicyVersion {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  version   Int
+  rules     Json
+  active    Boolean  @default(false)
+  createdBy String?  @db.Uuid @map("created_by")
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([tenantId, version], map: "uq_policy_versions_tenant_version")
+  @@map("policy_versions")
+}
+
+model AuditEvent {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid @map("tenant_id")
+  actorUserId    String?   @db.Uuid @map("actor_user_id")
+  eventType      String    @map("event_type")
+  resourceType   String?   @map("resource_type")
+  resourceId     String?   @db.Uuid @map("resource_id")
+  decision       String?
+  reasonCode     String?   @map("reason_code")
+  policyVersion  Int?      @map("policy_version")
+  metadata       Json?
+  createdAt      DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId, eventType, createdAt], map: "idx_audit_events_tenant_type_time")
+  @@map("audit_events")
+}
+
+// ---------- Feature #5: ATS / Recruitment (Module 3) ----------
+
+model Requisition {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid @map("tenant_id")
+  code             String?
+  jobTitle         String    @map("job_title")
+  jobFamily        String?   @map("job_family")
+  grade            String?
+  headcount        Int       @default(1)
+  budgetBand       String?   @map("budget_band")
+  hiringManagerId  String?   @db.Uuid @map("hiring_manager_id")
+  justification    String?   @db.Text
+  expectedStartDate DateTime? @db.Timestamptz(6) @map("expected_start_date")
+  status           String    @default("draft") // draft | submitted | approved | rejected | closed
+  approvedBy       String?   @db.Uuid @map("approved_by")
+  approvedAt       DateTime? @db.Timestamptz(6) @map("approved_at")
+  createdBy        String?   @db.Uuid @map("created_by")
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status, createdAt], map: "idx_req_tenant_status_created")
+  @@map("requisitions")
+}
+
+model Candidate {
+  id                  String    @id @default(uuid()) @db.Uuid
+  tenantId            String    @db.Uuid @map("tenant_id")
+  fullName            String    @map("full_name")
+  email               String
+  phone               String?
+  source              String?
+  resumeUrl           String?   @map("resume_url")
+  consentGiven        Boolean   @default(false) @map("consent_given")
+  consentAt           DateTime? @db.Timestamptz(6) @map("consent_at")
+  consentIp           String?   @map("consent_ip")
+  status              String    @default("applied") // applied | screening | rejected | withdrawn | offer_made | accepted
+  linkedRequisitionId String?   @db.Uuid @map("linked_requisition_id")
+  notes               String?   @db.Text
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt           DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, email, status], map: "idx_cand_tenant_email_status")
+  @@map("candidates")
+}
+
+model Interview {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @db.Uuid @map("tenant_id")
+  requisitionId String?   @db.Uuid @map("requisition_id")
+  candidateId   String?   @db.Uuid @map("candidate_id")
+  type          String    @default("phone") // phone | technical | managerial | hr
+  startAt       DateTime  @db.Timestamptz(6) @map("start_at")
+  endAt         DateTime  @db.Timestamptz(6) @map("end_at")
+  timezone      String    @default("UTC")
+  location      String?
+  meetingLink   String?   @map("meeting_link")
+  status        String    @default("scheduled") // scheduled | completed | cancelled | no_show
+  createdBy     String?   @db.Uuid @map("created_by")
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, candidateId, startAt], map: "idx_intv_tenant_cand_start")
+  @@map("interviews")
+}
+
+model InterviewPanelMember {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid @map("tenant_id")
+  interviewId String   @db.Uuid @map("interview_id")
+  employeeId  String   @db.Uuid @map("employee_id")
+  role        String   @default("interviewer")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@unique([tenantId, interviewId, employeeId], map: "uq_ipm_tenant_interview_emp")
+  @@map("interview_panel_members")
+}
+
+model InterviewFeedback {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @db.Uuid @map("tenant_id")
+  interviewId   String   @db.Uuid @map("interview_id")
+  interviewerId String   @db.Uuid @map("interviewer_id")
+  rating        Int
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt     DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, interviewId, interviewerId], map: "idx_ifb_tenant_interview_intr")
+  @@map("interview_feedback")
+}
+
+// ---- Feature #6: CRM core (PRD Module 9) ----
+
+model CrmAccount {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  name       String
+  industry   String?
+  website    String?
+  source     String   @default("inbound")
+  status     String   @default("prospect") // prospect | active | on_hold | churned
+  clientTier String?  @map("client_tier") // standard | strategic
+  ownerId    String   @db.Uuid @map("owner_id")
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status, createdAt], map: "idx_crm_acc_tenant_status_created")
+  @@map("crm_accounts")
+}
+
+model CrmContact {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  accountId String   @db.Uuid @map("account_id")
+  fullName  String   @map("full_name")
+  email     String
+  phone     String?
+  title     String?
+  isPrimary Boolean  @default(false) @map("is_primary")
+  notes     String?  @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, accountId], map: "idx_crm_con_tenant_account")
+  @@map("crm_contacts")
+}
+
+model CrmLead {
+  id                   String    @id @default(uuid()) @db.Uuid
+  tenantId             String    @db.Uuid @map("tenant_id")
+  fullName             String    @map("full_name")
+  email                String?
+  phone                String?
+  company              String?
+  source               String    @default("inbound")
+  status               String    @default("new") // new | working | qualified | unqualified | converted
+  ownerId              String    @db.Uuid @map("owner_id")
+  nextAction           String?   @map("next_action")
+  nextActionAt         DateTime? @db.Timestamptz(6) @map("next_action_at")
+  notes                String?   @db.Text
+  convertedAccountId   String?   @db.Uuid @map("converted_account_id")
+  convertedContactId   String?   @db.Uuid @map("converted_contact_id")
+  convertedOpportunityId String? @db.Uuid @map("converted_opportunity_id")
+  createdAt            DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt            DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status, createdAt], map: "idx_crm_lead_tenant_status_created")
+  @@map("crm_leads")
+}
+
+model CrmOpportunity {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid @map("tenant_id")
+  accountId        String    @db.Uuid @map("account_id")
+  name             String
+  stage            String    @default("prospecting") // prospecting | qualification | proposal | negotiation | won | lost
+  amountCents      BigInt    @default(0) @db.BigInt @map("amount_cents") // integer cents; never binary float
+  currency         String    @default("USD")
+  expectedCloseDate DateTime? @db.Timestamptz(6) @map("expected_close_date")
+  probability       Int?
+  forecastCategory String?   @map("forecast_category") // pipeline | best_case | commit | closed
+  ownerId          String    @db.Uuid @map("owner_id")
+  lostReason       String?   @db.Text @map("lost_reason")
+  competitorNotes  String?   @db.Text @map("competitor_notes")
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, stage, createdAt], map: "idx_crm_opp_tenant_stage_created")
+  @@map("crm_opportunities")
+}
+
+// ---- Feature #7: Project & Workforce Management (PRD Modules 8 + 7 + 11) ----
+
+model Project {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid @map("tenant_id")
+  name           String
+  code           String
+  accountId      String?   @db.Uuid @map("account_id")
+  ownerId        String    @db.Uuid @map("owner_id")
+  deliveryLeadId String?   @db.Uuid @map("delivery_lead_id")
+  startDate      DateTime? @db.Timestamptz(6) @map("start_date")
+  endDate        DateTime? @db.Timestamptz(6) @map("end_date")
+  budgetCents    BigInt?   @db.BigInt @map("budget_cents")
+  status         String    @default("proposed") // proposed | pending_approval | approved | active | on_hold | completed | cancelled
+  description    String?   @db.Text
+  createdAt      DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, code], map: "uq_proj_tenant_code")
+  @@index([tenantId, status, createdAt], map: "idx_proj_tenant_status_created")
+  @@map("projects")
+}
+
+model Ticket {
+  id           String    @id @default(uuid()) @db.Uuid
+  tenantId     String    @db.Uuid @map("tenant_id")
+  projectId    String?   @db.Uuid @map("project_id")
+  title        String
+  description  String?   @db.Text
+  type         String    @default("task") // bug | feature | task | incident | support
+  status       String    @default("open") // open | triaged | in_progress | in_review | resolved | closed
+  priority     String    @default("medium") // low | medium | high | critical
+  assigneeId   String?   @db.Uuid @map("assignee_id")
+  reporterId   String?   @db.Uuid @map("reporter_id")
+  closedReason String?   @db.Text @map("closed_reason")
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status, createdAt], map: "idx_ticket_tenant_status_created")
+  @@index([tenantId, projectId], map: "idx_ticket_tenant_project")
+  @@map("tickets")
+}
+
+model Allocation {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  projectId String   @db.Uuid @map("project_id")
+  employeeId String  @db.Uuid @map("employee_id")
+  percentage Int
+  startDate DateTime @db.Timestamptz(6) @map("start_date")
+  endDate   DateTime @db.Timestamptz(6) @map("end_date")
+  notes     String?  @db.Text
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, employeeId, startDate, endDate], map: "idx_alloc_tenant_emp_dates")
+  @@index([tenantId, projectId], map: "idx_alloc_tenant_project")
+  @@map("allocations")
+}
+
+model ProjectMilestone {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  projectId String   @db.Uuid @map("project_id")
+  name      String
+  dueDate   DateTime? @db.Timestamptz(6) @map("due_date")
+  status    String   @default("pending") // pending | in_progress | completed | missed
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, projectId, status], map: "idx_milestone_tenant_project_status")
+  @@map("project_milestones")
+}
+
+// ---- Feature #8: Time & Activity Reporting (PRD Modules 6 + 5) ----
+
+model DailyPlan {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  employeeId String   @db.Uuid @map("employee_id")
+  planDate   DateTime @db.Date @map("plan_date")
+  status     String   @default("draft") // draft | submitted | reviewed
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, employeeId, planDate], map: "uq_plan_tenant_emp_date")
+  @@index([tenantId, planDate, status], map: "idx_plan_tenant_date_status")
+  @@map("daily_plans")
+}
+
+model DailyPlanItem {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  planId           String   @db.Uuid @map("plan_id")
+  title            String
+  projectId        String?  @db.Uuid @map("project_id")
+  ticketId         String?  @db.Uuid @map("ticket_id")
+  plannedOutcome   String?  @db.Text @map("planned_outcome")
+  estimatedMinutes Int      @map("estimated_minutes")
+  priority         String   @default("medium") // low | medium | high | critical
+  status           String   @default("planned") // planned | in_progress | completed | blocked | carried_forward
+  actualMinutes    Int?     @map("actual_minutes")
+  outcome          String?  @db.Text
+  blocker          String?
+  evidence         String?
+  createdAt        DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, planId], map: "idx_planitem_tenant_plan")
+  @@map("daily_plan_items")
+}
+
+model DailyReportVersion {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  employeeId String   @db.Uuid @map("employee_id")
+  reportDate DateTime @db.Date @map("report_date")
+  version    Int
+  payload    Json
+  note       String?  @db.Text
+  createdBy  String   @db.Uuid @map("created_by")
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@unique([tenantId, employeeId, reportDate, version], map: "uq_report_tenant_emp_date_ver")
+  @@index([tenantId, employeeId, reportDate], map: "idx_report_tenant_emp_date")
+  @@map("daily_report_versions")
+}
+
+model TimeEntry {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  employeeId String   @db.Uuid @map("employee_id")
+  entryDate  DateTime @db.Date @map("entry_date")
+  projectId  String?  @db.Uuid @map("project_id")
+  ticketId   String?  @db.Uuid @map("ticket_id")
+  minutes    Int
+  billable   Boolean  @default(false)
+  note       String?  @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, employeeId, entryDate], map: "idx_timeentry_tenant_emp_date")
+  @@index([tenantId, projectId, entryDate], map: "idx_timeentry_tenant_project_date")
+  @@map("time_entries")
+}
+
+model AttendanceDay {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenantId   String    @db.Uuid @map("tenant_id")
+  employeeId String    @db.Uuid @map("employee_id")
+  workDate   DateTime  @db.Date @map("work_date")
+  checkInAt  DateTime? @db.Timestamptz(6) @map("check_in_at")
+  checkOutAt DateTime? @db.Timestamptz(6) @map("check_out_at")
+  status     String    @default("not_checked_in") // not_checked_in | checked_in | checked_out | leave | holiday | weekend | absence_pending | correction_requested
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, employeeId, workDate], map: "uq_attendance_tenant_emp_date")
+  @@index([tenantId, workDate, status], map: "idx_attendance_tenant_date_status")
+  @@map("attendance_days")
+}
+
+model AttendanceCorrection {
+  id                String    @id @default(uuid()) @db.Uuid
+  tenantId          String    @db.Uuid @map("tenant_id")
+  attendanceDayId   String    @db.Uuid @map("attendance_day_id")
+  requestedBy       String    @db.Uuid @map("requested_by")
+  reason            String    @db.Text
+  proposedCheckIn   DateTime? @db.Timestamptz(6) @map("proposed_check_in")
+  proposedCheckOut  DateTime? @db.Timestamptz(6) @map("proposed_check_out")
+  status            String    @default("pending") // pending | approved | rejected
+  decidedBy         String?   @db.Uuid @map("decided_by")
+  decidedAt         DateTime? @db.Timestamptz(6) @map("decided_at")
+  decisionReason    String?   @db.Text @map("decision_reason")
+  createdAt         DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, attendanceDayId, status], map: "idx_attcorr_tenant_day_status")
+  @@map("attendance_corrections")
+}
+
+model StageHistory {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  entityType String   @map("entity_type") // requisition | candidate | interview | lead | opportunity | project | ticket | daily_plan | attendance_correction | workflow_definition | approval_instance | invoice | offer | onboarding_plan | probation_review
+  entityId   String   @db.Uuid @map("entity_id")
+  fromStatus String?  @map("from_status")
+  toStatus   String   @map("to_status")
+  actorId    String?  @db.Uuid @map("actor_id")
+  reason     String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, entityType, entityId, createdAt], map: "idx_sh_tenant_ent_created")
+  @@map("stage_history")
+}
+
+model WorkflowDefinition {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid @map("tenant_id")
+  subjectType String   @map("subject_type")
+  name        String
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, name], map: "uq_wfdef_tenant_name")
+  @@index([tenantId, subjectType, active], map: "idx_wfdef_tenant_subject_active")
+  @@map("workflow_definitions")
+}
+
+model WorkflowVersion {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @db.Uuid @map("tenant_id")
+  definitionId  String    @db.Uuid @map("definition_id")
+  versionNumber Int       @map("version_number")
+  status        String    @default("draft")
+  rules         Json
+  effectiveFrom DateTime? @map("effective_from") @db.Timestamptz(6)
+  effectiveTo   DateTime? @map("effective_to") @db.Timestamptz(6)
+  createdBy     String    @db.Uuid @map("created_by")
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([definitionId, versionNumber], map: "uq_wfver_def_number")
+  @@index([tenantId, definitionId, status], map: "idx_wfver_tenant_def_status")
+  @@map("workflow_versions")
+}
+
+model ApprovalInstance {
+  id                  String    @id @default(uuid()) @db.Uuid
+  tenantId            String    @db.Uuid @map("tenant_id")
+  subjectType         String    @map("subject_type")
+  subjectId           String    @db.Uuid @map("subject_id")
+  subjectVersion      String    @map("subject_version")
+  subjectContext      Json?     @map("subject_context")
+  workflowVersionId   String    @db.Uuid @map("workflow_version_id")
+  requesterEmployeeId String    @db.Uuid @map("requester_employee_id")
+  status              String    @default("pending")
+  currentStepNumber   Int       @default(1) @map("current_step_number")
+  reason              String?
+  amountCents         BigInt?   @map("amount_cents")
+  dueAt               DateTime? @map("due_at") @db.Timestamptz(6)
+  decidedAt           DateTime? @map("decided_at") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt           DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status], map: "idx_apprinst_tenant_status")
+  @@index([tenantId, subjectType, subjectId], map: "idx_apprinst_tenant_subject")
+  @@index([tenantId, requesterEmployeeId], map: "idx_apprinst_tenant_requester")
+  @@map("approval_instances")
+}
+
+model ApprovalStep {
+  id                   String   @id @default(uuid()) @db.Uuid
+  tenantId             String   @db.Uuid @map("tenant_id")
+  instanceId           String   @db.Uuid @map("instance_id")
+  stepNumber           Int      @map("step_number")
+  name                 String
+  mode                 String   @default("any")
+  resolver             Json
+  minApprovals         Int      @default(1) @map("min_approvals")
+  amountThresholdCents BigInt?  @map("amount_threshold_cents")
+  status               String   @default("pending")
+  createdAt            DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt            DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, instanceId, stepNumber], map: "idx_apprstep_tenant_instance")
+  @@map("approval_steps")
+}
+
+model ApprovalDecision {
+  id                    String   @id @default(uuid()) @db.Uuid
+  tenantId              String   @db.Uuid @map("tenant_id")
+  instanceId            String   @db.Uuid @map("instance_id")
+  stepId                String?  @db.Uuid @map("step_id")
+  approverEmployeeId    String   @db.Uuid @map("approver_employee_id")
+  onBehalfOfEmployeeId  String?  @db.Uuid @map("on_behalf_of_employee_id")
+  decision              String
+  reason                String?
+  isSodOverride         Boolean  @default(false) @map("is_sod_override")
+  decidedAt             DateTime @default(now()) @db.Timestamptz(6) @map("decided_at")
+  createdAt             DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, instanceId, decidedAt], map: "idx_apprdec_tenant_instance")
+  @@map("approval_decisions")
+}
+
+model ApprovalDelegation {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid @map("tenant_id")
+  fromEmployeeId String   @db.Uuid @map("from_employee_id")
+  toEmployeeId   String   @db.Uuid @map("to_employee_id")
+  scopeType      String   @default("ALL") @map("scope_type")
+  scopeValue     String?  @map("scope_value")
+  startDate      DateTime @map("start_date") @db.Date
+  endDate        DateTime @map("end_date") @db.Date
+  reason         String?
+  active         Boolean  @default(true)
+  createdBy      String   @db.Uuid @map("created_by")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, fromEmployeeId, active], map: "idx_apprdeleg_tenant_from")
+  @@index([tenantId, toEmployeeId, active], map: "idx_apprdeleg_tenant_to")
+  @@map("approval_delegations")
+}
+
+// ---- Feature #10: Finance Operations (PRD Module 12) ----
+
+model Invoice {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid @map("tenant_id")
+  number             String
+  accountId          String    @db.Uuid @map("account_id")
+  projectId          String?   @db.Uuid @map("project_id")
+  milestoneId        String?   @db.Uuid @map("milestone_id")
+  status             String    @default("draft") // draft | issued | partially_paid | paid | overdue | void
+  currency           String    @default("USD")
+  subtotalCents      BigInt    @default(0) @db.BigInt @map("subtotal_cents") // integer cents; never binary float
+  taxCents           BigInt    @default(0) @db.BigInt @map("tax_cents")
+  totalCents         BigInt    @default(0) @db.BigInt @map("total_cents")
+  paymentTermsDays   Int       @default(30) @map("payment_terms_days")
+  issuedOn           DateTime? @map("issued_on") @db.Timestamptz(6)
+  dueOn              DateTime? @map("due_on") @db.Timestamptz(6)
+  disputeStatus      String    @default("none") @map("dispute_status") // none | raised | resolved
+  disputeReason      String?   @db.Text @map("dispute_reason")
+  approvalInstanceId String?   @db.Uuid @map("approval_instance_id")
+  notes              String?   @db.Text
+  createdBy          String?   @db.Uuid @map("created_by")
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, number], map: "uq_invoice_tenant_number")
+  @@index([tenantId, status, createdAt], map: "idx_invoice_tenant_status_created")
+  @@index([tenantId, accountId, createdAt], map: "idx_invoice_tenant_account_created")
+  @@map("invoices")
+}
+
+model InvoiceLine {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid @map("tenant_id")
+  invoiceId      String   @db.Uuid @map("invoice_id")
+  lineNumber     Int      @map("line_number")
+  description    String
+  quantity       Int      @default(1)
+  unitPriceCents BigInt   @db.BigInt @map("unit_price_cents") // integer cents; never binary float
+  amountCents    BigInt   @db.BigInt @map("amount_cents")
+  projectId      String?  @db.Uuid @map("project_id")
+  milestoneId    String?  @db.Uuid @map("milestone_id")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([invoiceId, lineNumber], map: "uq_invline_invoice_number")
+  @@index([tenantId, invoiceId], map: "idx_invline_tenant_invoice")
+  @@map("invoice_lines")
+}
+
+model Receivable {
+  id                  String    @id @default(uuid()) @db.Uuid
+  tenantId            String    @db.Uuid @map("tenant_id")
+  invoiceId           String    @db.Uuid @map("invoice_id")
+  originalAmountCents BigInt    @db.BigInt @map("original_amount_cents") // integer cents
+  paidAmountCents     BigInt    @default(0) @db.BigInt @map("paid_amount_cents")
+  outstandingCents    BigInt    @default(0) @db.BigInt @map("outstanding_cents")
+  currency            String    @default("USD")
+  dueOn               DateTime? @map("due_on") @db.Timestamptz(6)
+  status              String    @default("open") // open | partially_paid | paid | disputed | written_off
+  followUpOwnerId     String?   @db.Uuid @map("follow_up_owner_id")
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt           DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([invoiceId], map: "uq_receivable_invoice")
+  @@index([tenantId, status, dueOn], map: "idx_receivable_tenant_status_due")
+  @@map("receivables")
+}
+
+model Payment {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String   @db.Uuid @map("tenant_id")
+  invoiceId    String   @db.Uuid @map("invoice_id")
+  receivableId String   @db.Uuid @map("receivable_id")
+  amountCents  BigInt   @db.BigInt @map("amount_cents") // integer cents; never binary float
+  currency     String   @default("USD")
+  receivedOn   DateTime @map("received_on") @db.Timestamptz(6)
+  method       String   @default("bank_transfer") // bank_transfer | upi | card | cash | cheque | other
+  reference    String?
+  notes        String?  @db.Text
+  recordedBy   String?  @db.Uuid @map("recorded_by")
+  createdAt    DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, invoiceId, receivedOn], map: "idx_payment_tenant_invoice")
+  @@map("payments")
+}
+
+model PaymentAdjustment {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid @map("tenant_id")
+  invoiceId          String   @db.Uuid @map("invoice_id")
+  paymentId          String?  @db.Uuid @map("payment_id")
+  type               String   // reversal | credit_note | discount | write_off
+  amountCents        BigInt   @db.BigInt @map("amount_cents") // signed integer cents
+  reason             String   @db.Text
+  approvedBy         String?  @db.Uuid @map("approved_by")
+  approvalInstanceId String?  @db.Uuid @map("approval_instance_id")
+  createdBy          String?  @db.Uuid @map("created_by")
+  createdAt          DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, invoiceId, createdAt], map: "idx_adj_tenant_invoice")
+  @@map("payment_adjustments")
+}
+
+// ---- Feature #11: Recruitment & Onboarding (PRD Module 3 tail + Module 4) ----
+
+model OfferTemplate {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  name             String
+  jobFamily        String?  @map("job_family")
+  employmentType   String?  @map("employment_type")
+  body             String   @db.Text
+  defaultTermsDays Int?     @map("default_terms_days")
+  active           Boolean  @default(true)
+  version          Int      @default(1)
+  createdBy        String?  @db.Uuid @map("created_by")
+  createdAt        DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, name, version], map: "uq_offertpl_tenant_name_version")
+  @@index([tenantId, active, createdAt], map: "idx_offertpl_tenant_active")
+  @@map("offer_templates")
+}
+
+model Offer {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid @map("tenant_id")
+  number             String
+  candidateId        String    @db.Uuid @map("candidate_id")
+  requisitionId      String?   @db.Uuid @map("requisition_id")
+  templateId         String?   @db.Uuid @map("template_id")
+  jobTitle           String    @map("job_title")
+  grade              String?
+  employmentType     String?   @map("employment_type")
+  location           String?
+  workMode           String?   @map("work_mode")
+  startDate          DateTime? @map("start_date") @db.Timestamptz(6)
+  baseCompCents      BigInt    @default(0) @db.BigInt @map("base_comp_cents") // integer cents
+  variableCents      BigInt?   @db.BigInt @map("variable_cents") // integer cents
+  currency           String    @default("USD")
+  notes              String?   @db.Text
+  status             String    @default("draft") // draft | pending_approval | approved | sent | accepted | declined | withdrawn | expired
+  approvalInstanceId String?   @db.Uuid @map("approval_instance_id")
+  sentAt             DateTime? @map("sent_at") @db.Timestamptz(6)
+  respondedAt        DateTime? @map("responded_at") @db.Timestamptz(6)
+  declineReason      String?   @map("decline_reason") @db.Text
+  expiresOn          DateTime? @map("expires_on") @db.Timestamptz(6)
+  createdBy          String?   @db.Uuid @map("created_by")
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, number], map: "uq_offer_tenant_number")
+  @@index([tenantId, status, createdAt], map: "idx_offer_tenant_status_created")
+  @@index([tenantId, candidateId], map: "idx_offer_tenant_candidate")
+  @@map("offers")
+}
+
+model OnboardingChecklistTemplate {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid @map("tenant_id")
+  name           String
+  jobFamily      String?  @map("job_family")
+  location       String?
+  employmentType String?  @map("employment_type")
+  tasks          Json     @default("[]")
+  active         Boolean  @default(true)
+  createdBy      String?  @db.Uuid @map("created_by")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, name], map: "uq_onbctl_tenant_name")
+  @@index([tenantId, active, createdAt], map: "idx_onbctl_tenant_active")
+  @@map("onboarding_checklist_templates")
+}
+
+model OnboardingPlan {
+  id                String    @id @default(uuid()) @db.Uuid
+  tenantId          String    @db.Uuid @map("tenant_id")
+  candidateId       String    @db.Uuid @map("candidate_id")
+  offerId           String    @db.Uuid @map("offer_id")
+  jobFamily         String?   @map("job_family")
+  location          String?
+  employmentType    String?   @map("employment_type")
+  status            String    @default("pending") // pending | in_progress | completed | cancelled
+  startedOn         DateTime? @map("started_on") @db.Timestamptz(6)
+  completedOn       DateTime? @map("completed_on") @db.Timestamptz(6)
+  buddyEmployeeId   String?   @db.Uuid @map("buddy_employee_id")
+  createdEmployeeId String?   @db.Uuid @map("created_employee_id")
+  notes             String?   @db.Text
+  createdBy         String?   @db.Uuid @map("created_by")
+  createdAt         DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, candidateId, offerId], map: "uq_onbplan_tenant_candidate_offer")
+  @@index([tenantId, status, createdAt], map: "idx_onbplan_tenant_status_created")
+  @@map("onboarding_plans")
+}
+
+model OnboardingTask {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @db.Uuid @map("tenant_id")
+  planId          String    @db.Uuid @map("plan_id")
+  title           String
+  category        String    @default("hr") // hr | it | manager | finance | employee | document | policy | training
+  ownerEmployeeId String?   @db.Uuid @map("owner_employee_id")
+  ownerRole       String?   @map("owner_role")
+  dueOn           DateTime? @map("due_on") @db.Timestamptz(6)
+  status          String    @default("pending") // pending | in_progress | completed | blocked | waived | cancelled
+  blockedReason   String?   @map("blocked_reason") @db.Text
+  evidenceRef     String?   @map("evidence_ref")
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz(6)
+  createdBy       String?   @db.Uuid @map("created_by")
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, planId, status], map: "idx_onbtask_tenant_plan_status")
+  @@map("onboarding_tasks")
+}
+
+model OnboardingTaskDependency {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid @map("tenant_id")
+  taskId          String   @db.Uuid @map("task_id")
+  dependsOnTaskId String   @db.Uuid @map("depends_on_task_id")
+  createdAt       DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@unique([tenantId, taskId, dependsOnTaskId], map: "uq_onbdep_tenant_task_parent")
+  @@index([tenantId, taskId], map: "idx_onbdep_tenant_task")
+  @@map("onboarding_task_dependencies")
+}
+
+model InductionEvent {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid @map("tenant_id")
+  planId          String   @db.Uuid @map("plan_id")
+  title           String
+  startAt         DateTime @map("start_at") @db.Timestamptz(6)
+  endAt           DateTime @map("end_at") @db.Timestamptz(6)
+  timezone        String   @default("UTC")
+  location        String?
+  link            String?
+  ownerEmployeeId String?  @db.Uuid @map("owner_employee_id")
+  createdAt       DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, planId, startAt], map: "idx_induction_tenant_plan_start")
+  @@map("induction_events")
+}
+
+model PolicyAcknowledgement {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid @map("tenant_id")
+  planId         String   @db.Uuid @map("plan_id")
+  policyName     String   @map("policy_name")
+  policyVersion  String   @map("policy_version")
+  acknowledgedAt DateTime @default(now()) @db.Timestamptz(6) @map("acknowledged_at")
+  ackRef         String?  @map("ack_ref")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, planId], map: "idx_policy_ack_tenant_plan")
+  @@map("policy_acknowledgements")
+}
+
+model ProbationReview {
+  id                  String    @id @default(uuid()) @db.Uuid
+  tenantId            String    @db.Uuid @map("tenant_id")
+  planId              String    @db.Uuid @map("plan_id")
+  startOn             DateTime  @map("start_on") @db.Timestamptz(6)
+  dueOn               DateTime  @map("due_on") @db.Timestamptz(6)
+  endOn               DateTime? @map("end_on") @db.Timestamptz(6)
+  managerEmployeeId   String?   @db.Uuid @map("manager_employee_id")
+  employeeReviewerId  String?   @db.Uuid @map("employee_reviewer_id")
+  status              String    @default("pending") // pending | in_review | completed
+  recommendation      String? // confirm | extend | terminate
+  outcome             String?
+  managerFeedback     String?   @map("manager_feedback") @db.Text
+  employeeFeedback    String?   @map("employee_feedback") @db.Text
+  decidedBy           String?   @db.Uuid @map("decided_by")
+  decidedAt           DateTime? @map("decided_at") @db.Timestamptz(6)
+  newEndOn            DateTime? @map("new_end_on") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt           DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, planId, status], map: "idx_probation_tenant_plan_status")
+  @@index([tenantId, dueOn], map: "idx_probation_tenant_due")
+  @@map("probation_reviews")
+}
+
+model Notification {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @db.Uuid @map("tenant_id")
+  recipientUserId String    @db.Uuid @map("recipient_user_id")
+  channel         String    @default("in_app") // in_app | email
+  category        String    // approval | task | ticket | interview | onboarding | system
+  title           String
+  body            String    @db.Text
+  readAt          DateTime? @db.Timestamptz(6) @map("read_at")
+  deliveredAt     DateTime? @db.Timestamptz(6) @map("delivered_at")
+  metadata        Json?
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, recipientUserId, readAt], map: "idx_notifications_recipient_read")
+  @@map("notifications")
+}
