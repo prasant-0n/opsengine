@@ -41,9 +41,10 @@ Every feature goes through these stages in order. Do not skip stages.
 24. Production Runbooks & Disaster Recovery Automated Drills (PRD Phase 6 / §18.7 complete)
 25. OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics (PRD §7.3, §9.1 & §21 complete)
 26. OpenAPI 3.1 Contract Generation & Interactive API Documentation (PRD §7.3 line 704 & §10 complete)
+27. Rate Limiting & Web Application Firewall (WAF) Rule Hardening (PRD §4.1 & OWASP Top 10 complete)
 
 ## Current Active Feature
-Feature #26 — OpenAPI 3.1 Contract Generation & Interactive API Documentation: APPROVED 2026-11-10. Evidence: `features/openapi-docs/approve.md` (Delivered packages/api-contracts with OpenAPI 3.1.0 specification generator across all 16 domains and 50+ operations; live /api/openapi.json and self-hosted /api/docs interactive explorer; Admin Console tab integration; 223/223 Vitest tests passing across 24 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, 100% DR drill fidelity).
+Feature #27 — Rate Limiting & Web Application Firewall (WAF) Rule Hardening: APPROVED 2026-11-10. Evidence: `features/waf-rate-limiting/approve.md` (Delivered apps/web/src/lib/security with precision sliding-window rate limiting, tiered endpoint policies, and WAF inspection against SQLi, XSS, Path Traversal, and vulnerability scanners; integrated into apps/web/src/proxy.ts edge pipeline; 235/235 Vitest tests passing across 25 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live HTTP curl verified 403 blocks for SQLi and scanner agents, IETF draft RateLimit headers verified).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
