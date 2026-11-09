@@ -1,7 +1,7 @@
 # Task Tracking — Enterprise Ops SaaS (CRM/HRMS)
 
 ## Status
-Monorepo bootstrapped; features #1 through #13 APPROVED. Feature #13 (Attendance & Leave Management — PRD Module 5) fully implemented and verified with 159/159 passing unit tests, clean TypeScript compilation, and 200 HTTP API probes.
+Monorepo bootstrapped; features #1 through #14 APPROVED. Feature #14 (Executive Reporting, Analytics & Audit Log Viewer — PRD Module 16) fully implemented and verified with 164/164 passing unit tests, clean TypeScript compilation, and 200 HTTP API & page probes.
 
 ## Feature Lifecycle (per feature)
 Every feature goes through these stages in order. Do not skip stages.
@@ -28,9 +28,10 @@ Every feature goes through these stages in order. Do not skip stages.
 11. Recruitment & Onboarding (offers, induction, probation)
 12. AI Assistant (controlled Gemini integration)
 13. Attendance & Leave Management (PRD Module 5 complete)
+14. Executive Reporting, Analytics & Audit Log Viewer (PRD Module 16 complete)
 
 ## Current Active Feature
-Feature #13 — Attendance & Leave Management: APPROVED 2026-11-09. Evidence: `features/leave-attendance/approve.md` (vitest 159/159 passing, tsc clean, API smoke 200 OK, migration applied).
+Feature #14 — Executive Reporting, Analytics & Audit Log Viewer: APPROVED 2026-11-09. Evidence: `features/reporting-audit/approve.md` (vitest 164/164 passing across 17 test suites, tsc clean, API smoke 200 OK, live CSV export 200 OK).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
