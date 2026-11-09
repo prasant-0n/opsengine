@@ -131,6 +131,12 @@ export const PERMISSIONS = {
   DOCUMENT_UPLOAD: "document.upload",
   DOCUMENT_VERIFY: "document.verify",
   DOCUMENT_DELETE: "document.delete",
+  // Calendar, Meetings & Internal Engagement (Module 15)
+  CALENDAR_EVENT_READ: "calendar.event.read",
+  CALENDAR_EVENT_CREATE: "calendar.event.create",
+  CALENDAR_EVENT_UPDATE: "calendar.event.update",
+  CALENDAR_EVENT_DELETE: "calendar.event.delete",
+  MEETING_NOTE_MANAGE: "meeting.note.manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -161,11 +167,17 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LEAVE_BALANCE_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.DOCUMENT_READ, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.DOCUMENT_UPLOAD, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.CALENDAR_EVENT_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.CALENDAR_EVENT_CREATE, scopeType: "TENANT" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.PROFILE_UPDATE_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.SESSION_MANAGE_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.CALENDAR_EVENT_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.CALENDAR_EVENT_CREATE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.CALENDAR_EVENT_UPDATE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.MEETING_NOTE_MANAGE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ORG_READ_DIRECTORY, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.WORK_TICKET_ASSIGN, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.WORK_TICKET_TRANSITION, scopeType: "TEAM" },

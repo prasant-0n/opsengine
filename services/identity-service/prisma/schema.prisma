@@ -1233,3 +1233,68 @@ model Document {
   @@map("documents")
 }
 
+// ---------- Feature #18: Calendar, Meetings, Decisions & Engagement (Module 15) ----------
+
+model CalendarEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid @map("tenant_id")
+  title       String
+  description String?  @db.Text
+  eventType   String   @default("meeting") @map("event_type") // meeting | client_meeting | interview | review | training | holiday | engagement
+  startTime   DateTime @db.Timestamptz(6) @map("start_time")
+  endTime     DateTime @db.Timestamptz(6) @map("end_time")
+  allDay      Boolean  @default(false) @map("all_day")
+  location    String?
+  status      String   @default("scheduled") // scheduled | completed | cancelled
+  organizerId String   @db.Uuid @map("organizer_id")
+  capacity    Int?
+  relatedType String?  @map("related_type") // project | crm_opportunity | candidate | client
+  relatedId   String?  @db.Uuid @map("related_id")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  attendees   EventAttendee[]
+  meetingNote MeetingNote?
+
+  @@index([tenantId, eventType], map: "idx_calendar_events_tenant_type")
+  @@index([tenantId, startTime, endTime], map: "idx_calendar_events_tenant_time")
+  @@map("calendar_events")
+}
+
+model EventAttendee {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid @map("tenant_id")
+  eventId   String   @db.Uuid @map("event_id")
+  userId    String   @db.Uuid @map("user_id")
+  status    String   @default("invited") // invited | accepted | declined | tentative
+  feedback  String?  @db.Text
+  rating    Int?
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  event     CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, eventId, userId], map: "uq_event_attendee_tenant_event_user")
+  @@index([tenantId, userId], map: "idx_event_attendees_tenant_user")
+  @@map("event_attendees")
+}
+
+model MeetingNote {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid @map("tenant_id")
+  eventId     String   @unique @db.Uuid @map("event_id")
+  agenda      String?  @db.Text
+  notes       String?  @db.Text
+  decisions   Json?
+  actionItems Json?    @map("action_items")
+  createdBy   String   @db.Uuid @map("created_by")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  event       CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, eventId], map: "idx_meeting_notes_tenant_event")
+  @@map("meeting_notes")
+}
+
+

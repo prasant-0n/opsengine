@@ -47,6 +47,13 @@ export const NAV_GROUPS: NavGroup[] = [
         permission: "time.report.read_team",
         behavior: "hide",
       },
+      {
+        label: "Calendar",
+        href: "/dashboard/calendar",
+        icon: "calendar_month",
+        permission: "calendar.event.read",
+        behavior: "hide",
+      },
     ],
   },
   {

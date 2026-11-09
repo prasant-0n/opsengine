@@ -171,6 +171,11 @@ async function main() {
     "document.upload",
     "document.verify",
     "document.delete",
+    "calendar.event.read",
+    "calendar.event.create",
+    "calendar.event.update",
+    "calendar.event.delete",
+    "meeting.note.manage",
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];

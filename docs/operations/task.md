@@ -1,7 +1,7 @@
 # Task Tracking — Enterprise Ops SaaS (CRM/HRMS)
 
 ## Status
-Monorepo bootstrapped; features #1 through #17 APPROVED. Feature #17 (Google OAuth 2.0 / SSO Integration — PRD Module 1) fully implemented and verified with 190/190 passing unit tests across 20 suites, clean TypeScript compilation, and 200 HTTP API & page probes.
+Monorepo bootstrapped; features #1 through #18 APPROVED. Feature #18 (Calendar, Meetings, Decisions & Internal Engagement Activities — PRD Module 15) fully implemented and verified with 196/196 passing unit tests across 21 suites, clean TypeScript compilation, and 200 HTTP API & page probes.
 
 ## Feature Lifecycle (per feature)
 Every feature goes through these stages in order. Do not skip stages.
@@ -32,9 +32,10 @@ Every feature goes through these stages in order. Do not skip stages.
 15. Tenant Administration, Role Governance & Organization Management (PRD Modules 0 & 15 complete)
 16. Documents and Secure File Management (PRD Module 14 complete)
 17. Google OAuth 2.0 / SSO Integration (PRD Module 1 complete)
+18. Calendar, Meetings, Decisions & Internal Engagement Activities (PRD Module 15 complete)
 
 ## Current Active Feature
-Feature #17 — Google OAuth 2.0 / SSO Integration: APPROVED 2026-11-09. Evidence: `features/google-sso/approve.md` (vitest 190/190 passing across 20 test suites, tsc clean, API smoke 200/307 OK, live OAuth start and callback flows verified).
+Feature #18 — Calendar, Meetings, Decisions & Internal Engagement Activities: APPROVED 2026-11-09. Evidence: `features/calendar-meetings/approve.md` (vitest 196/196 passing across 21 test suites, tsc clean, API smoke 200/307 OK, live calendar, minutes, decisions, and capacity-enforced RSVP verified).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
