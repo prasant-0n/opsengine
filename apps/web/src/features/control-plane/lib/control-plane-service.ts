@@ -306,8 +306,8 @@ export async function setTenantLifecycleStatus(
   const isActive = status === "active";
   const now = new Date();
 
-  const updated = await prisma.tenantWorkspace.update({
-    where: { id: ws.id },
+  await prisma.tenantWorkspace.updateMany({
+    where: { tenantId },
     data: {
       isActive,
       lifecycleStatus: status,
@@ -315,6 +315,10 @@ export async function setTenantLifecycleStatus(
       suspendedAt: status === "suspended" ? now : null,
     },
   });
+
+  const updated = (await prisma.tenantWorkspace.findFirst({
+    where: { tenantId },
+  }))!;
 
   // Update subscription status in lockstep
   await prisma.tenantSubscription.updateMany({

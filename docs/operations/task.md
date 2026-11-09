@@ -37,9 +37,10 @@ Every feature goes through these stages in order. Do not skip stages.
 20. End-to-End Playwright Automated Test Suite, Health Probes & Multi-Service Hardening (PRD §1.3, §2.2, §4.1, §5 complete)
 21. Full Stack Multi-Service Containerization & Docker Compose Production Topology (PRD §9.1, Phase 0 & Phase 6 complete)
 22. Enterprise Multi-Tenant Showcase & Demo Seed Engine (PRD §1 & Phase 1 complete)
+23. Production CI/CD GitHub Actions Pipeline Hardening (PRD Phase 0 & Phase 6 complete)
 
 ## Current Active Feature
-Feature #22 — Enterprise Multi-Tenant Showcase & Demo Seed Engine: APPROVED 2026-11-09. Evidence: `features/enterprise-seed/approve.md` (Idempotent seed script populating 2 isolated enterprise tenants Acme Corp and Starlight Technologies, multi-level reporting hierarchy with SBU Head/Director/Leads/Engineers, CRM accounts & pipeline, Project Apollo & Titan, leave allocations, finance invoices, verified documents, calendar decisions; Vitest 202/202 passing, Playwright 13/13 passing).
+Feature #23 — Production CI/CD GitHub Actions Pipeline Hardening: APPROVED 2026-11-09. Evidence: `features/cicd-pipeline/approve.md` (Workflow .github/workflows/ci.yml with PostgreSQL 16 container, migrations, seed, Vitest 202/202, Playwright 13/13, Next.js build, least privilege permissions: contents: read, artifact uploads on failure; all steps verified locally).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

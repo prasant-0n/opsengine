@@ -1,0 +1,89 @@
+name: CI Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, Test & E2E Quality Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: opsengine
+          POSTGRES_PASSWORD: opsengine
+          POSTGRES_DB: opsengine_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      NEXTAUTH_SECRET: ci-testing-secret-32-chars-long-minimum!
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      AWS_SES_REGION: us-east-1
+      AWS_SES_FROM_EMAIL: noreply@opsengine.enterprise
+      CI: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd services/identity-service && npx prisma generate
+
+      - name: TypeScript Typecheck
+        run: pnpm --filter @opsengine/web typecheck
+
+      - name: Run Database Migrations
+        run: cd services/identity-service && npx prisma migrate deploy
+
+      - name: Seed Database Baseline
+        run: cd apps/web && node scripts/seed.mjs
+
+      - name: Run Vitest Unit & ReBAC Suite
+        run: pnpm --filter @opsengine/web test
+
+      - name: Install Playwright Chromium & Dependencies
+        run: cd apps/web && npx playwright install --with-deps chromium
+
+      - name: Build Next.js Application (Standalone)
+        run: pnpm --filter @opsengine/web build
+
+      - name: Run Playwright End-to-End Suite
+        run: cd apps/web && npx playwright test
+
+      - name: Upload Playwright Test Report on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
