@@ -5,6 +5,7 @@ import {
   resolveRateLimitTier,
   extractClientIp,
 } from "./lib/security";
+import { globalTenantLifecycleService } from "./lib/tenancy";
 
 export default function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -72,7 +73,30 @@ export default function proxy(req: NextRequest) {
       );
     }
 
-    // C. Forward request with standard RateLimit headers attached
+    // C. Tenant Lifecycle & Quarantine Edge Enforcement (PRD §18.7)
+    const isLifecycleAdminEndpoint = pathname.startsWith("/api/admin/tenants/lifecycle");
+    if (!isLifecycleAdminEndpoint) {
+      const tenantHeader = req.headers.get("x-tenant-id");
+      if (tenantHeader && globalTenantLifecycleService.isQuarantined(tenantHeader)) {
+        return NextResponse.json(
+          {
+            error: `Tenant '${tenantHeader}' has been quarantined or suspended by platform operations.`,
+            code: "TENANT_QUARANTINED",
+            tenantId: tenantHeader,
+            timestamp: new Date().toISOString(),
+          },
+          {
+            status: 403,
+            headers: {
+              "Content-Type": "application/json",
+              "X-Tenant-Status": "QUARANTINED",
+            },
+          }
+        );
+      }
+    }
+
+    // D. Forward request with standard RateLimit headers attached
     const res = NextResponse.next();
     res.headers.set("RateLimit-Limit", String(rateResult.limit));
     res.headers.set("RateLimit-Remaining", String(rateResult.remaining));

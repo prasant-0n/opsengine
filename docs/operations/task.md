@@ -45,9 +45,10 @@ Every feature goes through these stages in order. Do not skip stages.
 28. Multi-Tenant Domain Event Bus & Outbox Integration Pipeline (PRD §11 & §14.2 complete)
 29. High-Throughput Load Testing & Concurrency Stress Suite (PRD §14.1 & Phase 6 complete)
 30. Real-Time Server-Sent Events (SSE) & Notification Push Stream (PRD Module 15 & §11 complete)
+31. Tenant Offboarding, Compliant Data Export & Retention Lifecycle (PRD §14.3, Module 0A & §18.7 complete)
 
 ## Current Active Feature
-Feature #30 — Real-Time Server-Sent Events (SSE) & Notification Push Stream: APPROVED 2026-11-10. Evidence: `features/realtime-notifications/approve.md` (Delivered apps/web/src/lib/notifications with NotificationHub and SSE wire protocol; live /api/notifications/stream and /api/notifications endpoints; useNotificationStream hook and topbar bell integration; 267/267 Vitest tests passing across 28 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live curl verified SSE handshake and notification delivery).
+Feature #31 — Tenant Offboarding, Compliant Data Export & Retention Lifecycle: APPROVED 2026-11-10. Evidence: `features/tenant-offboarding/approve.md` (Delivered apps/web/src/lib/tenancy with TenantLifecycleService and TenantExportEngine; multi-domain JSON export bundles with SHA-256 manifests; edge quarantine enforcement in proxy.ts returning 403 TENANT_QUARANTINED; live /api/admin/tenants/export and /api/admin/tenants/lifecycle endpoints; 278/278 Vitest tests passing across 29 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live curl verified export download and quarantine blocking).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
