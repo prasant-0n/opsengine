@@ -35,9 +35,10 @@ Every feature goes through these stages in order. Do not skip stages.
 18. Calendar, Meetings, Decisions & Internal Engagement Activities (PRD Module 15 complete)
 19. SaaS Control Plane, Tenant Lifecycle, Plans & Entitlements (PRD Module 0A complete)
 20. End-to-End Playwright Automated Test Suite, Health Probes & Multi-Service Hardening (PRD §1.3, §2.2, §4.1, §5 complete)
+21. Full Stack Multi-Service Containerization & Docker Compose Production Topology (PRD §9.1, Phase 0 & Phase 6 complete)
 
 ## Current Active Feature
-Feature #20 — End-to-End Playwright Automated Test Suite, Health Probes & Multi-Service Hardening: APPROVED 2026-11-09. Evidence: `features/e2e-hardening/approve.md` (Playwright E2E 13/13 passing across 3 specs covering all 20 dashboard routes, auth flows, Google SSO, and negative gates; Vitest 202/202 passing across 22 test suites; edge security headers nosniff/DENY active; `GET /api/health` 200 OK; tsc clean).
+Feature #21 — Full Stack Containerization & Docker Compose Topology: APPROVED 2026-11-09. Evidence: `features/containerization/approve.md` (Multi-stage Dockerfile with Node 22 slim, pnpm 9, non-root user UID 1001, standalone Next.js 16 build; docker-compose.yml running opsengine-postgres and opsengine-web both Up (healthy); live health check on http://localhost:3002/api/health 200 OK with 1ms latency; security headers verified).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

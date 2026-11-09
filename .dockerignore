@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/build
+**/coverage
+**/test-results
+**/playwright-report
+**/blob-report
+**/.git
+**/.DS_Store
+**/*.log
+storage/
+apps/web/storage/
