@@ -31,10 +31,13 @@ model AuthUser {
   isRootAdmin      Boolean  @default(false) @map("is_root_admin")
   isSuperadmin     Boolean  @default(false) @map("is_superadmin")
   breakGlassEnabled Boolean @default(false) @map("break_glass_enabled")
+  oauthProvider     String?  @map("oauth_provider")
+  oauthSubject      String?  @map("oauth_subject")
   createdAt        DateTime @default(now()) @db.Timestamptz(6)
   updatedAt        DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([tenantId, email], map: "idx_auth_users_tenant_email")
+  @@index([tenantId, oauthProvider, oauthSubject], map: "idx_auth_users_tenant_oauth")
   @@map("auth_users")
 }
 
