@@ -12,7 +12,6 @@ const PLACEHOLDERS: Record<string, { title: string; feature: string }> = {
   people: { title: "People / HR", feature: "Module 8 — HRMS" },
   finance: { title: "Finance", feature: "Module 10 — finance" },
   approvals: { title: "Approvals", feature: "Module 4 — approvals inbox" },
-  administration: { title: "Administration", feature: "Module 15 — administration" },
   assistant: { title: "AI Assistant", feature: "Module 17 — agentic console" },
 };
 

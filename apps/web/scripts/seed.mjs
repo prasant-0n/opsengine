@@ -165,6 +165,8 @@ async function main() {
     "leave.type.manage",
     "time.attendance.read_team",
     "time.attendance.correct_approve",
+    "org.manage_roles",
+    "org.manage_employees",
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];
