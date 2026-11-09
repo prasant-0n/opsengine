@@ -1,7 +1,7 @@
 # Task Tracking — Enterprise Ops SaaS (CRM/HRMS)
 
 ## Status
-Monorepo bootstrapped; features #1 through #15 APPROVED. Feature #15 (Tenant Administration, Role Governance & Organization Management — PRD Modules 0 & 15) fully implemented and verified with 173/173 passing unit tests, clean TypeScript compilation, and 200 HTTP API & page probes.
+Monorepo bootstrapped; features #1 through #16 APPROVED. Feature #16 (Documents and Secure File Management — PRD Module 14) fully implemented and verified with 180/180 passing unit tests, clean TypeScript compilation, and 200 HTTP API & page probes.
 
 ## Feature Lifecycle (per feature)
 Every feature goes through these stages in order. Do not skip stages.
@@ -30,9 +30,10 @@ Every feature goes through these stages in order. Do not skip stages.
 13. Attendance & Leave Management (PRD Module 5 complete)
 14. Executive Reporting, Analytics & Audit Log Viewer (PRD Module 16 complete)
 15. Tenant Administration, Role Governance & Organization Management (PRD Modules 0 & 15 complete)
+16. Documents and Secure File Management (PRD Module 14 complete)
 
 ## Current Active Feature
-Feature #15 — Tenant Administration, Role Governance & Organization Management: APPROVED 2026-11-09. Evidence: `features/administration/approve.md` (vitest 173/173 passing across 18 test suites, tsc clean, API smoke 200 OK, live settings/role grants verified).
+Feature #16 — Documents and Secure File Management: APPROVED 2026-11-09. Evidence: `features/documents/approve.md` (vitest 180/180 passing across 19 test suites, tsc clean, API smoke 200 OK, live upload/download verified).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

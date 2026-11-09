@@ -126,6 +126,11 @@ export const PERMISSIONS = {
   // Resource Planning & Capacity (Module 11)
   RESOURCE_PLANNING_READ: "resource_planning.read",
   RESOURCE_PLANNING_MANAGE: "resource_planning.manage",
+  // Documents & Secure File Management (Module 14)
+  DOCUMENT_READ: "document.read",
+  DOCUMENT_UPLOAD: "document.upload",
+  DOCUMENT_VERIFY: "document.verify",
+  DOCUMENT_DELETE: "document.delete",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -154,6 +159,8 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LEAVE_REQUEST_CREATE, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LEAVE_REQUEST_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LEAVE_BALANCE_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.DOCUMENT_READ, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.DOCUMENT_UPLOAD, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -244,6 +251,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_CORRECT_APPROVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.HR_CANDIDATE_READ_SENSITIVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.HR_EMPLOYEE_DOCUMENT_VERIFY, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.DOCUMENT_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.DOCUMENT_UPLOAD, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.DOCUMENT_VERIFY, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.DOCUMENT_DELETE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ORG_READ_DIRECTORY, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ORG_MANAGE_EMPLOYEES, scopeType: "TENANT" },
     // ATS (Module 3)

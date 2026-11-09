@@ -13,6 +13,9 @@ coverage/
 *.log
 /tmp/
 
+# Storage
+apps/web/storage/
+
 # Internal Agent Stage Logs (keeping repo recruiter-ready & authentic)
 features/**/planning.md
 features/**/design.md

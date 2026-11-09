@@ -1198,3 +1198,35 @@ model LeaveAdjustment {
   @@index([tenantId, leaveBalanceId], map: "idx_leave_adj_tenant_bal")
   @@map("leave_adjustments")
 }
+
+// ---------- Feature #16: Documents and Secure File Management (Module 14) ----------
+
+model Document {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid @map("tenant_id")
+  ownerService       String    @map("owner_service") // recruitment | hrms | finance | compliance | project | general
+  ownerId            String?   @db.Uuid @map("owner_id")
+  category           String    // resume | contract | identification | tax_form | invoice_attachment | policy | report | general
+  fileName           String    @map("file_name")
+  mimeType           String    @map("mime_type")
+  fileSizeBytes      Int       @map("file_size_bytes")
+  checksumSha256     String    @map("checksum_sha256")
+  storageKey         String    @map("storage_key")
+  uploaderUserId     String    @db.Uuid @map("uploader_user_id")
+  visibility         String    @default("internal") // private | internal | confidential
+  verificationStatus String    @default("pending") @map("verification_status") // pending | verified | rejected | quarantined
+  verifiedBy         String?   @db.Uuid @map("verified_by")
+  verifiedAt         DateTime? @db.Timestamptz(6) @map("verified_at")
+  verificationNotes  String?   @db.Text @map("verification_notes")
+  retentionClass     String    @default("standard") @map("retention_class") // standard | legal_hold | indefinite | temporary
+  version            Int       @default(1)
+  isArchived         Boolean   @default(false) @map("is_archived")
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, category], map: "idx_docs_tenant_category")
+  @@index([tenantId, ownerService, ownerId], map: "idx_docs_tenant_owner")
+  @@index([tenantId, verificationStatus], map: "idx_docs_tenant_verification")
+  @@map("documents")
+}
+

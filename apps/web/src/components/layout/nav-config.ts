@@ -234,6 +234,13 @@ export const NAV_GROUPS: NavGroup[] = [
         behavior: "hide",
       },
       {
+        label: "Documents",
+        href: "/dashboard/documents",
+        icon: "folder_shared",
+        permission: "document.read",
+        behavior: "hide",
+      },
+      {
         label: "Reports",
         href: "/dashboard/reports",
         icon: "monitoring",

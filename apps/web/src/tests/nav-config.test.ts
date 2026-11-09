@@ -43,7 +43,8 @@ describe("filterNavGroups (navigation = usability only)", () => {
     expect(hrefs).toContain("/dashboard/resource-planning");
     expect(hrefs).toContain("/dashboard/attendance");
     expect(hrefs).toContain("/dashboard/leave");
-    expect(hrefs.length).toBe(28);
+    expect(hrefs).toContain("/dashboard/documents");
+    expect(hrefs.length).toBe(29);
   });
 
   it("hides Projects/Tickets from an employee without project/ticket perms", () => {
@@ -96,6 +97,7 @@ describe("filterNavGroups (navigation = usability only)", () => {
     expect(hrefs).not.toContain("/dashboard/my-team");
     expect(hrefs).not.toContain("/dashboard/reports");
     expect(hrefs).not.toContain("/dashboard/administration");
+    expect(hrefs).not.toContain("/dashboard/documents");
     // lock-behavior items stay visible (dimmed), never hidden
     expect(hrefs).toContain("/dashboard/crm");
     expect(hrefs).not.toContain("/dashboard/finance");

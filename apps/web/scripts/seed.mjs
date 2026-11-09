@@ -167,6 +167,10 @@ async function main() {
     "time.attendance.correct_approve",
     "org.manage_roles",
     "org.manage_employees",
+    "document.read",
+    "document.upload",
+    "document.verify",
+    "document.delete",
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];
