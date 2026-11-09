@@ -13,10 +13,13 @@ model TenantWorkspace {
   name      String
   slug      String
   domain    String?
-  isActive  Boolean  @default(true)
-  aiEnabled Boolean  @default(false) @map("ai_enabled")
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  isActive        Boolean   @default(true)
+  aiEnabled       Boolean   @default(false) @map("ai_enabled")
+  lifecycleStatus String    @default("active") @map("lifecycle_status") // provisioning | active | suspended | offboarding | closed
+  suspendedReason String?   @map("suspended_reason")
+  suspendedAt     DateTime? @db.Timestamptz(6) @map("suspended_at")
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
 
   @@index([tenantId, slug], map: "idx_tenant_workspaces_tenant_slug")
   @@index([tenantId, domain], map: "idx_tenant_workspaces_tenant_domain")
@@ -1296,5 +1299,55 @@ model MeetingNote {
   @@index([tenantId, eventId], map: "idx_meeting_notes_tenant_event")
   @@map("meeting_notes")
 }
+
+// ---------- Feature #19: SaaS Control Plane & Tenant Lifecycle (Module 0A) ----------
+
+model TenantSubscription {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @unique @db.Uuid @map("tenant_id")
+  planTier           String    @default("starter") @map("plan_tier") // starter | professional | enterprise
+  status             String    @default("active") // active | trial | past_due | suspended | cancelled
+  seatLimit          Int       @default(10) @map("seat_limit")
+  storageLimitBytes  BigInt    @default(5368709120) @map("storage_limit_bytes") // 5GB default
+  features           Json      @default("[\"core_hrms\", \"crm_core\", \"documents\", \"calendar\"]")
+  trialEndsAt        DateTime? @db.Timestamptz(6) @map("trial_ends_at")
+  currentPeriodStart DateTime  @default(now()) @db.Timestamptz(6) @map("current_period_start")
+  currentPeriodEnd   DateTime  @default(now()) @db.Timestamptz(6) @map("current_period_end")
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, status], map: "idx_tenant_subscriptions_tenant_status")
+  @@map("tenant_subscriptions")
+}
+
+model TenantDataExport {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid @map("tenant_id")
+  status      String   @default("completed") // pending | completed | failed
+  requestedBy String   @db.Uuid @map("requested_by")
+  expiresAt   DateTime @db.Timestamptz(6) @map("expires_at")
+  recordCount Int      @default(0) @map("record_count")
+  archiveData Json     @map("archive_data")
+  createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, createdAt], map: "idx_tenant_data_exports_tenant_created")
+  @@map("tenant_data_exports")
+}
+
+model SupportSession {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid @map("tenant_id")
+  operatorUserId String    @db.Uuid @map("operator_user_id")
+  reason         String    @db.Text
+  token          String    @unique
+  expiresAt      DateTime  @db.Timestamptz(6) @map("expires_at")
+  revokedAt      DateTime? @db.Timestamptz(6) @map("revoked_at")
+  createdAt      DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([token], map: "idx_support_sessions_token")
+  @@index([tenantId, operatorUserId], map: "idx_support_sessions_tenant_operator")
+  @@map("support_sessions")
+}
+
 
 

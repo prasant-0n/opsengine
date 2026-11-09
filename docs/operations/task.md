@@ -1,7 +1,7 @@
 # Task Tracking — Enterprise Ops SaaS (CRM/HRMS)
 
 ## Status
-Monorepo bootstrapped; features #1 through #18 APPROVED. Feature #18 (Calendar, Meetings, Decisions & Internal Engagement Activities — PRD Module 15) fully implemented and verified with 196/196 passing unit tests across 21 suites, clean TypeScript compilation, and 200 HTTP API & page probes.
+Monorepo bootstrapped; features #1 through #19 APPROVED. Feature #19 (SaaS Control Plane, Tenant Lifecycle, Plans & Entitlements — PRD Module 0A) fully implemented and verified with 202/202 passing unit tests across 22 suites, clean TypeScript compilation, and 200 HTTP API & page probes.
 
 ## Feature Lifecycle (per feature)
 Every feature goes through these stages in order. Do not skip stages.
@@ -33,9 +33,10 @@ Every feature goes through these stages in order. Do not skip stages.
 16. Documents and Secure File Management (PRD Module 14 complete)
 17. Google OAuth 2.0 / SSO Integration (PRD Module 1 complete)
 18. Calendar, Meetings, Decisions & Internal Engagement Activities (PRD Module 15 complete)
+19. SaaS Control Plane, Tenant Lifecycle, Plans & Entitlements (PRD Module 0A complete)
 
 ## Current Active Feature
-Feature #18 — Calendar, Meetings, Decisions & Internal Engagement Activities: APPROVED 2026-11-09. Evidence: `features/calendar-meetings/approve.md` (vitest 196/196 passing across 21 test suites, tsc clean, API smoke 200/307 OK, live calendar, minutes, decisions, and capacity-enforced RSVP verified).
+Feature #19 — SaaS Control Plane, Tenant Lifecycle, Plans & Entitlements: APPROVED 2026-11-09. Evidence: `features/control-plane/approve.md` (vitest 202/202 passing across 22 test suites, tsc clean, API smoke 200/307 OK, live portfolio telemetry, provisioning, session revocation, and data export verified).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

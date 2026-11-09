@@ -261,6 +261,13 @@ export const NAV_GROUPS: NavGroup[] = [
         permission: "org.manage_roles",
         behavior: "hide",
       },
+      {
+        label: "Control Plane",
+        href: "/dashboard/control-plane",
+        icon: "shield_with_house",
+        permission: "control_plane.read",
+        behavior: "hide",
+      },
     ],
   },
   {

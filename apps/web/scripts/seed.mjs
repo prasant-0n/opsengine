@@ -46,13 +46,14 @@ async function main() {
 
   const adminA = await prisma.authUser.upsert({
     where: { id: USER_A },
-    update: {},
+    update: { isSuperadmin: true },
     create: {
       id: USER_A,
       tenantId: T_A,
       email: "admin@acme.opsengine.enterprise",
       passwordHash: passwordHashA,
       isRootAdmin: true,
+      isSuperadmin: true,
     },
   });
 
@@ -176,6 +177,8 @@ async function main() {
     "calendar.event.update",
     "calendar.event.delete",
     "meeting.note.manage",
+    "control_plane.read",
+    "control_plane.manage",
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];
@@ -309,6 +312,33 @@ async function main() {
       },
     });
   }
+
+  // Seed Subscriptions for Control Plane (Module 0A)
+  await prisma.tenantSubscription.upsert({
+    where: { tenantId: T_A },
+    update: {},
+    create: {
+      tenantId: T_A,
+      planTier: "enterprise",
+      status: "active",
+      seatLimit: 100,
+      storageLimitBytes: 107374182400n, // 100 GB
+      features: ["core_hrms", "crm_core", "finance", "approvals", "documents", "calendar", "ai_assistant", "audit_export"],
+    },
+  });
+
+  await prisma.tenantSubscription.upsert({
+    where: { tenantId: T_B },
+    update: {},
+    create: {
+      tenantId: T_B,
+      planTier: "professional",
+      status: "active",
+      seatLimit: 25,
+      storageLimitBytes: 26843545600n, // 25 GB
+      features: ["core_hrms", "crm_core", "finance", "documents", "calendar"],
+    },
+  });
 
   console.log("Seeded successfully with assistant grants, leave types, balances, and demo data!");
 }

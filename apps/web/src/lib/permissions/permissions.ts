@@ -137,6 +137,9 @@ export const PERMISSIONS = {
   CALENDAR_EVENT_UPDATE: "calendar.event.update",
   CALENDAR_EVENT_DELETE: "calendar.event.delete",
   MEETING_NOTE_MANAGE: "meeting.note.manage",
+  // SaaS Control Plane & Tenant Lifecycle (Module 0A)
+  CONTROL_PLANE_READ: "control_plane.read",
+  CONTROL_PLANE_MANAGE: "control_plane.manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
