@@ -25,3 +25,8 @@ features/**/bugs.md
 features/**/security.md
 features/**/review.md
 features/**/approve.md
+
+# Test Results & Reports
+test-results/
+playwright-report/
+blob-report/

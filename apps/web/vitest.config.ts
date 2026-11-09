@@ -5,6 +5,8 @@ export default defineConfig({
   test: {
     environment: "node",
     pool: "forks",
+    include: ["src/tests/**/*.test.ts"],
+    exclude: ["e2e/**", "node_modules/**"],
   },
   resolve: {
     alias: {
