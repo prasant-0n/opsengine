@@ -43,9 +43,10 @@ Every feature goes through these stages in order. Do not skip stages.
 26. OpenAPI 3.1 Contract Generation & Interactive API Documentation (PRD §7.3 line 704 & §10 complete)
 27. Rate Limiting & Web Application Firewall (WAF) Rule Hardening (PRD §4.1 & OWASP Top 10 complete)
 28. Multi-Tenant Domain Event Bus & Outbox Integration Pipeline (PRD §11 & §14.2 complete)
+29. High-Throughput Load Testing & Concurrency Stress Suite (PRD §14.1 & Phase 6 complete)
 
 ## Current Active Feature
-Feature #28 — Multi-Tenant Domain Event Bus & Outbox Integration Pipeline: APPROVED 2026-11-10. Evidence: `features/domain-events/approve.md` (Delivered packages/domain-events with 35+ domain event catalogue across 12 domains, transactional outbox engine with exponential backoff & DLQ escalation, sliding-window consumer idempotency store, strict tenant boundary isolation; live /api/events/outbox management endpoint and Admin Console inspector tab; 249/249 Vitest tests passing across 26 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live HTTP curl verified outbox batch processing).
+Feature #29 — High-Throughput Load Testing & Concurrency Stress Suite: APPROVED 2026-11-10. Evidence: `features/load-testing/approve.md` (Delivered apps/web/src/lib/testing/load-benchmark with LatencyCalculator, ConcurrentExecutor, and SlaValidator; scripts/load-test.ts automated multi-tenant concurrency benchmark harness; 258/258 Vitest tests passing across 27 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live benchmark run achieved 92.12 RPS with P95 latency of 233.11ms passing PRD §14.1 SLA < 300ms with 0 errors).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

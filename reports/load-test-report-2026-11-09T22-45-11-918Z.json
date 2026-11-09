@@ -1,0 +1,35 @@
+{
+  "testRunId": "load-test-1794264311918",
+  "timestamp": "2026-11-09T22:45:11.918Z",
+  "configuration": {
+    "baseUrl": "http://localhost:3001",
+    "concurrency": 15,
+    "totalRequests": 100
+  },
+  "summary": {
+    "totalRequests": 100,
+    "durationSeconds": 1.0855969479999998,
+    "throughputRps": 92.12,
+    "successCount": 100,
+    "rateLimitedCount": 0,
+    "wafBlockedCount": 0,
+    "serverErrors": 0
+  },
+  "latency": {
+    "minMs": 84.82,
+    "maxMs": 281.97,
+    "meanMs": 152.79,
+    "p50Ms": 144.26,
+    "p90Ms": 218.18,
+    "p95Ms": 233.11,
+    "p99Ms": 277.96
+  },
+  "slaEvaluation": {
+    "passed": true,
+    "targetP95Ms": 300,
+    "achievedP95Ms": 233.11,
+    "targetErrorRate": 0.01,
+    "achievedErrorRate": 0,
+    "violations": []
+  }
+}
