@@ -39,9 +39,10 @@ Every feature goes through these stages in order. Do not skip stages.
 22. Enterprise Multi-Tenant Showcase & Demo Seed Engine (PRD §1 & Phase 1 complete)
 23. Production CI/CD GitHub Actions Pipeline Hardening (PRD Phase 0 & Phase 6 complete)
 24. Production Runbooks & Disaster Recovery Automated Drills (PRD Phase 6 / §18.7 complete)
+25. OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics (PRD §7.3, §9.1 & §21 complete)
 
 ## Current Active Feature
-Feature #24 — Production Runbooks & Disaster Recovery Automated Drills: APPROVED 2026-11-10. Evidence: `features/disaster-recovery/approve.md` (Automated DR drill harness scripts/dr-drill.sh achieving 3s RTO, 15/15 table parity, SHA-256 validation, zero cross-tenant leakage; complete SOP suite in docs/runbooks/ covering DR, tenant quarantine, break-glass access, GDPR tenant export/purge, and zero-downtime migrations; 202/202 Vitest tests, 13/13 Playwright E2E tests, clean TypeScript compilation).
+Feature #25 — OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics: APPROVED 2026-11-10. Evidence: `features/observability-metrics/approve.md` (Delivered packages/telemetry with W3C TraceContext distributed tracing, Span lifecycle, Prometheus MetricRegistry with Counters/Gauges/Histograms, OpenMetrics exposition; delivered packages/logger with structured JSON logging, correlation IDs and secret redaction; live /api/metrics and /api/health probes verified; ReBAC decision tracking in permissions engine; 216/216 Vitest tests passing across 23 suites, 13/13 Playwright E2E tests, clean TypeScript compilation).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

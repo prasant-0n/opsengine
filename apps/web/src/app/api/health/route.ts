@@ -1,16 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { initializeRequestTelemetry, finalizeResponseTelemetry } from "@/lib/telemetry";
+import { recordDbQuery } from "@opsengine/telemetry";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  const start = performance.now();
+export async function GET(req: Request) {
+  const telemetry = initializeRequestTelemetry(req);
+  const dbStart = performance.now();
   let dbStatus = "connected";
   let latencyMs = 0;
 
   try {
     await prisma.$queryRaw`SELECT 1`;
-    latencyMs = Math.round(performance.now() - start);
+    const dbDurationSec = (performance.now() - dbStart) / 1000;
+    latencyMs = Math.round(dbDurationSec * 1000);
+    recordDbQuery("health_check_ping", dbDurationSec);
   } catch {
     dbStatus = "disconnected";
   }
@@ -18,11 +23,12 @@ export async function GET() {
   const memory = process.memoryUsage();
   const isHealthy = dbStatus === "connected";
 
-  return NextResponse.json(
+  const res = NextResponse.json(
     {
       status: isHealthy ? "healthy" : "degraded",
       timestamp: new Date().toISOString(),
       uptimeSeconds: Math.round(process.uptime()),
+      traceId: telemetry.traceId,
       database: {
         status: dbStatus,
         latencyMs,
@@ -35,4 +41,10 @@ export async function GET() {
     },
     { status: isHealthy ? 200 : 503 }
   );
+
+  return finalizeResponseTelemetry(telemetry, res, {
+    route: "/api/health",
+    method: "GET",
+    tenantId: "system",
+  });
 }

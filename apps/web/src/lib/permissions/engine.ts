@@ -2,6 +2,7 @@ import type { AuthorizationContext } from "./context";
 import { scopeAllows, type ResourceScope } from "./scopes";
 import { checkSoD } from "./sod";
 import { writeAudit } from "./audit";
+import { recordRebacDecision } from "@opsengine/telemetry";
 
 export interface DecisionResource extends ResourceScope {
   id?: string;
@@ -32,6 +33,11 @@ export function authorize(
   requestContext?: { audit?: boolean },
 ): Decision {
   const decision = decide(subject, action, resource);
+  try {
+    recordRebacDecision(subject.tenantId, decision.allowed ? "ALLOW" : "DENY", action);
+  } catch {
+    // Non-blocking telemetry
+  }
   const shouldAudit =
     requestContext?.audit ||
     !decision.allowed ||

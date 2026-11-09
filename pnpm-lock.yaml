@@ -20,6 +20,12 @@ importers:
       '@opsengine/api-contracts':
         specifier: workspace:*
         version: link:../../packages/api-contracts
+      '@opsengine/logger':
+        specifier: workspace:*
+        version: link:../../packages/logger
+      '@opsengine/telemetry':
+        specifier: workspace:*
+        version: link:../../packages/telemetry
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)
@@ -101,6 +107,24 @@ importers:
         version: 1.6.1(@types/node@20.19.43)(lightningcss@1.32.0)
 
   packages/api-contracts:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.43)(lightningcss@1.32.0)
+
+  packages/logger:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.43)(lightningcss@1.32.0)
+
+  packages/telemetry:
     devDependencies:
       typescript:
         specifier: ^5.0.0
