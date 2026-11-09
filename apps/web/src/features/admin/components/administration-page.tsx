@@ -18,6 +18,7 @@ import {
   Lock,
   Unlock,
   AlertCircle,
+  Code2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -102,7 +103,7 @@ interface UserItem {
 }
 
 export function AdministrationPage() {
-  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users">("workspace");
+  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users" | "api">("workspace");
 
   // State: Workspace
   const [workspace, setWorkspace] = useState<WorkspaceInfo | null>(null);
@@ -525,6 +526,18 @@ export function AdministrationPage() {
           <KeyRound className="w-4 h-4" />
           <span>Users & Emergency Break-Glass</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab("api")}
+          className={`flex items-center gap-2 px-4 py-2.5 font-medium text-sm transition-colors border-b-2 -mb-px ${
+            activeTab === "api"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Code2 className="w-4 h-4" />
+          <span>API & OpenAPI 3.1</span>
+        </button>
       </div>
 
       {/* Tab 1: Workspace & General Settings */}
@@ -936,6 +949,78 @@ export function AdministrationPage() {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Tab 5: OpenAPI 3.1 & Developer API Documentation */}
+      {activeTab === "api" && (
+        <div className="space-y-6">
+          <div className="panel p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
+              <div>
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Code2 className="w-5 h-5 text-primary" />
+                  <span>OpenAPI 3.1 & Platform Developer Ecosystem</span>
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Standard OpenAPI 3.1 specifications, interactive contract explorer, and system telemetry endpoints.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href="/api/docs"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+                >
+                  <Code2 className="w-4 h-4" />
+                  <span>Launch Interactive Explorer</span>
+                </a>
+                <a
+                  href="/api/openapi.json"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-input bg-background text-sm font-medium hover:bg-accent transition-colors"
+                >
+                  <span>Download Spec JSON</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
+              <div className="p-4 rounded-lg border border-border bg-card/50 space-y-2">
+                <div className="text-xs font-semibold text-primary uppercase tracking-wider">Specification Standard</div>
+                <div className="text-lg font-bold">OpenAPI 3.1.0</div>
+                <p className="text-xs text-muted-foreground">
+                  Compliant with JSON Schema 2020-12, W3C TraceContext headers, and ReBAC security schemes.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50 space-y-2">
+                <div className="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Functional Surface</div>
+                <div className="text-lg font-bold">16 Bounded Contexts</div>
+                <p className="text-xs text-muted-foreground">
+                  CRM, HRMS, Projects, Finance, Approvals, ATS, Onboarding, Documents, Time, and Control Plane.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50 space-y-2">
+                <div className="text-xs font-semibold text-indigo-500 uppercase tracking-wider">Operations Catalog</div>
+                <div className="text-lg font-bold">50+ REST Operations</div>
+                <p className="text-xs text-muted-foreground">
+                  Fully typed request bodies, responses, path parameters, and error contracts.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 rounded-lg border border-border bg-secondary/30 space-y-3">
+              <div className="text-sm font-medium">Quickstart cURL: WhoAmI & ReBAC Permissions</div>
+              <pre className="p-3 rounded bg-background border border-border text-xs font-mono overflow-x-auto text-muted-foreground">
+{`curl -X GET "http://localhost:3000/api/authz/whoami" \\
+  -H "Cookie: ops_session=<your_session_token>"`}
+              </pre>
+            </div>
+          </div>
         </div>
       )}
 

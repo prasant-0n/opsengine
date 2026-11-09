@@ -40,9 +40,10 @@ Every feature goes through these stages in order. Do not skip stages.
 23. Production CI/CD GitHub Actions Pipeline Hardening (PRD Phase 0 & Phase 6 complete)
 24. Production Runbooks & Disaster Recovery Automated Drills (PRD Phase 6 / §18.7 complete)
 25. OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics (PRD §7.3, §9.1 & §21 complete)
+26. OpenAPI 3.1 Contract Generation & Interactive API Documentation (PRD §7.3 line 704 & §10 complete)
 
 ## Current Active Feature
-Feature #25 — OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics: APPROVED 2026-11-10. Evidence: `features/observability-metrics/approve.md` (Delivered packages/telemetry with W3C TraceContext distributed tracing, Span lifecycle, Prometheus MetricRegistry with Counters/Gauges/Histograms, OpenMetrics exposition; delivered packages/logger with structured JSON logging, correlation IDs and secret redaction; live /api/metrics and /api/health probes verified; ReBAC decision tracking in permissions engine; 216/216 Vitest tests passing across 23 suites, 13/13 Playwright E2E tests, clean TypeScript compilation).
+Feature #26 — OpenAPI 3.1 Contract Generation & Interactive API Documentation: APPROVED 2026-11-10. Evidence: `features/openapi-docs/approve.md` (Delivered packages/api-contracts with OpenAPI 3.1.0 specification generator across all 16 domains and 50+ operations; live /api/openapi.json and self-hosted /api/docs interactive explorer; Admin Console tab integration; 223/223 Vitest tests passing across 24 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, 100% DR drill fidelity).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
