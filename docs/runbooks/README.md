@@ -1,47 +1,47 @@
-# Runbooks
+# OpsEngine Operational Runbooks
 
-## DB migrate (Prisma)
+This directory contains the production Standard Operating Procedures (SOPs), emergency incident protocols, and disaster recovery procedures for OpsEngine Enterprise SaaS.
 
-Schema lives in `services/identity-service/prisma/`.
+## Runbook Index
 
+| Runbook | Focus Area | Key Procedures |
+|---|---|---|
+| [**disaster-recovery.md**](./disaster-recovery.md) | Business Continuity & Backups | RPO/RTO SLOs, `backup.sh`, `restore.sh`, automated `dr-drill.sh` execution, emergency recovery |
+| [**tenant-quarantine.md**](./tenant-quarantine.md) | Security & Abuse Response | Emergency tenant suspension, session termination, token revocation, forensic snapshotting |
+| [**break-glass-access.md**](./break-glass-access.md) | Incident Management | Dual-authorization protocol, time-bounded support sessions, least-privilege elevation, revocation |
+| [**tenant-data-export.md**](./tenant-data-export.md) | Compliance (GDPR/SOC2) | Machine-readable JSON/CSV tenant export, right-to-be-forgotten cascade purge, zero-leakage verification |
+| [**zero-downtime-migration.md**](./zero-downtime-migration.md) | Deployment & Database SRE | Expand-and-contract schema changes, concurrent index creation, rolling Next.js pod deployments |
+
+---
+
+## Daily Operations Quick Reference
+
+### 1. Database Migrations (Prisma)
+Schema source of truth lives in `services/identity-service/prisma/schema.prisma`.
 ```bash
 cd services/identity-service
 export DATABASE_URL="postgresql://opsengine:opsengine@localhost:5432/opsengine"
-npx prisma migrate deploy              # apply recorded migrations
-# After schema.prisma changes:
-npx prisma generate
-# then RESTART the dev server (it holds a stale client):
-pkill -f "next dev"
-cd ../../apps/web && setsid nohup pnpm dev > /tmp/next-shell.log 2>&1 < /dev/null & disown
+npx prisma migrate deploy              # Apply recorded migrations
+npx prisma generate                    # Regenerate client types
 ```
 
-Quirk: `prisma migrate dev` fails non-interactively here — write SQL into a migration folder, `prisma migrate deploy`; baseline pre-existing tables with `npx prisma migrate resolve --applied <name>`.
-
-## Seed
-
+### 2. Multi-Tenant Enterprise Seed Engine
+Populates Enterprise showcase tenants (Acme Corp and Starlight Tech) with full hierarchy, CRM, and project data:
 ```bash
 cd apps/web && DATABASE_URL="postgresql://opsengine:opsengine@localhost:5432/opsengine" node scripts/seed.mjs
 ```
-Idempotent (upserts). Seed credentials are printed by the script; tenant A admin holds org.* + recruit.* TENANT grants.
 
-## Dev server
-
+### 3. Automated Disaster Recovery Drills
+Execute end-to-end non-destructive backup, sandbox restore, 100% row parity, and multi-tenant isolation verification:
 ```bash
-cd apps/web && pnpm dev      # http://localhost:3000 (Next 16, Turbopack)
-tail -f /tmp/next-shell.log
+./scripts/dr-drill.sh
 ```
 
-## Quality gates (before claiming anything works)
-
+### 4. Health & Security Verification Gates
 ```bash
 cd apps/web
-npx vitest run
-npx tsc --noEmit
-```
-Then curl smokes (`/tmp/opencode/ats-smoke.sh`, `ats-smoke2.sh`) and Chrome probes (`verify-hrms.mjs`, `verify-ats.mjs`) — see `docs/operations/task.md` for current numbers.
-
-## Postgres shell
-
-```bash
-psql "postgresql://opsengine:opsengine@localhost:5432/opsengine"
+npx vitest run          # 202+ ReBAC & business logic tests across 22 suites
+npx tsc --noEmit        # TypeScript typecheck
+pnpm test:e2e           # Playwright 13/13 E2E tests
+curl -f http://localhost:3000/api/health
 ```

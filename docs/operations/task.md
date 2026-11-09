@@ -38,9 +38,10 @@ Every feature goes through these stages in order. Do not skip stages.
 21. Full Stack Multi-Service Containerization & Docker Compose Production Topology (PRD §9.1, Phase 0 & Phase 6 complete)
 22. Enterprise Multi-Tenant Showcase & Demo Seed Engine (PRD §1 & Phase 1 complete)
 23. Production CI/CD GitHub Actions Pipeline Hardening (PRD Phase 0 & Phase 6 complete)
+24. Production Runbooks & Disaster Recovery Automated Drills (PRD Phase 6 / §18.7 complete)
 
 ## Current Active Feature
-Feature #23 — Production CI/CD GitHub Actions Pipeline Hardening: APPROVED 2026-11-09. Evidence: `features/cicd-pipeline/approve.md` (Workflow .github/workflows/ci.yml with PostgreSQL 16 container, migrations, seed, Vitest 202/202, Playwright 13/13, Next.js build, least privilege permissions: contents: read, artifact uploads on failure; all steps verified locally).
+Feature #24 — Production Runbooks & Disaster Recovery Automated Drills: APPROVED 2026-11-10. Evidence: `features/disaster-recovery/approve.md` (Automated DR drill harness scripts/dr-drill.sh achieving 3s RTO, 15/15 table parity, SHA-256 validation, zero cross-tenant leakage; complete SOP suite in docs/runbooks/ covering DR, tenant quarantine, break-glass access, GDPR tenant export/purge, and zero-downtime migrations; 202/202 Vitest tests, 13/13 Playwright E2E tests, clean TypeScript compilation).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

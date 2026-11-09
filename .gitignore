@@ -30,3 +30,6 @@ features/**/approve.md
 test-results/
 playwright-report/
 blob-report/
+backups/*.dump
+backups/*.sha256
+backups/*.manifest.json
