@@ -14,6 +14,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.0.0",
     "@opsengine/api-contracts": "workspace:*",
+    "@opsengine/domain-events": "workspace:*",
     "@opsengine/logger": "workspace:*",
     "@opsengine/telemetry": "workspace:*",
     "@prisma/client": "^5.0.0",

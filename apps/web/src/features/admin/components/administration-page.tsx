@@ -19,6 +19,7 @@ import {
   Unlock,
   AlertCircle,
   Code2,
+  Radio,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,7 +104,16 @@ interface UserItem {
 }
 
 export function AdministrationPage() {
-  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users" | "api">("workspace");
+  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users" | "api" | "events">("workspace");
+
+  // State: Outbox & Domain Events
+  const [outboxData, setOutboxData] = useState<{
+    summary: { pending: number; published: number; failed: number; deadLetter: number; total: number };
+    messages: any[];
+    recentEvents: any[];
+  } | null>(null);
+  const [outboxLoading, setOutboxLoading] = useState(false);
+  const [processingOutbox, setProcessingOutbox] = useState(false);
 
   // State: Workspace
   const [workspace, setWorkspace] = useState<WorkspaceInfo | null>(null);
@@ -225,6 +235,56 @@ export function AdministrationPage() {
       setUsersLoading(false);
     }
   }, []);
+
+  // Fetch Outbox & Domain Events Data
+  const fetchOutboxData = useCallback(async () => {
+    setOutboxLoading(true);
+    try {
+      const res = await fetch("/api/events/outbox");
+      if (!res.ok) throw new Error("Failed to load outbox data");
+      const data = await res.json();
+      setOutboxData(data);
+    } catch (e: any) {
+      showBanner(e.message, true);
+    } finally {
+      setOutboxLoading(false);
+    }
+  }, []);
+
+  const handleProcessOutbox = async () => {
+    setProcessingOutbox(true);
+    try {
+      const res = await fetch("/api/events/outbox", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "process" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to process outbox");
+      showBanner(`Outbox processed: ${data.result?.published ?? 0} published, ${data.result?.failed ?? 0} failed.`);
+      fetchOutboxData();
+    } catch (e: any) {
+      showBanner(e.message, true);
+    } finally {
+      setProcessingOutbox(false);
+    }
+  };
+
+  const handlePublishDemoEvent = async () => {
+    try {
+      const res = await fetch("/api/events/outbox", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "publish_demo" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to publish demo event");
+      showBanner("Sample Domain Event enqueued into Transactional Outbox.");
+      fetchOutboxData();
+    } catch (e: any) {
+      showBanner(e.message, true);
+    }
+  };
 
   useEffect(() => {
     fetchWorkspace();
@@ -537,6 +597,21 @@ export function AdministrationPage() {
         >
           <Code2 className="w-4 h-4" />
           <span>API & OpenAPI 3.1</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveTab("events");
+            fetchOutboxData();
+          }}
+          className={`flex items-center gap-2 px-4 py-2.5 font-medium text-sm transition-colors border-b-2 -mb-px ${
+            activeTab === "events"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Radio className="w-4 h-4" />
+          <span>Events & Outbox</span>
         </button>
       </div>
 
@@ -1019,6 +1094,211 @@ export function AdministrationPage() {
 {`curl -X GET "http://localhost:3000/api/authz/whoami" \\
   -H "Cookie: ops_session=<your_session_token>"`}
               </pre>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 6: Domain Events & Transactional Outbox */}
+      {activeTab === "events" && (
+        <div className="space-y-6">
+          <div className="panel p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
+              <div>
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Radio className="w-5 h-5 text-primary" />
+                  <span>Domain Events & Transactional Outbox Pipeline</span>
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  PRD §11 & §14.2 — Guaranteed at-least-once delivery, idempotent consumption, and strict tenant boundary isolation.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleProcessOutbox}
+                  disabled={processingOutbox || outboxLoading}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`w-4 h-4 ${processingOutbox ? "animate-spin" : ""}`} />
+                  <span>Process Outbox</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handlePublishDemoEvent}
+                  disabled={outboxLoading}
+                  className="gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Enqueue Sample Event</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={fetchOutboxData}
+                  disabled={outboxLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${outboxLoading ? "animate-spin" : ""}`} />
+                </Button>
+              </div>
+            </div>
+
+            {/* Outbox Metrics Summary */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 pt-6">
+              <div className="p-4 rounded-lg border border-border bg-card/50">
+                <div className="text-xs text-muted-foreground">Total Messages</div>
+                <div className="text-2xl font-bold mt-1">
+                  {outboxData?.summary.total ?? 0}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50">
+                <div className="text-xs text-amber-500 font-medium">Pending Dispatch</div>
+                <div className="text-2xl font-bold mt-1 text-amber-500">
+                  {outboxData?.summary.pending ?? 0}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50">
+                <div className="text-xs text-emerald-500 font-medium">Published</div>
+                <div className="text-2xl font-bold mt-1 text-emerald-500">
+                  {outboxData?.summary.published ?? 0}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50">
+                <div className="text-xs text-rose-500 font-medium">Failed / Retrying</div>
+                <div className="text-2xl font-bold mt-1 text-rose-500">
+                  {outboxData?.summary.failed ?? 0}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg border border-border bg-card/50">
+                <div className="text-xs text-purple-500 font-medium">Dead Letter Queue</div>
+                <div className="text-2xl font-bold mt-1 text-purple-500">
+                  {outboxData?.summary.deadLetter ?? 0}
+                </div>
+              </div>
+            </div>
+
+            {/* Outbox Table */}
+            <div className="mt-8 space-y-3">
+              <h4 className="text-sm font-semibold flex items-center justify-between">
+                <span>Transactional Outbox Records</span>
+                <span className="text-xs text-muted-foreground font-normal">
+                  Showing last {outboxData?.messages.length ?? 0} records
+                </span>
+              </h4>
+
+              <div className="overflow-x-auto rounded-md border border-border">
+                <table className="data-table w-full text-sm">
+                  <thead>
+                    <tr className="bg-secondary/40 text-left border-b border-border">
+                      <th className="p-3 font-medium">Event Name</th>
+                      <th className="p-3 font-medium">Tenant</th>
+                      <th className="p-3 font-medium">Aggregate</th>
+                      <th className="p-3 font-medium">Status</th>
+                      <th className="p-3 font-medium">Retries</th>
+                      <th className="p-3 font-medium">Created At</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!outboxData?.messages.length ? (
+                      <tr>
+                        <td colSpan={6} className="p-6 text-center text-muted-foreground text-xs">
+                          No outbox records. Outbox pipeline is fully synchronized.
+                        </td>
+                      </tr>
+                    ) : (
+                      outboxData.messages.map((m: any) => (
+                        <tr key={m.id} className="border-b border-border/60 hover:bg-muted/30">
+                          <td className="p-3 font-mono text-xs font-medium text-primary">
+                            {m.eventName}
+                          </td>
+                          <td className="p-3 text-xs">{m.tenantId}</td>
+                          <td className="p-3 text-xs">
+                            <span className="text-muted-foreground">{m.aggregateType}:</span>{" "}
+                            {m.aggregateId}
+                          </td>
+                          <td className="p-3">
+                            <Badge
+                              variant="outline"
+                              className={
+                                m.status === "PUBLISHED"
+                                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                  : m.status === "PENDING"
+                                  ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                  : m.status === "DEAD_LETTER"
+                                  ? "bg-purple-500/10 text-purple-500 border-purple-500/20"
+                                  : "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                              }
+                            >
+                              {m.status}
+                            </Badge>
+                          </td>
+                          <td className="p-3 text-xs">
+                            {m.retryCount} / {m.maxRetries}
+                          </td>
+                          <td className="p-3 text-xs text-muted-foreground">
+                            {new Date(m.createdAt).toLocaleTimeString()}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Live Domain Event Stream Table */}
+            <div className="mt-8 space-y-3">
+              <h4 className="text-sm font-semibold flex items-center justify-between">
+                <span>Recent Domain Event Stream</span>
+                <span className="text-xs text-muted-foreground font-normal">
+                  In-memory Ring Buffer (Last {outboxData?.recentEvents.length ?? 0} dispatched)
+                </span>
+              </h4>
+
+              <div className="overflow-x-auto rounded-md border border-border">
+                <table className="data-table w-full text-sm">
+                  <thead>
+                    <tr className="bg-secondary/40 text-left border-b border-border">
+                      <th className="p-3 font-medium">Dispatched At</th>
+                      <th className="p-3 font-medium">Event Name</th>
+                      <th className="p-3 font-medium">Tenant</th>
+                      <th className="p-3 font-medium">Aggregate</th>
+                      <th className="p-3 font-medium">Correlation ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!outboxData?.recentEvents.length ? (
+                      <tr>
+                        <td colSpan={5} className="p-6 text-center text-muted-foreground text-xs">
+                          No domain events dispatched in current session yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      outboxData.recentEvents.map((e: any) => (
+                        <tr key={e.id} className="border-b border-border/60 hover:bg-muted/30">
+                          <td className="p-3 text-xs text-muted-foreground">
+                            {new Date(e.timestamp).toLocaleTimeString()}
+                          </td>
+                          <td className="p-3 font-mono text-xs font-medium text-emerald-500">
+                            {e.name}
+                          </td>
+                          <td className="p-3 text-xs">{e.tenantId}</td>
+                          <td className="p-3 text-xs">
+                            <span className="text-muted-foreground">{e.aggregateType}:</span>{" "}
+                            {e.aggregateId}
+                          </td>
+                          <td className="p-3 font-mono text-xs text-muted-foreground truncate max-w-[150px]">
+                            {e.correlationId}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

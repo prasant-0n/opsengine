@@ -42,9 +42,10 @@ Every feature goes through these stages in order. Do not skip stages.
 25. OpenTelemetry Observability, Distributed Tracing & Prometheus Metrics (PRD §7.3, §9.1 & §21 complete)
 26. OpenAPI 3.1 Contract Generation & Interactive API Documentation (PRD §7.3 line 704 & §10 complete)
 27. Rate Limiting & Web Application Firewall (WAF) Rule Hardening (PRD §4.1 & OWASP Top 10 complete)
+28. Multi-Tenant Domain Event Bus & Outbox Integration Pipeline (PRD §11 & §14.2 complete)
 
 ## Current Active Feature
-Feature #27 — Rate Limiting & Web Application Firewall (WAF) Rule Hardening: APPROVED 2026-11-10. Evidence: `features/waf-rate-limiting/approve.md` (Delivered apps/web/src/lib/security with precision sliding-window rate limiting, tiered endpoint policies, and WAF inspection against SQLi, XSS, Path Traversal, and vulnerability scanners; integrated into apps/web/src/proxy.ts edge pipeline; 235/235 Vitest tests passing across 25 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live HTTP curl verified 403 blocks for SQLi and scanner agents, IETF draft RateLimit headers verified).
+Feature #28 — Multi-Tenant Domain Event Bus & Outbox Integration Pipeline: APPROVED 2026-11-10. Evidence: `features/domain-events/approve.md` (Delivered packages/domain-events with 35+ domain event catalogue across 12 domains, transactional outbox engine with exponential backoff & DLQ escalation, sliding-window consumer idempotency store, strict tenant boundary isolation; live /api/events/outbox management endpoint and Admin Console inspector tab; 249/249 Vitest tests passing across 26 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live HTTP curl verified outbox batch processing).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

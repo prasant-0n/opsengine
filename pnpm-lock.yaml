@@ -20,6 +20,9 @@ importers:
       '@opsengine/api-contracts':
         specifier: workspace:*
         version: link:../../packages/api-contracts
+      '@opsengine/domain-events':
+        specifier: workspace:*
+        version: link:../../packages/domain-events
       '@opsengine/logger':
         specifier: workspace:*
         version: link:../../packages/logger
@@ -107,6 +110,22 @@ importers:
         version: 1.6.1(@types/node@20.19.43)(lightningcss@1.32.0)
 
   packages/api-contracts:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.43)(lightningcss@1.32.0)
+
+  packages/domain-events:
+    dependencies:
+      '@opsengine/logger':
+        specifier: workspace:*
+        version: link:../logger
+      '@opsengine/telemetry':
+        specifier: workspace:*
+        version: link:../telemetry
     devDependencies:
       typescript:
         specifier: ^5.0.0
