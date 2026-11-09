@@ -48,13 +48,14 @@ Every feature goes through these stages in order. Do not skip stages.
 31. Tenant Offboarding, Compliant Data Export & Retention Lifecycle (PRD §14.3, Module 0A & §18.7 complete)
 32. Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up Hardening (PRD Module 1 & §14.3 complete)
 33. Cryptographic Audit Trail Verification & Tamper-Evident Hash Chaining (PRD Module 16 & §14.3 complete)
-34. Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator (PRD §6.1, §6.2 & §6.4)
+34. Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator (PRD §6.1, §6.2 & §6.4 complete)
+35. Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3)
 
 ## Current Active Feature
-Feature #33 — Cryptographic Audit Trail Verification & Tamper-Evident Hash Chaining: APPROVED 2026-11-10. Evidence: `features/cryptographic-audit/approve.md` (Delivered canonical JSON serialization, SHA-256 hash chaining, and optional HMAC chain seals in apps/web/src/lib/audit; atomic per-tenant concurrency queues preventing race conditions; tamper detection pinpointing payload manipulation, sequence gaps, deleted records, and broken links; portable offline cryptographic proof generation & validation; live Next.js API endpoints /api/audit/chain/{append,records,verify,proof,verify-proof}; 301/301 Vitest tests passing across 31 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, and complete live verification).
+Feature #34 — Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator: APPROVED 2026-11-10. Evidence: `features/cross-module-orchestration/approve.md` (Delivered LifecycleOrchestrator in apps/web/src/lib/orchestration; multi-stakeholder quorum gates for Lead-to-Project-to-Cash, Hire-to-Onboard-to-Probation, and Production Release Gates; downstream artifact generation for projects, milestone invoices, employees, onboarding tasks, and probation review scheduling; domain events integration lifecycle.handover.*; cryptographic audit logging; live Next.js API endpoints /api/handover/{initiate,approve,execute} and GET /api/handover; 308/308 Vitest tests passing across 32 suites, 13/13 Playwright E2E tests passing, clean TypeScript compilation, and complete live verification).
 
 ## Next Up
-Feature #34 — Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator (PRD §6.1, §6.2 & §6.4).
+Feature #35 — Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
