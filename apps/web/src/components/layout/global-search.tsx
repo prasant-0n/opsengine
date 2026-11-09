@@ -2,29 +2,72 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Search,
+  Command,
+  ArrowRight,
+  Clock,
+  Loader2,
+  FileText,
+  User,
+  CheckSquare,
+  Shield,
+  Briefcase,
+  X,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+const CATEGORY_ICONS: Record<string, any> = {
+  employee: User,
+  project: Briefcase,
+  ticket: CheckSquare,
+  approval: Shield,
+  proposal: FileText,
+  default: Search,
+};
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Keyboard shortcut Cmd+K or Ctrl+K
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((o) => !o);
-        setTimeout(() => inputRef.current?.focus(), 50);
-      } else if (e.key === "Escape") {
+        setOpen((o) => {
+          const next = !o;
+          if (next) setTimeout(() => inputRef.current?.focus(), 50);
+          return next;
+        });
+      } else if (e.key === "Escape" && open) {
         setOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [open]);
+
+  // Handle arrow navigation in results
+  const handleKeyDownList = (e: React.KeyboardEvent) => {
+    if (results.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev + 1) % results.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
+    } else if (e.key === "Enter" && results[selectedIndex]) {
+      e.preventDefault();
+      handleSelect(results[selectedIndex].href);
+    }
+  };
 
   const search = useCallback(async (q: string) => {
     if (q.trim().length < 2) {
@@ -38,6 +81,7 @@ export function GlobalSearch() {
       if (res.ok) {
         const data = await res.json();
         setResults(data.results ?? []);
+        setSelectedIndex(0);
       }
     } finally {
       setLoading(false);
@@ -47,7 +91,7 @@ export function GlobalSearch() {
   useEffect(() => {
     const timer = setTimeout(() => {
       search(query);
-    }, 300);
+    }, 250);
     return () => clearTimeout(timer);
   }, [query, search]);
 
@@ -58,91 +102,183 @@ export function GlobalSearch() {
     router.push(href);
   }
 
+  // Click outside listener
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
   return (
-    <div style={{ position: "relative" }}>
+    <div className="relative" ref={containerRef}>
+      {/* Trigger Bar */}
       <div
         onClick={() => {
           setOpen(true);
           setTimeout(() => inputRef.current?.focus(), 50);
         }}
-        style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+        className="group relative flex items-center cursor-pointer"
       >
+        <Search className="w-3.5 h-3.5 absolute left-3 text-muted-foreground group-hover:text-primary transition-colors pointer-events-none" />
         <input
           ref={inputRef}
           type="search"
-          className="input input-sm shell-search"
-          placeholder="Search workspace (Ctrl+K)"
+          className="input input-sm pl-8 pr-16 w-52 md:w-64 rounded-lg bg-card/80 border-border/80 hover:border-primary/40 focus:border-primary transition-all duration-150 placeholder:text-muted-foreground/80 cursor-pointer"
+          placeholder="Search workspace…"
           value={query}
+          onFocus={() => setOpen(true)}
           onChange={(e) => {
             setQuery(e.target.value);
             if (!open) setOpen(true);
           }}
+          onKeyDown={handleKeyDownList}
           aria-label="Global search"
         />
+        <div className="absolute right-2 flex items-center gap-0.5 pointer-events-none">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-medium text-muted-foreground bg-secondary/80 border border-border/60 rounded">
+            <Command className="w-2.5 h-2.5" /> K
+          </kbd>
+        </div>
       </div>
 
+      {/* Popover Command Palette Dialog */}
       {open && (
         <>
+          {/* Backdrop */}
           <div
-            onClick={() => setOpen(false)}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(0,0,0,0.6)",
-              zIndex: 999,
-            }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            aria-hidden="true"
           />
+
           <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: "120%",
-              width: "420px",
-              background: "#0f172a",
-              border: "1px solid #334155",
-              borderRadius: "10px",
-              boxShadow: "0 15px 35px rgba(0,0,0,0.6)",
-              zIndex: 1000,
-              padding: "1rem",
-            }}
+            className="absolute right-0 top-[calc(100%+0.5rem)] w-80 sm:w-[460px] rounded-xl border border-border/80 bg-popover/95 backdrop-blur-xl shadow-2xl shadow-black/50 z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150"
+            role="dialog"
+            aria-modal="true"
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem", borderBottom: "1px solid #334155", paddingBottom: "0.5rem" }}>
-              <strong>Quick Search</strong>
-              <span className="muted mono" style={{ fontSize: "0.75rem" }}>ESC to close</span>
+            {/* Search Header Bar */}
+            <div className="flex items-center px-3.5 py-2.5 border-b border-border/60 bg-secondary/30">
+              <Search className="w-4 h-4 text-muted-foreground mr-2.5 flex-shrink-0" />
+              <input
+                type="text"
+                autoFocus
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none border-none p-0 focus:ring-0"
+                placeholder="Type to search employees, tickets, approvals..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDownList}
+              />
+              {loading ? (
+                <Loader2 className="w-4 h-4 text-primary animate-spin ml-2 flex-shrink-0" />
+              ) : query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="p-1 text-muted-foreground hover:text-foreground rounded-md"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ) : null}
             </div>
 
-            <div style={{ maxHeight: "360px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              {loading ? (
-                <p className="muted" style={{ textAlign: "center", padding: "1rem" }}>Searching across workspace…</p>
-              ) : results.length === 0 ? (
-                <p className="muted" style={{ textAlign: "center", padding: "1rem" }}>{query.length < 2 ? "Type at least 2 characters to search..." : "No matching records found."}</p>
-              ) : (
-                results.map((r, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => handleSelect(r.href)}
-                    style={{
-                      padding: "0.6rem 0.75rem",
-                      background: "#1e293b",
-                      borderRadius: "6px",
-                      border: "1px solid #334155",
-                      cursor: "pointer",
-                      transition: "background 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#334155")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "#1e293b")}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <strong>{r.title}</strong>
-                      <span className="badge badge-outline" style={{ fontSize: "0.7rem" }}>{r.category}</span>
-                    </div>
-                    <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "0.2rem" }}>{r.subtitle}</p>
+            {/* Results List */}
+            <div className="max-h-80 overflow-y-auto no-scrollbar p-2">
+              {query.length < 2 ? (
+                <div className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    Type at least 2 characters to search across all tenant resources.
+                  </p>
+                  <div className="flex justify-center gap-1.5 mt-3 flex-wrap">
+                    <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-secondary text-muted-foreground">
+                      Employees
+                    </span>
+                    <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-secondary text-muted-foreground">
+                      Projects
+                    </span>
+                    <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-secondary text-muted-foreground">
+                      Invoices
+                    </span>
+                    <span className="px-2 py-0.5 text-[11px] font-mono rounded bg-secondary text-muted-foreground">
+                      Approvals
+                    </span>
                   </div>
-                ))
+                </div>
+              ) : results.length === 0 && !loading ? (
+                <div className="p-6 text-center">
+                  <p className="text-sm font-medium text-foreground">No matches found</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    No authorized records match &ldquo;<span className="text-primary font-mono">{query}</span>&rdquo;.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {results.map((r, idx) => {
+                    const IconComp = CATEGORY_ICONS[r.category?.toLowerCase()] || CATEGORY_ICONS.default;
+                    const isSelected = idx === selectedIndex;
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelect(r.href)}
+                        onMouseEnter={() => setSelectedIndex(idx)}
+                        className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150 ${
+                          isSelected
+                            ? "bg-primary/15 border border-primary/30 text-foreground"
+                            : "bg-card/40 hover:bg-secondary/60 border border-transparent"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div
+                            className={`p-1.5 rounded-md ${
+                              isSelected
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary text-muted-foreground"
+                            }`}
+                          >
+                            <IconComp className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-semibold text-foreground truncate">{r.title}</h4>
+                            <p className="text-[11px] text-muted-foreground truncate">{r.subtitle}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Badge variant="outline" className="text-[10px] capitalize font-mono py-0 px-1.5">
+                            {r.category}
+                          </Badge>
+                          <ArrowRight
+                            className={`w-3.5 h-3.5 transition-transform ${
+                              isSelected ? "text-primary translate-x-0.5" : "text-muted-foreground/40"
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between px-3.5 py-2 border-t border-border/60 bg-secondary/20 text-[11px] text-muted-foreground font-mono">
+              <span className="flex items-center gap-1.5">
+                <kbd className="px-1 py-0.5 bg-secondary rounded border border-border/60 text-[10px]">↑</kbd>
+                <kbd className="px-1 py-0.5 bg-secondary rounded border border-border/60 text-[10px]">↓</kbd>
+                to navigate
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="px-1 py-0.5 bg-secondary rounded border border-border/60 text-[10px]">↵</kbd>
+                to select
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="px-1 py-0.5 bg-secondary rounded border border-border/60 text-[10px]">esc</kbd>
+                to close
+              </span>
             </div>
           </div>
         </>

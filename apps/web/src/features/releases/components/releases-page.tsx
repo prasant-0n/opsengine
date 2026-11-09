@@ -4,6 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useShell } from "@/components/layout/shell-context";
 import { RELEASE_STATUSES } from "../lib/releases";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
 
 function statusBadge(status: string): string {
   switch (status) {
@@ -93,8 +101,9 @@ export default function ReleasesPage() {
         </div>
         {canCreate && (
           <div className="action-row">
-            <button className="btn btn-primary" onClick={() => setShowForm((s) => !s)}>
-              {showForm ? "Cancel" : "New release"}
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+              <Plus className="w-4 h-4 mr-1 inline" />
+              New release
             </button>
           </div>
         )}
@@ -102,39 +111,45 @@ export default function ReleasesPage() {
 
       {error && <div className="state-panel state-panel-error">{error}</div>}
 
-      {showForm && canCreate && (
-        <div className="panel">
-          <div className="panel-head">
-            <h2>New release record</h2>
-          </div>
-          <div className="form-grid">
-            <label>
-              Release Number*
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Production / Staging Release</DialogTitle>
+            <DialogDescription>
+              Create a governed software release with deployment gate validation and rollback procedures.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="form-grid py-2">
+            <label className="form-field">
+              <span className="form-label">Release Number*</span>
               <input className="input" value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} />
             </label>
-            <label>
-              Title*
+            <label className="form-field">
+              <span className="form-label">Title*</span>
               <input className="input" placeholder="e.g. Q4 Platform Rollout" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </label>
-            <label>
-              Target Environment
+            <label className="form-field">
+              <span className="form-label">Target Environment</span>
               <select className="input" value={form.targetEnv} onChange={(e) => setForm({ ...form, targetEnv: e.target.value })}>
                 <option value="staging">staging</option>
                 <option value="production">production</option>
               </select>
             </label>
-            <label>
-              Rollback Plan
+            <label className="form-field">
+              <span className="form-label">Rollback Plan</span>
               <input className="input" placeholder="Rollback procedure" value={form.rollbackPlan} onChange={(e) => setForm({ ...form, rollbackPlan: e.target.value })} />
             </label>
           </div>
-          <div className="action-row">
+          <div className="flex justify-end gap-2 pt-3 border-t border-border/50">
+            <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>
+              Cancel
+            </button>
             <button className="btn btn-primary" onClick={create} disabled={saving}>
               {saving ? "Creating…" : "Create release"}
             </button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div className="panel">
         <div className="inline-form">

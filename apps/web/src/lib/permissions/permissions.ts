@@ -112,6 +112,9 @@ export const PERMISSIONS = {
   PRESALES_PROPOSAL_READ: "presales.proposal.read",
   PRESALES_PROPOSAL_CREATE: "presales.proposal.create",
   PRESALES_PROPOSAL_APPROVE: "presales.proposal.approve",
+  // Resource Planning & Capacity (Module 11)
+  RESOURCE_PLANNING_READ: "resource_planning.read",
+  RESOURCE_PLANNING_MANAGE: "resource_planning.manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -244,6 +247,9 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.PRESALES_PROPOSAL_APPROVE, scopeType: "TENANT" },
+    // Resource Planning & Capacity (Module 11)
+    { permissionKey: PERMISSIONS.RESOURCE_PLANNING_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RESOURCE_PLANNING_MANAGE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CRM_ACCOUNT_UPDATE, scopeType: "TENANT" },

@@ -5,6 +5,14 @@ import Link from "next/link";
 import { useShell } from "@/components/layout/shell-context";
 import { formatMoney } from "@/features/finance/lib/finance";
 import { PRESALES_STATUSES } from "../lib/presales";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
 
 function statusBadge(status: string): string {
   switch (status) {
@@ -92,8 +100,9 @@ export default function PresalesPage() {
         </div>
         {canCreate && (
           <div className="action-row">
-            <button className="btn btn-primary" onClick={() => setShowForm((s) => !s)}>
-              {showForm ? "Cancel" : "New proposal"}
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+              <Plus className="w-4 h-4 mr-1 inline" />
+              New proposal
             </button>
           </div>
         )}
@@ -101,36 +110,42 @@ export default function PresalesPage() {
 
       {error && <div className="state-panel state-panel-error">{error}</div>}
 
-      {showForm && canCreate && (
-        <div className="panel">
-          <div className="panel-head">
-            <h2>New presales proposal</h2>
-          </div>
-          <div className="form-grid">
-            <label>
-              Proposal Number*
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Presales Proposal</DialogTitle>
+            <DialogDescription>
+              Create a new client estimate proposal. Line items and totals can be configured after creation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="form-grid py-2">
+            <label className="form-field">
+              <span className="form-label">Proposal Number*</span>
               <input className="input" value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} />
             </label>
-            <label>
-              Title*
+            <label className="form-field">
+              <span className="form-label">Title*</span>
               <input className="input" placeholder="e.g. Enterprise Migration Estimate" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </label>
-            <label>
-              Currency
+            <label className="form-field">
+              <span className="form-label">Currency</span>
               <input className="input" value={form.currency} maxLength={3} onChange={(e) => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
             </label>
-            <label>
-              Target Margin (%)
+            <label className="form-field">
+              <span className="form-label">Target Margin (%)</span>
               <input className="input" type="number" step="0.05" value={form.marginPct} onChange={(e) => setForm({ ...form, marginPct: Number(e.target.value) })} />
             </label>
           </div>
-          <div className="action-row">
+          <div className="flex justify-end gap-2 pt-3 border-t border-border/50">
+            <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>
+              Cancel
+            </button>
             <button className="btn btn-primary" onClick={create} disabled={saving}>
               {saving ? "Creating…" : "Create proposal"}
             </button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div className="panel">
         <div className="inline-form">
