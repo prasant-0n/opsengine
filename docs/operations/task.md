@@ -49,13 +49,14 @@ Every feature goes through these stages in order. Do not skip stages.
 32. Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up Hardening (PRD Module 1 & §14.3 complete)
 33. Cryptographic Audit Trail Verification & Tamper-Evident Hash Chaining (PRD Module 16 & §14.3 complete)
 34. Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator (PRD §6.1, §6.2 & §6.4 complete)
-35. Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3)
+35. Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3 complete)
+36. Outbound Webhook Delivery Engine with HMAC Signatures, Exponential Retries & DLQ (PRD §11, §12.3 & §14.2)
 
 ## Current Active Feature
-Feature #34 — Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator: APPROVED 2026-11-10. Evidence: `features/cross-module-orchestration/approve.md` (Delivered LifecycleOrchestrator in apps/web/src/lib/orchestration; multi-stakeholder quorum gates for Lead-to-Project-to-Cash, Hire-to-Onboard-to-Probation, and Production Release Gates; downstream artifact generation for projects, milestone invoices, employees, onboarding tasks, and probation review scheduling; domain events integration lifecycle.handover.*; cryptographic audit logging; live Next.js API endpoints /api/handover/{initiate,approve,execute} and GET /api/handover; 308/308 Vitest tests passing across 32 suites, 13/13 Playwright E2E tests passing, clean TypeScript compilation, and complete live verification).
+Feature #35 — Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline: APPROVED 2026-11-10. Evidence: `features/ai-guardrails/approve.md` (Delivered anti-prompt injection scanner, secret & PII redactor, and Sandboxed Tool Registry in apps/web/src/lib/ai-guardrails; pre-retrieval and pre-execution ReBAC enforcement; mandatory Human-in-the-Loop interception for mutating tools with 15-minute expiring Action Proposals; strict hardcoded prohibition of autonomous governance decisions; live Next.js API endpoints /api/ai/chat, /api/ai/proposals/confirm, /api/ai/proposals/reject, and /api/ai/tools; 320/320 Vitest tests passing across 33 suites, 13/13 Playwright E2E tests passing, clean TypeScript compilation, and complete live verification).
 
 ## Next Up
-Feature #35 — Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3).
+Feature #36 — Outbound Webhook Delivery Engine with HMAC Signatures, Exponential Retries & DLQ (PRD §11, §12.3 & §14.2).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
