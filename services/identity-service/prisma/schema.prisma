@@ -1129,3 +1129,72 @@ model PresalesEstimateLine {
   @@index([tenantId, proposalId], map: "idx_presales_line_tenant_proposal")
   @@map("presales_estimate_lines")
 }
+
+model LeaveType {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  code             String   // ANNUAL | SICK | CASUAL | MATERNITY | UNPAID
+  name             String
+  description      String?
+  annualAllowance  Int      @default(0) @map("annual_allowance") // in days
+  isPaid           Boolean  @default(true) @map("is_paid")
+  requiresApproval Boolean  @default(true) @map("requires_approval")
+  allowHalfDay     Boolean  @default(true) @map("allow_half_day")
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@unique([tenantId, code], map: "uq_leave_types_tenant_code")
+  @@index([tenantId, active], map: "idx_leave_types_tenant_active")
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  employeeId       String   @db.Uuid @map("employee_id")
+  leaveTypeId      String   @db.Uuid @map("leave_type_id")
+  year             Int      // e.g. 2026
+  allocatedDays    Float    @default(0) @map("allocated_days")
+  usedDays         Float    @default(0) @map("used_days")
+  pendingDays      Float    @default(0) @map("pending_days")
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, employeeId, leaveTypeId, year], map: "uq_leave_balance_tenant_emp_type_yr")
+  @@index([tenantId, employeeId, year], map: "idx_leave_balance_tenant_emp_year")
+  @@map("leave_balances")
+}
+
+model LeaveRequest {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid @map("tenant_id")
+  employeeId       String    @db.Uuid @map("employee_id")
+  leaveTypeId      String    @db.Uuid @map("leave_type_id")
+  startDate        DateTime  @db.Date @map("start_date")
+  endDate          DateTime  @db.Date @map("end_date")
+  daysCount        Float     @map("days_count")
+  isHalfDay        Boolean   @default(false) @map("is_half_day")
+  reason           String    @db.Text
+  status           String    @default("pending") // pending | approved | rejected | cancelled
+  reviewedBy       String?   @db.Uuid @map("reviewed_by")
+  reviewedAt       DateTime? @db.Timestamptz(6) @map("reviewed_at")
+  reviewNotes      String?   @db.Text @map("review_notes")
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, employeeId, startDate], map: "idx_leave_req_tenant_emp_start")
+  @@index([tenantId, status], map: "idx_leave_req_tenant_status")
+  @@map("leave_requests")
+}
+
+model LeaveAdjustment {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  leaveBalanceId   String   @db.Uuid @map("leave_balance_id")
+  amountDays       Float    @map("amount_days")
+  reason           String   @db.Text
+  adjustedBy       String   @db.Uuid @map("adjusted_by")
+  createdAt        DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, leaveBalanceId], map: "idx_leave_adj_tenant_bal")
+  @@map("leave_adjustments")
+}

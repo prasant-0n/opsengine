@@ -1,7 +1,7 @@
 # Task Tracking — Enterprise Ops SaaS (CRM/HRMS)
 
 ## Status
-Monorepo bootstrapped; features #1 through #11 APPROVED. Feature #12 (AI Assistant powered by Gemini 3.8 Flash with operator-gated tenant AI activation) and Cross-Cutting Notification & Outbound SES Email System fully implemented and verified (142/142 unit tests passed, tsc clean, production build successful).
+Monorepo bootstrapped; features #1 through #13 APPROVED. Feature #13 (Attendance & Leave Management — PRD Module 5) fully implemented and verified with 159/159 passing unit tests, clean TypeScript compilation, and 200 HTTP API probes.
 
 ## Feature Lifecycle (per feature)
 Every feature goes through these stages in order. Do not skip stages.
@@ -25,15 +25,12 @@ Every feature goes through these stages in order. Do not skip stages.
 8. Finance (invoices, receivables, payments)
 9. Recruitment (requisitions, interviews, onboarding)
 10. AI interface (controlled, no self-approval)
+11. Recruitment & Onboarding (offers, induction, probation)
+12. AI Assistant (controlled Gemini integration)
+13. Attendance & Leave Management (PRD Module 5 complete)
 
 ## Current Active Feature
-Feature #10 — Finance: APPROVED 2026-10-20. Evidence: `features/finance/approve.md` (vitest 136/136, tsc clean, smoke 36/36, Chrome 24/24, regression + approval smoke green).
-
-Feature #11 — Recruitment & Onboarding (PRD Module 3 tail + Module 4; offers, onboarding, induction, probation): Coding + Run + Verification DONE. Vitest 142/142 passed, tsc clean, smoke tests passed.
-
-## Feature Queue (remaining)
-- #11 Recruitment & Onboarding (offers, onboarding, induction, probation) — PLANNING+DESIGN DONE, CODING NEXT
-- #12 AI interface (controlled, no self-approval)
+Feature #13 — Attendance & Leave Management: APPROVED 2026-11-09. Evidence: `features/leave-attendance/approve.md` (vitest 159/159 passing, tsc clean, API smoke 200 OK, migration applied).
 
 ## Rules
 - One bounded context, one vertical slice at a time.

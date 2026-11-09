@@ -67,6 +67,13 @@ export const NAV_GROUPS: NavGroup[] = [
         behavior: "hide",
       },
       {
+        label: "Attendance",
+        href: "/dashboard/attendance",
+        icon: "timer",
+        permission: "time.attendance.read_self",
+        behavior: "hide",
+      },
+      {
         label: "My Time",
         href: "/dashboard/time",
         icon: "schedule",
@@ -130,6 +137,13 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/dashboard/people",
         icon: "badge",
         permission: "org.read_directory",
+        behavior: "hide",
+      },
+      {
+        label: "Leave",
+        href: "/dashboard/leave",
+        icon: "event_busy",
+        permission: "leave.balance.read_self",
         behavior: "hide",
       },
       {

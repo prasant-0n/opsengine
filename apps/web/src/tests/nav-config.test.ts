@@ -41,7 +41,9 @@ describe("filterNavGroups (navigation = usability only)", () => {
     expect(hrefs).toContain("/dashboard/releases");
     expect(hrefs).toContain("/dashboard/presales");
     expect(hrefs).toContain("/dashboard/resource-planning");
-    expect(hrefs.length).toBe(26);
+    expect(hrefs).toContain("/dashboard/attendance");
+    expect(hrefs).toContain("/dashboard/leave");
+    expect(hrefs.length).toBe(28);
   });
 
   it("hides Projects/Tickets from an employee without project/ticket perms", () => {
