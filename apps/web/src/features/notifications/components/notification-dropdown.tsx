@@ -30,8 +30,35 @@ export default function NotificationDropdown() {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 30_000); // poll every 30s
-    return () => clearInterval(interval);
+
+    if (typeof window === "undefined" || !("EventSource" in window)) {
+      const interval = setInterval(load, 30_000);
+      return () => clearInterval(interval);
+    }
+
+    // Real-Time Server-Sent Events (SSE) Push Subscription (PRD Module 15 & §11)
+    const es = new EventSource("/api/notifications/stream");
+
+    es.addEventListener("notification", (e: MessageEvent) => {
+      try {
+        const notif = JSON.parse(e.data);
+        setNotifications((prev) => [notif, ...prev.slice(0, 49)]);
+        setUnreadCount((prev) => prev + 1);
+      } catch {}
+    });
+
+    es.addEventListener("badge_update", (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (typeof data.unreadCount === "number") {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch {}
+    });
+
+    return () => {
+      es.close();
+    };
   }, [load]);
 
   // Click outside to close

@@ -44,9 +44,10 @@ Every feature goes through these stages in order. Do not skip stages.
 27. Rate Limiting & Web Application Firewall (WAF) Rule Hardening (PRD §4.1 & OWASP Top 10 complete)
 28. Multi-Tenant Domain Event Bus & Outbox Integration Pipeline (PRD §11 & §14.2 complete)
 29. High-Throughput Load Testing & Concurrency Stress Suite (PRD §14.1 & Phase 6 complete)
+30. Real-Time Server-Sent Events (SSE) & Notification Push Stream (PRD Module 15 & §11 complete)
 
 ## Current Active Feature
-Feature #29 — High-Throughput Load Testing & Concurrency Stress Suite: APPROVED 2026-11-10. Evidence: `features/load-testing/approve.md` (Delivered apps/web/src/lib/testing/load-benchmark with LatencyCalculator, ConcurrentExecutor, and SlaValidator; scripts/load-test.ts automated multi-tenant concurrency benchmark harness; 258/258 Vitest tests passing across 27 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live benchmark run achieved 92.12 RPS with P95 latency of 233.11ms passing PRD §14.1 SLA < 300ms with 0 errors).
+Feature #30 — Real-Time Server-Sent Events (SSE) & Notification Push Stream: APPROVED 2026-11-10. Evidence: `features/realtime-notifications/approve.md` (Delivered apps/web/src/lib/notifications with NotificationHub and SSE wire protocol; live /api/notifications/stream and /api/notifications endpoints; useNotificationStream hook and topbar bell integration; 267/267 Vitest tests passing across 28 suites, 13/13 Playwright E2E tests, clean TypeScript compilation, live curl verified SSE handshake and notification delivery).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
