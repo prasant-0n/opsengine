@@ -3,349 +3,789 @@ import { hashPassword } from "../src/lib/auth/crypto/index.ts";
 
 const prisma = new PrismaClient();
 
-const T_A = "00000000-0000-4000-8000-0000000000aa";
-const T_B = "00000000-0000-4000-8000-0000000000bb";
+// Tenant Identifiers
+const T_A = "00000000-0000-4000-8000-0000000000aa"; // Acme Global Enterprise
+const T_B = "00000000-0000-4000-8000-0000000000bb"; // Starlight Global Technologies
 
-const USER_A = "00000000-0000-4000-8000-000000000001";
-const USER_B = "00000000-0000-4000-8000-000000000002";
+// Tenant A Users
+const USER_A_ADMIN = "00000000-0000-4000-8000-000000000001";
+const USER_A_SBU_HEAD = "00000000-0000-4000-8000-000000000003";
+const USER_A_DIR = "00000000-0000-4000-8000-000000000004";
+const USER_A_LEAD1 = "00000000-0000-4000-8000-000000000005";
+const USER_A_LEAD2 = "00000000-0000-4000-8000-000000000006";
+const USER_A_DEV1 = "00000000-0000-4000-8000-000000000007";
+const USER_A_DEV2 = "00000000-0000-4000-8000-000000000008";
+const USER_A_DEV3 = "00000000-0000-4000-8000-000000000009";
+const USER_A_QA = "00000000-0000-4000-8000-000000000010";
+const USER_A_INTERN = "00000000-0000-4000-8000-000000000013";
 
-const EMP_A = "00000000-0000-4000-8000-000000000011";
-const EMP_B = "00000000-0000-4000-8000-000000000012";
+// Tenant B Users
+const USER_B_ADMIN = "00000000-0000-4000-8000-000000000002";
+const USER_B_LEAD = "00000000-0000-4000-8000-000000000020";
 
-const TEAM_A = "00000000-0000-4000-8000-000000000021";
-const REQ_A1 = "00000000-0000-4000-8000-00000000a001";
-const CAND_A1 = "00000000-0000-4000-8000-00000000a011";
+// Tenant A Employees
+const EMP_A_ADMIN = "00000000-0000-4000-8000-000000000011";
+const EMP_A_SBU_HEAD = "00000000-0000-4000-8000-000000000031";
+const EMP_A_DIR = "00000000-0000-4000-8000-000000000032";
+const EMP_A_LEAD1 = "00000000-0000-4000-8000-000000000033";
+const EMP_A_LEAD2 = "00000000-0000-4000-8000-000000000034";
+const EMP_A_DEV1 = "00000000-0000-4000-8000-000000000035";
+const EMP_A_DEV2 = "00000000-0000-4000-8000-000000000036";
+const EMP_A_DEV3 = "00000000-0000-4000-8000-000000000037";
+const EMP_A_QA = "00000000-0000-4000-8000-000000000038";
+const EMP_A_INTERN = "00000000-0000-4000-8000-000000000039";
+
+// Tenant B Employees
+const EMP_B_ADMIN = "00000000-0000-4000-8000-000000000012";
+const EMP_B_LEAD = "00000000-0000-4000-8000-000000000040";
+
+// Teams
+const TEAM_A_EXEC = "00000000-0000-4000-8000-000000000021";
+const TEAM_A_CLOUD = "00000000-0000-4000-8000-000000000022";
+const TEAM_A_FINTECH = "00000000-0000-4000-8000-000000000023";
+const TEAM_A_QA = "00000000-0000-4000-8000-000000000024";
+const TEAM_B_PRODUCT = "00000000-0000-4000-8000-000000000025";
 
 async function main() {
-  console.log("Seeding database...");
+  console.log("==> Initializing Enterprise Multi-Tenant Demo Showcase Seed...");
 
-  const passwordHashA = await hashPassword("Sup3rSecret!");
-  const passwordHashB = await hashPassword("An0therSecret!");
+  const defaultPasswordHash = await hashPassword("Sup3rSecret!");
+  const globexPasswordHash = await hashPassword("An0therSecret!");
 
-  const tenantA = await prisma.tenantWorkspace.upsert({
+  // 1. Tenant Workspaces
+  console.log("Seeding Workspaces & Subscriptions...");
+  await prisma.tenantWorkspace.upsert({
     where: { id: T_A },
-    update: {},
+    update: {
+      name: "Acme Corp",
+      domain: "acme.opsengine.enterprise",
+      lifecycleStatus: "active",
+      aiEnabled: true,
+    },
     create: {
       id: T_A,
       tenantId: T_A,
       name: "Acme Corp",
       slug: "acme.opsengine.enterprise",
+      domain: "acme.opsengine.enterprise",
+      lifecycleStatus: "active",
+      aiEnabled: true,
     },
   });
 
-  const tenantB = await prisma.tenantWorkspace.upsert({
-    where: { id: T_B },
-    update: {},
-    create: {
-      id: T_B,
-      tenantId: T_B,
-      name: "Globex Inc",
-      slug: "globex.opsengine.enterprise",
-    },
-  });
-
-  const adminA = await prisma.authUser.upsert({
-    where: { id: USER_A },
-    update: { isSuperadmin: true },
-    create: {
-      id: USER_A,
-      tenantId: T_A,
-      email: "admin@acme.opsengine.enterprise",
-      passwordHash: passwordHashA,
-      isRootAdmin: true,
-      isSuperadmin: true,
-    },
-  });
-
-  const userB = await prisma.authUser.upsert({
-    where: { id: USER_B },
-    update: {},
-    create: {
-      id: USER_B,
-      tenantId: T_B,
-      email: "user@globex.opsengine.enterprise",
-      passwordHash: passwordHashB,
-    },
-  });
-
-  const teamA = await prisma.team.upsert({
-    where: { id: TEAM_A },
-    update: {},
-    create: {
-      id: TEAM_A,
-      tenantId: T_A,
-      name: "Engineering Core",
-    },
-  });
-
-  const empA = await prisma.employee.upsert({
-    where: { id: EMP_A },
-    update: {},
-    create: {
-      id: EMP_A,
-      tenantId: T_A,
-      userId: USER_A,
-      displayName: "Alex Mercer",
-      employeeNumber: "EMP-001",
-      workEmail: "admin@acme.opsengine.enterprise",
-      jobTitle: "VP Engineering",
-      department: "Engineering",
-      employmentType: "full_time",
-      employmentStatus: "active",
-    },
-  });
-
-  const empB = await prisma.employee.upsert({
-    where: { id: EMP_B },
-    update: {},
-    create: {
-      id: EMP_B,
-      tenantId: T_B,
-      userId: USER_B,
-      displayName: "Bob Globex",
-      employeeNumber: "EMP-002",
-      workEmail: "user@globex.opsengine.enterprise",
-      jobTitle: "Software Engineer",
-      department: "Engineering",
-      employmentType: "full_time",
-      employmentStatus: "active",
-    },
-  });
-
-  await prisma.requisition.upsert({
-    where: { id: REQ_A1 },
-    update: {},
-    create: {
-      id: REQ_A1,
-      tenantId: T_A,
-      jobTitle: "Senior Software Engineer",
-      hiringManagerId: EMP_A,
-      status: "approved",
-      headcount: 1,
-    },
-  });
-
-  await prisma.candidate.upsert({
-    where: { id: CAND_A1 },
-    update: {},
-    create: {
-      id: CAND_A1,
-      tenantId: T_A,
-      fullName: "Jane Doe",
-      email: "jane.doe@example.com",
-      status: "offer",
-      linkedRequisitionId: REQ_A1,
-    },
-  });
-
-  // ---- Feature #11 + #12: Grants for Acme admin ----
-  const permissionsA = [
-    "recruit.offer.read",
-    "recruit.offer.create",
-    "recruit.offer.send",
-    "recruit.offer.decide",
-    "recruit.offer.approve",
-    "onboarding.plan.read",
-    "onboarding.plan.create",
-    "onboarding.plan.update",
-    "onboarding.task.manage",
-    "onboarding.induction.manage",
-    "onboarding.probation.read",
-    "onboarding.probation.review",
-    "onboarding.probation.decide",
-    "onboarding.convert_employee",
-    "assistant.use",
-    "assistant.manage",
-    "leave.request.create",
-    "leave.request.read_self",
-    "leave.request.read_team",
-    "leave.request.approve",
-    "leave.balance.read_self",
-    "leave.balance.read_team",
-    "leave.balance.adjust",
-    "leave.type.manage",
-    "time.attendance.read_team",
-    "time.attendance.correct_approve",
-    "org.manage_roles",
-    "org.manage_employees",
-    "document.read",
-    "document.upload",
-    "document.verify",
-    "document.delete",
-    "calendar.event.read",
-    "calendar.event.create",
-    "calendar.event.update",
-    "calendar.event.delete",
-    "meeting.note.manage",
-    "control_plane.read",
-    "control_plane.manage",
-  ];
-  for (let i = 0; i < permissionsA.length; i++) {
-    const key = permissionsA[i];
-    const id = `00000000-0000-4000-8000-00000000fe${String(i).padStart(2, "0")}`;
-    await prisma.permissionGrant.upsert({
-      where: { id },
-      update: {},
-      create: {
-        id,
-        tenantId: T_A,
-        principalUserId: USER_A,
-        principalEmployeeId: EMP_A,
-        permissionKey: key,
-        scopeType: "TENANT",
-        scopeId: null,
-        reason: "seed",
-      },
-    });
-  }
-
-  const OFFTPL_A1 = "00000000-0000-4000-8000-00000000fd10";
-  const OFFER_A1 = "00000000-0000-4000-8000-00000000fd11";
-  const ONB_A1 = "00000000-0000-4000-8000-00000000fd12";
-
-  await prisma.offerTemplate.upsert({
-    where: { id: OFFTPL_A1 },
-    update: {},
-    create: {
-      id: OFFTPL_A1,
-      tenantId: T_A,
-      name: "Standard Software Engineer Offer",
-      jobFamily: "Engineering",
-      employmentType: "full_time",
-      body: "We are delighted to offer you the position of {{jobTitle}} at OpsEngine.",
-      defaultTermsDays: 14,
-      active: true,
-      version: 1,
-      createdBy: USER_A,
-    },
-  });
-
-  await prisma.offer.upsert({
-    where: { id: OFFER_A1 },
-    update: {},
-    create: {
-      id: OFFER_A1,
-      tenantId: T_A,
-      number: "OFF-2026-0001",
-      candidateId: CAND_A1,
-      requisitionId: REQ_A1,
-      templateId: OFFTPL_A1,
-      jobTitle: "Senior Software Engineer",
-      employmentType: "full_time",
-      location: "San Francisco, CA",
-      workMode: "hybrid",
-      startDate: new Date("2026-11-01T00:00:00Z"),
-      baseCompCents: 18000000n,
-      variableCents: 2000000n,
-      currency: "USD",
-      status: "accepted",
-      sentAt: new Date("2026-10-10T00:00:00Z"),
-      respondedAt: new Date("2026-10-12T00:00:00Z"),
-      createdBy: USER_A,
-    },
-  });
-
-  await prisma.onboardingPlan.upsert({
-    where: { id: ONB_A1 },
-    update: {},
-    create: {
-      id: ONB_A1,
-      tenantId: T_A,
-      candidateId: CAND_A1,
-      offerId: OFFER_A1,
-      jobFamily: "Engineering",
-      location: "San Francisco, CA",
-      employmentType: "full_time",
-      status: "in_progress",
-      startedOn: new Date("2026-11-01T00:00:00Z"),
-      buddyEmployeeId: EMP_A,
-      notes: "Welcome aboard!",
-      createdBy: USER_A,
-    },
-  });
-
-  // ---- Leave Management Types and Balances ----
-  const standardTypes = [
-    { code: "ANNUAL", name: "Annual / Paid Leave", allowance: 18, isPaid: true },
-    { code: "SICK", name: "Sick Leave", allowance: 10, isPaid: true },
-    { code: "CASUAL", name: "Casual Leave", allowance: 7, isPaid: true },
-    { code: "UNPAID", name: "Unpaid Leave (LOP)", allowance: 0, isPaid: false },
-  ];
-
-  for (const st of standardTypes) {
-    const lt = await prisma.leaveType.upsert({
-      where: {
-        tenantId_code: { tenantId: T_A, code: st.code },
-      },
-      update: {},
-      create: {
-        tenantId: T_A,
-        code: st.code,
-        name: st.name,
-        annualAllowance: st.allowance,
-        isPaid: st.isPaid,
-        requiresApproval: true,
-        allowHalfDay: true,
-        active: true,
-      },
-    });
-
-    // Seed balance for EMP_A for 2026
-    await prisma.leaveBalance.upsert({
-      where: {
-        tenantId_employeeId_leaveTypeId_year: {
-          tenantId: T_A,
-          employeeId: EMP_A,
-          leaveTypeId: lt.id,
-          year: 2026,
-        },
-      },
-      update: {},
-      create: {
-        tenantId: T_A,
-        employeeId: EMP_A,
-        leaveTypeId: lt.id,
-        year: 2026,
-        allocatedDays: st.allowance,
-        usedDays: 0,
-        pendingDays: 0,
-      },
-    });
-  }
-
-  // Seed Subscriptions for Control Plane (Module 0A)
   await prisma.tenantSubscription.upsert({
     where: { tenantId: T_A },
-    update: {},
+    update: {
+      planTier: "enterprise",
+      seatLimit: 500,
+      status: "active",
+    },
     create: {
       tenantId: T_A,
       planTier: "enterprise",
+      seatLimit: 500,
       status: "active",
-      seatLimit: 100,
-      storageLimitBytes: 107374182400n, // 100 GB
-      features: ["core_hrms", "crm_core", "finance", "approvals", "documents", "calendar", "ai_assistant", "audit_export"],
+      storageLimitBytes: 107374182400n, // 100GB
+      features: [
+        "ai_assistant",
+        "custom_workflows",
+        "advanced_reporting",
+        "audit_export",
+        "sso",
+        "documents",
+        "calendar",
+        "resource_planning",
+      ],
+    },
+  });
+
+  await prisma.tenantWorkspace.upsert({
+    where: { id: T_B },
+    update: {
+      name: "Starlight Global Technologies",
+      domain: "starlight.opsengine.enterprise",
+      lifecycleStatus: "active",
+    },
+    create: {
+      id: T_B,
+      tenantId: T_B,
+      name: "Starlight Global Technologies",
+      slug: "starlight.opsengine.enterprise",
+      domain: "starlight.opsengine.enterprise",
+      lifecycleStatus: "active",
     },
   });
 
   await prisma.tenantSubscription.upsert({
     where: { tenantId: T_B },
-    update: {},
+    update: {
+      planTier: "professional",
+      seatLimit: 50,
+      status: "active",
+    },
     create: {
       tenantId: T_B,
       planTier: "professional",
+      seatLimit: 50,
       status: "active",
-      seatLimit: 25,
-      storageLimitBytes: 26843545600n, // 25 GB
-      features: ["core_hrms", "crm_core", "finance", "documents", "calendar"],
+      storageLimitBytes: 10737418240n, // 10GB
+      features: ["core_hrms", "crm_core", "documents", "calendar"],
     },
   });
 
-  console.log("Seeded successfully with assistant grants, leave types, balances, and demo data!");
+  // 2. Auth Users
+  console.log("Seeding Users & Permissions...");
+  const users = [
+    { id: USER_A_ADMIN, tenantId: T_A, email: "admin@acme.opsengine.enterprise", isRootAdmin: true, isSuperadmin: true, pw: defaultPasswordHash },
+    { id: USER_A_SBU_HEAD, tenantId: T_A, email: "sarah.jenkins@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_DIR, tenantId: T_A, email: "marcus.vance@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_LEAD1, tenantId: T_A, email: "elena.rostova@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_LEAD2, tenantId: T_A, email: "jordan.hayes@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_DEV1, tenantId: T_A, email: "david.kim@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_DEV2, tenantId: T_A, email: "maya.lin@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_DEV3, tenantId: T_A, email: "liam.oconnor@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_QA, tenantId: T_A, email: "priya.sharma@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_A_INTERN, tenantId: T_A, email: "chloe.bennett@acme.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: defaultPasswordHash },
+    { id: USER_B_ADMIN, tenantId: T_B, email: "user@globex.opsengine.enterprise", isRootAdmin: true, isSuperadmin: false, pw: globexPasswordHash },
+    { id: USER_B_LEAD, tenantId: T_B, email: "rachel.zane@starlight.opsengine.enterprise", isRootAdmin: false, isSuperadmin: false, pw: globexPasswordHash },
+  ];
+
+  for (const u of users) {
+    await prisma.authUser.upsert({
+      where: { id: u.id },
+      update: {
+        email: u.email,
+        passwordHash: u.pw,
+        isRootAdmin: u.isRootAdmin,
+        isSuperadmin: u.isSuperadmin,
+      },
+      create: {
+        id: u.id,
+        tenantId: u.tenantId,
+        email: u.email,
+        passwordHash: u.pw,
+        isRootAdmin: u.isRootAdmin,
+        isSuperadmin: u.isSuperadmin,
+      },
+    });
+
+    // Create Tenant Membership
+    await prisma.tenantMembership.upsert({
+      where: {
+        tenantId_userId: { tenantId: u.tenantId, userId: u.id },
+      },
+      update: { status: "active" },
+      create: {
+        tenantId: u.tenantId,
+        userId: u.id,
+        status: "active",
+      },
+    });
+  }
+
+  // 3. Teams
+  console.log("Seeding Teams & Organizational Structure...");
+  const teams = [
+    { id: TEAM_A_EXEC, tenantId: T_A, name: "Executive Committee" },
+    { id: TEAM_A_CLOUD, tenantId: T_A, name: "Cloud & Infrastructure" },
+    { id: TEAM_A_FINTECH, tenantId: T_A, name: "Fintech & Payments Core" },
+    { id: TEAM_A_QA, tenantId: T_A, name: "Quality Assurance & Testing" },
+    { id: TEAM_B_PRODUCT, tenantId: T_B, name: "Core Platform Development" },
+  ];
+  for (const t of teams) {
+    await prisma.team.upsert({
+      where: { id: t.id },
+      update: { name: t.name },
+      create: { id: t.id, tenantId: t.tenantId, name: t.name },
+    });
+  }
+
+  // 4. Employees & Reporting Hierarchy
+  console.log("Seeding Employee Directory...");
+  const employees = [
+    { id: EMP_A_ADMIN, tenantId: T_A, userId: USER_A_ADMIN, name: "Alex Mercer", num: "EMP-ACME-001", email: "admin@acme.opsengine.enterprise", title: "VP Engineering", dept: "Engineering", mgr: null },
+    { id: EMP_A_SBU_HEAD, tenantId: T_A, userId: USER_A_SBU_HEAD, name: "Sarah Jenkins", num: "EMP-ACME-002", email: "sarah.jenkins@acme.opsengine.enterprise", title: "SBU Head / EVP", dept: "Executive", mgr: null },
+    { id: EMP_A_DIR, tenantId: T_A, userId: USER_A_DIR, name: "Marcus Vance", num: "EMP-ACME-003", email: "marcus.vance@acme.opsengine.enterprise", title: "Director of Engineering", dept: "Engineering", mgr: EMP_A_SBU_HEAD },
+    { id: EMP_A_LEAD1, tenantId: T_A, userId: USER_A_LEAD1, name: "Elena Rostova", num: "EMP-ACME-004", email: "elena.rostova@acme.opsengine.enterprise", title: "Staff Cloud Architect", dept: "Engineering", mgr: EMP_A_DIR },
+    { id: EMP_A_LEAD2, tenantId: T_A, userId: USER_A_LEAD2, name: "Jordan Hayes", num: "EMP-ACME-005", email: "jordan.hayes@acme.opsengine.enterprise", title: "Principal Fintech Engineer", dept: "Engineering", mgr: EMP_A_DIR },
+    { id: EMP_A_DEV1, tenantId: T_A, userId: USER_A_DEV1, name: "David Kim", num: "EMP-ACME-006", email: "david.kim@acme.opsengine.enterprise", title: "Sr. Backend Engineer", dept: "Engineering", mgr: EMP_A_LEAD1 },
+    { id: EMP_A_DEV2, tenantId: T_A, userId: USER_A_DEV2, name: "Maya Lin", num: "EMP-ACME-007", email: "maya.lin@acme.opsengine.enterprise", title: "Sr. Frontend Engineer", dept: "Engineering", mgr: EMP_A_LEAD2 },
+    { id: EMP_A_DEV3, tenantId: T_A, userId: USER_A_DEV3, name: "Liam O'Connor", num: "EMP-ACME-008", email: "liam.oconnor@acme.opsengine.enterprise", title: "Lead SRE & DevOps", dept: "Operations", mgr: EMP_A_LEAD1 },
+    { id: EMP_A_QA, tenantId: T_A, userId: USER_A_QA, name: "Priya Sharma", num: "EMP-ACME-009", email: "priya.sharma@acme.opsengine.enterprise", title: "QA Automation Lead", dept: "Quality", mgr: EMP_A_DIR },
+    { id: EMP_A_INTERN, tenantId: T_A, userId: USER_A_INTERN, name: "Chloe Bennett", num: "EMP-ACME-010", email: "chloe.bennett@acme.opsengine.enterprise", title: "Software Intern", dept: "Engineering", mgr: EMP_A_DEV1 },
+    { id: EMP_B_ADMIN, tenantId: T_B, userId: USER_B_ADMIN, name: "Bob Globex", num: "EMP-STR-001", email: "user@globex.opsengine.enterprise", title: "Director of Technology", dept: "Engineering", mgr: null },
+    { id: EMP_B_LEAD, tenantId: T_B, userId: USER_B_LEAD, name: "Rachel Zane", num: "EMP-STR-002", email: "rachel.zane@starlight.opsengine.enterprise", title: "Engineering Lead", dept: "Engineering", mgr: EMP_B_ADMIN },
+  ];
+
+  for (const e of employees) {
+    await prisma.employee.upsert({
+      where: { id: e.id },
+      update: {
+        displayName: e.name,
+        employeeNumber: e.num,
+        workEmail: e.email,
+        jobTitle: e.title,
+        department: e.dept,
+        employmentStatus: "active",
+      },
+      create: {
+        id: e.id,
+        tenantId: e.tenantId,
+        userId: e.userId,
+        displayName: e.name,
+        employeeNumber: e.num,
+        workEmail: e.email,
+        jobTitle: e.title,
+        department: e.dept,
+        employmentType: e.num === "EMP-ACME-010" ? "intern" : "full_time",
+        employmentStatus: "active",
+      },
+    });
+
+    if (e.mgr) {
+      await prisma.reportingRelationship.upsert({
+        where: { id: `00000000-0000-4000-8000-0000000088${e.id.slice(-2)}` },
+        update: {},
+        create: {
+          id: `00000000-0000-4000-8000-0000000088${e.id.slice(-2)}`,
+          tenantId: e.tenantId,
+          managerEmployeeId: e.mgr,
+          reportEmployeeId: e.id,
+          relationshipType: "direct",
+        },
+      });
+    }
+  }
+
+  // 5. Full Permission Grants for Admin A
+  const permissionsA = [
+    "recruit.offer.read", "recruit.offer.create", "recruit.offer.send", "recruit.offer.decide", "recruit.offer.approve",
+    "onboarding.plan.read", "onboarding.plan.create", "onboarding.plan.update", "onboarding.task.manage",
+    "onboarding.induction.manage", "onboarding.probation.read", "onboarding.probation.review", "onboarding.probation.decide",
+    "onboarding.convert_employee", "assistant.use", "assistant.manage", "leave.request.create", "leave.request.read_self",
+    "leave.request.read_team", "leave.request.approve", "leave.balance.read_self", "leave.balance.read_team",
+    "leave.balance.adjust", "leave.type.manage", "time.attendance.read_team", "time.attendance.correct_approve",
+    "org.manage_roles", "org.manage_employees", "document.read", "document.upload", "document.verify",
+    "document.delete", "calendar.event.read", "calendar.event.create", "calendar.event.update", "calendar.event.delete",
+    "meeting.note.manage", "control_plane.read", "control_plane.manage", "crm.account.read", "crm.account.manage",
+    "project.read", "project.manage", "finance.invoice.read", "finance.invoice.manage", "report.read"
+  ];
+  for (let i = 0; i < permissionsA.length; i++) {
+    const key = permissionsA[i];
+    const id = `00000000-0000-4000-8000-00000000ea${String(i).padStart(2, "0")}`;
+    await prisma.permissionGrant.upsert({
+      where: { id },
+      update: { permissionKey: key },
+      create: {
+        id,
+        tenantId: T_A,
+        principalUserId: USER_A_ADMIN,
+        principalEmployeeId: EMP_A_ADMIN,
+        permissionKey: key,
+        scopeType: "TENANT",
+        scopeId: null,
+        reason: "enterprise_seed",
+      },
+    });
+  }
+
+  // 6. CRM Accounts & Opportunities
+  console.log("Seeding CRM Accounts & Pipeline Opportunities...");
+  const ACC_NEXUS = "00000000-0000-4000-8000-00000000ac01";
+  const ACC_APEX = "00000000-0000-4000-8000-00000000ac02";
+  const ACC_VANGUARD = "00000000-0000-4000-8000-00000000ac03";
+
+  await prisma.crmAccount.upsert({
+    where: { id: ACC_NEXUS },
+    update: {},
+    create: {
+      id: ACC_NEXUS,
+      tenantId: T_A,
+      name: "Nexus Global Financial",
+      industry: "Financial Services",
+      website: "https://nexus-global.example.com",
+      status: "active",
+      clientTier: "strategic",
+      ownerId: EMP_A_ADMIN,
+      notes: "Tier-1 Investment Banking Client, $500k ARR commitment.",
+    },
+  });
+
+  await prisma.crmAccount.upsert({
+    where: { id: ACC_APEX },
+    update: {},
+    create: {
+      id: ACC_APEX,
+      tenantId: T_A,
+      name: "Apex Logistics & Supply",
+      industry: "Supply Chain & Logistics",
+      status: "active",
+      clientTier: "standard",
+      ownerId: EMP_A_ADMIN,
+    },
+  });
+
+  await prisma.crmAccount.upsert({
+    where: { id: ACC_VANGUARD },
+    update: {},
+    create: {
+      id: ACC_VANGUARD,
+      tenantId: T_A,
+      name: "Vanguard Health Systems",
+      industry: "Healthcare Provider",
+      status: "active",
+      clientTier: "strategic",
+      ownerId: EMP_A_SBU_HEAD,
+    },
+  });
+
+  const OPP_1 = "00000000-0000-4000-8000-000000000c01";
+  const OPP_2 = "00000000-0000-4000-8000-000000000c02";
+
+  await prisma.crmOpportunity.upsert({
+    where: { id: OPP_1 },
+    update: {},
+    create: {
+      id: OPP_1,
+      tenantId: T_A,
+      accountId: ACC_NEXUS,
+      name: "Core Banking Cloud Modernization",
+      stage: "negotiation",
+      amountCents: 45000000n, // $450,000
+      currency: "USD",
+      probability: 85,
+      forecastCategory: "commit",
+      ownerId: EMP_A_ADMIN,
+      expectedCloseDate: new Date("2026-12-15T00:00:00Z"),
+    },
+  });
+
+  await prisma.crmOpportunity.upsert({
+    where: { id: OPP_2 },
+    update: {},
+    create: {
+      id: OPP_2,
+      tenantId: T_A,
+      accountId: ACC_APEX,
+      name: "Fleet Realtime Telemetry Platform",
+      stage: "proposal",
+      amountCents: 28000000n, // $280,000
+      currency: "USD",
+      probability: 60,
+      forecastCategory: "pipeline",
+      ownerId: EMP_A_DIR,
+      expectedCloseDate: new Date("2027-01-30T00:00:00Z"),
+    },
+  });
+
+  // 7. Projects, Milestones & Tickets
+  console.log("Seeding Projects, Milestones & Work Tickets...");
+  const PROJ_APOLLO = "00000000-0000-4000-8000-000000000b01";
+  const PROJ_TITAN = "00000000-0000-4000-8000-000000000b02";
+
+  await prisma.project.upsert({
+    where: { id: PROJ_APOLLO },
+    update: {},
+    create: {
+      id: PROJ_APOLLO,
+      tenantId: T_A,
+      name: "Project Apollo — NextGen Cloud Native Platform",
+      code: "APOLLO",
+      accountId: ACC_NEXUS,
+      ownerId: EMP_A_DIR,
+      deliveryLeadId: EMP_A_LEAD1,
+      startDate: new Date("2026-08-01T00:00:00Z"),
+      endDate: new Date("2027-04-30T00:00:00Z"),
+      budgetCents: 50000000n, // $500,000
+      status: "active",
+      description: "High-throughput cloud architecture delivering 99.999% uptime with sub-5ms API latency.",
+    },
+  });
+
+  await prisma.project.upsert({
+    where: { id: PROJ_TITAN },
+    update: {},
+    create: {
+      id: PROJ_TITAN,
+      tenantId: T_A,
+      name: "Project Titan — Core Banking & ISO 20022 Payments",
+      code: "TITAN",
+      accountId: ACC_APEX,
+      ownerId: EMP_A_DIR,
+      deliveryLeadId: EMP_A_LEAD2,
+      startDate: new Date("2026-09-01T00:00:00Z"),
+      endDate: new Date("2027-03-31T00:00:00Z"),
+      budgetCents: 35000000n, // $350,000
+      status: "active",
+    },
+  });
+
+  // Milestones
+  const MILE_A1 = "00000000-0000-4000-8000-000000000b11";
+  const MILE_A2 = "00000000-0000-4000-8000-000000000b12";
+
+  await prisma.projectMilestone.upsert({
+    where: { id: MILE_A1 },
+    update: {},
+    create: {
+      id: MILE_A1,
+      tenantId: T_A,
+      projectId: PROJ_APOLLO,
+      name: "Phase 1: Architecture Baseline & Zero-Trust Auth",
+      dueDate: new Date("2026-10-31T00:00:00Z"),
+      status: "completed",
+    },
+  });
+
+  await prisma.projectMilestone.upsert({
+    where: { id: MILE_A2 },
+    update: {},
+    create: {
+      id: MILE_A2,
+      tenantId: T_A,
+      projectId: PROJ_APOLLO,
+      name: "Phase 2: Multi-Region High Availability & Sharding",
+      dueDate: new Date("2026-12-15T00:00:00Z"),
+      status: "in_progress",
+    },
+  });
+
+  // Tickets
+  const tickets = [
+    { id: "00000000-0000-4000-8000-000000000701", proj: PROJ_APOLLO, title: "Implement distributed tracing with OpenTelemetry", type: "feature", prio: "high", status: "in_progress", assignee: EMP_A_DEV1 },
+    { id: "00000000-0000-4000-8000-000000000702", proj: PROJ_APOLLO, title: "Resolve race condition in payment idempotency token validation", type: "bug", prio: "critical", status: "in_review", assignee: EMP_A_LEAD1 },
+    { id: "00000000-0000-4000-8000-000000000703", proj: PROJ_APOLLO, title: "Implement accessible high-contrast UI component tokens", type: "task", prio: "medium", status: "resolved", assignee: EMP_A_DEV2 },
+    { id: "00000000-0000-4000-8000-000000000704", proj: PROJ_TITAN, title: "Automate zero-downtime Canary deployment pipelines", type: "feature", prio: "high", status: "open", assignee: EMP_A_DEV3 },
+    { id: "00000000-0000-4000-8000-000000000705", proj: PROJ_TITAN, title: "End-to-end load testing under 15,000 req/sec peak load", type: "task", prio: "high", status: "in_progress", assignee: EMP_A_QA },
+  ];
+
+  for (const t of tickets) {
+    await prisma.ticket.upsert({
+      where: { id: t.id },
+      update: { title: t.title, status: t.status },
+      create: {
+        id: t.id,
+        tenantId: T_A,
+        projectId: t.proj,
+        title: t.title,
+        type: t.type,
+        priority: t.prio,
+        status: t.status,
+        assigneeId: t.assignee,
+        reporterId: EMP_A_DIR,
+      },
+    });
+  }
+
+  // 8. Leave Management
+  console.log("Seeding Leave Types & Balances...");
+  const leaveTypes = [
+    { code: "ANNUAL", name: "Annual Vacation", allowance: 24, paid: true },
+    { code: "SICK", name: "Sick & Medical Leave", allowance: 12, paid: true },
+    { code: "CASUAL", name: "Casual Personal Leave", allowance: 6, paid: true },
+    { code: "PARENTAL", name: "Parental Leave", allowance: 90, paid: true },
+  ];
+
+  const leaveTypeMap = {};
+  for (const lt of leaveTypes) {
+    const record = await prisma.leaveType.upsert({
+      where: {
+        tenantId_code: { tenantId: T_A, code: lt.code },
+      },
+      update: { annualAllowance: lt.allowance },
+      create: {
+        tenantId: T_A,
+        code: lt.code,
+        name: lt.name,
+        annualAllowance: lt.allowance,
+        isPaid: lt.paid,
+        active: true,
+      },
+    });
+    leaveTypeMap[lt.code] = record.id;
+  }
+
+  // Balance for Admin and Leads
+  await prisma.leaveBalance.upsert({
+    where: {
+      tenantId_employeeId_leaveTypeId_year: {
+        tenantId: T_A,
+        employeeId: EMP_A_ADMIN,
+        leaveTypeId: leaveTypeMap["ANNUAL"],
+        year: 2026,
+      },
+    },
+    update: {},
+    create: {
+      tenantId: T_A,
+      employeeId: EMP_A_ADMIN,
+      leaveTypeId: leaveTypeMap["ANNUAL"],
+      year: 2026,
+      allocatedDays: 24,
+      usedDays: 4,
+      pendingDays: 2,
+    },
+  });
+
+  await prisma.leaveRequest.upsert({
+    where: { id: "00000000-0000-4000-8000-000000000101" },
+    update: {},
+    create: {
+      id: "00000000-0000-4000-8000-000000000101",
+      tenantId: T_A,
+      employeeId: EMP_A_DEV1,
+      leaveTypeId: leaveTypeMap["ANNUAL"],
+      startDate: new Date("2026-11-20T00:00:00Z"),
+      endDate: new Date("2026-11-22T00:00:00Z"),
+      daysCount: 3,
+      reason: "Family wedding and travel",
+      status: "pending",
+    },
+  });
+
+  // 9. Finance Invoices & Receivables
+  console.log("Seeding Finance Invoices & Receivables...");
+  const INV_1 = "00000000-0000-4000-8000-000000000111";
+  const INV_2 = "00000000-0000-4000-8000-000000000112";
+
+  await prisma.invoice.upsert({
+    where: { id: INV_1 },
+    update: {},
+    create: {
+      id: INV_1,
+      tenantId: T_A,
+      number: "INV-2026-001",
+      accountId: ACC_NEXUS,
+      projectId: PROJ_APOLLO,
+      status: "issued",
+      currency: "USD",
+      subtotalCents: 12500000n, // $125,000
+      taxCents: 1000000n, // $10,000
+      totalCents: 13500000n, // $135,000
+      issuedOn: new Date("2026-10-15T00:00:00Z"),
+      dueOn: new Date("2026-11-15T00:00:00Z"),
+      paymentTermsDays: 30,
+    },
+  });
+
+  await prisma.invoiceLine.upsert({
+    where: {
+      invoiceId_lineNumber: { invoiceId: INV_1, lineNumber: 1 },
+    },
+    update: {},
+    create: {
+      tenantId: T_A,
+      invoiceId: INV_1,
+      lineNumber: 1,
+      description: "Project Apollo Phase 1 Engineering Deliverables & Cloud Setup",
+      quantity: 1,
+      unitPriceCents: 12500000n,
+      amountCents: 12500000n,
+      projectId: PROJ_APOLLO,
+    },
+  });
+
+  await prisma.receivable.upsert({
+    where: { invoiceId: INV_1 },
+    update: {},
+    create: {
+      tenantId: T_A,
+      invoiceId: INV_1,
+      originalAmountCents: 13500000n,
+      paidAmountCents: 0n,
+      outstandingCents: 13500000n,
+      currency: "USD",
+      status: "open",
+      dueOn: new Date("2026-11-15T00:00:00Z"),
+    },
+  });
+
+  await prisma.invoice.upsert({
+    where: { id: INV_2 },
+    update: {},
+    create: {
+      id: INV_2,
+      tenantId: T_A,
+      number: "INV-2026-002",
+      accountId: ACC_APEX,
+      projectId: PROJ_TITAN,
+      status: "paid",
+      currency: "USD",
+      subtotalCents: 7500000n,
+      taxCents: 600000n,
+      totalCents: 8100000n,
+      issuedOn: new Date("2026-09-01T00:00:00Z"),
+      dueOn: new Date("2026-10-01T00:00:00Z"),
+      paymentTermsDays: 30,
+    },
+  });
+
+  // 10. Documents Repository
+  console.log("Seeding Document Management System...");
+  const DOC_1 = "00000000-0000-4000-8000-000000000d01";
+  const DOC_2 = "00000000-0000-4000-8000-000000000d02";
+
+  await prisma.document.upsert({
+    where: { id: DOC_1 },
+    update: {},
+    create: {
+      id: DOC_1,
+      tenantId: T_A,
+      ownerService: "compliance",
+      category: "policy",
+      fileName: "Acme_Enterprise_ISO27001_Information_Security_Standard.pdf",
+      mimeType: "application/pdf",
+      fileSizeBytes: 2458392,
+      checksumSha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      storageKey: "compliance/iso27001-v2026.pdf",
+      uploaderUserId: USER_A_ADMIN,
+      visibility: "internal",
+      verificationStatus: "verified",
+      verifiedBy: USER_A_ADMIN,
+      verifiedAt: new Date(),
+    },
+  });
+
+  await prisma.document.upsert({
+    where: { id: DOC_2 },
+    update: {},
+    create: {
+      id: DOC_2,
+      tenantId: T_A,
+      ownerService: "finance",
+      category: "contract",
+      fileName: "Nexus_Global_Master_Services_Agreement_2026_Executed.pdf",
+      mimeType: "application/pdf",
+      fileSizeBytes: 5821034,
+      checksumSha256: "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      storageKey: "contracts/nexus-msa-2026.pdf",
+      uploaderUserId: USER_A_ADMIN,
+      visibility: "confidential",
+      verificationStatus: "verified",
+      verifiedBy: USER_A_ADMIN,
+      verifiedAt: new Date(),
+    },
+  });
+
+  // 11. Calendar & Meetings
+  console.log("Seeding Calendar Events & Structured Meeting Decisions...");
+  const EVT_1 = "00000000-0000-4000-8000-000000000e01";
+  const EVT_2 = "00000000-0000-4000-8000-000000000e02";
+
+  await prisma.calendarEvent.upsert({
+    where: { id: EVT_1 },
+    update: {},
+    create: {
+      id: EVT_1,
+      tenantId: T_A,
+      title: "Q4 Strategic SBU Executive Review & Financial Projections",
+      description: "Quarterly review of revenue forecasts, project health indicators, and workforce capacity.",
+      eventType: "review",
+      startTime: new Date("2026-11-15T14:00:00Z"),
+      endTime: new Date("2026-11-15T16:00:00Z"),
+      allDay: false,
+      location: "Executive Boardroom A & Google Meet",
+      status: "scheduled",
+      organizerId: USER_A_ADMIN,
+      capacity: 25,
+      relatedType: "project",
+      relatedId: PROJ_APOLLO,
+    },
+  });
+
+  await prisma.eventAttendee.upsert({
+    where: {
+      tenantId_eventId_userId: {
+        tenantId: T_A,
+        eventId: EVT_1,
+        userId: USER_A_ADMIN,
+      },
+    },
+    update: {},
+    create: {
+      tenantId: T_A,
+      eventId: EVT_1,
+      userId: USER_A_ADMIN,
+      status: "accepted",
+    },
+  });
+
+  await prisma.eventAttendee.upsert({
+    where: {
+      tenantId_eventId_userId: {
+        tenantId: T_A,
+        eventId: EVT_1,
+        userId: USER_A_SBU_HEAD,
+      },
+    },
+    update: {},
+    create: {
+      tenantId: T_A,
+      eventId: EVT_1,
+      userId: USER_A_SBU_HEAD,
+      status: "accepted",
+    },
+  });
+
+  await prisma.meetingNote.upsert({
+    where: { eventId: EVT_1 },
+    update: {},
+    create: {
+      tenantId: T_A,
+      eventId: EVT_1,
+      agenda: "1. Revenue Pipeline Review\n2. Project Apollo Delivery Timeline\n3. Q1 2027 Headcount Approvals",
+      notes: "The leadership team confirmed that Project Apollo is tracking 2 weeks ahead of schedule.",
+      decisions: [
+        { id: "DEC-01", description: "Approved $150,000 additional budget allocation for multi-cloud infrastructure.", approvedBy: "Sarah Jenkins" },
+        { id: "DEC-02", description: "Promote Priya Sharma to Lead QA Architect effective Dec 1.", approvedBy: "Marcus Vance" }
+      ],
+      actionItems: [
+        { id: "ACT-01", task: "Submit ISO 20022 certification readiness audit to Nexus Global", assignee: "Jordan Hayes", dueDate: "2026-11-25" },
+        { id: "ACT-02", task: "Finalize load testing benchmark documentation", assignee: "Elena Rostova", dueDate: "2026-11-30" }
+      ],
+      createdBy: USER_A_ADMIN,
+    },
+  });
+
+  await prisma.calendarEvent.upsert({
+    where: { id: EVT_2 },
+    update: {},
+    create: {
+      id: EVT_2,
+      tenantId: T_A,
+      title: "Sprint 42 Architecture & Production Readiness Sync",
+      description: "Bi-weekly engineering sync to review open high-priority bugs and release gates.",
+      eventType: "meeting",
+      startTime: new Date("2026-11-18T10:00:00Z"),
+      endTime: new Date("2026-11-18T11:00:00Z"),
+      status: "scheduled",
+      organizerId: USER_A_LEAD1,
+      capacity: 15,
+    },
+  });
+
+  console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
+  console.log(`
+Summary of Seeded Data:
+- Tenant A: Acme Global Enterprise (acme.opsengine.enterprise) - Enterprise Tier (500 seats)
+  - 10 Employees across 5 Teams with Full Manager Reporting Hierarchy
+  - 3 CRM Client Accounts ($1.5M+ total pipeline) & 2 Active Opportunities
+  - 2 High-Visibility Projects (Apollo & Titan), 2 Milestones, 5 Sprint Tickets
+  - Complete Leave Management System (4 Leave Types, Allocations, Pending Requests)
+  - Finance Billing System (Invoices INV-2026-001 & 002, Line Items, Receivables, Payments)
+  - Verified Document Repository with SHA-256 Checksums
+  - Calendar Events with Attendees, Live Notes, Decisions, and Action Items
+  - 45+ Granular Permission Grants for Superadmin (Alex Mercer)
+- Tenant B: Starlight Global Technologies (starlight.opsengine.enterprise) - Professional Tier (50 seats)
+  - Isolated Teams, Users & Employees with Zero Cross-Tenant Leakage
+`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("Seed error:", e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
