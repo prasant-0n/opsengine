@@ -1,17 +1,55 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "NEXTAUTH_SECRET",
+    "NEXT_PUBLIC_APP_URL",
+    "NODE_ENV",
+    "CI",
+    "AWS_SES_REGION",
+    "AWS_SES_ACCESS_KEY_ID",
+    "AWS_SES_SECRET_ACCESS_KEY",
+    "AWS_SES_FROM_EMAIL",
+    "CLOUDFLARE_R2_ACCOUNT_ID",
+    "CLOUDFLARE_R2_ACCESS_KEY_ID",
+    "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
+    "CLOUDFLARE_R2_BUCKET_NAME",
+    "CLOUDFLARE_R2_PUBLIC_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "build/**"]
+      "outputs": [".next/**", "dist/**", "build/**"],
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "NEXTAUTH_SECRET",
+        "NEXT_PUBLIC_APP_URL",
+        "NODE_ENV"
+      ]
     },
     "lint": {},
     "typecheck": {},
-    "test": {},
+    "test": {
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "NEXTAUTH_SECRET",
+        "NEXT_PUBLIC_APP_URL",
+        "CI",
+        "NODE_ENV"
+      ]
+    },
     "dev": {
       "cache": false
     },
-    "db:migrate": {}
+    "db:migrate": {
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "DIRECT_URL"
+      ]
+    }
   },
   "globalDependencies": [
     ".env*"

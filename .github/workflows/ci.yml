@@ -89,6 +89,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure Environment Files
+        run: |
+          echo "DATABASE_URL=${{ env.DATABASE_URL }}" > .env
+          echo "DIRECT_URL=${{ env.DIRECT_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_APP_URL=${{ env.NEXT_PUBLIC_APP_URL }}" >> .env
+          cp .env apps/web/.env
+          cp .env services/identity-service/.env
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
@@ -131,6 +140,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Configure Environment Files
+        run: |
+          echo "DATABASE_URL=${{ env.DATABASE_URL }}" > .env
+          echo "DIRECT_URL=${{ env.DIRECT_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_APP_URL=${{ env.NEXT_PUBLIC_APP_URL }}" >> .env
+          cp .env apps/web/.env
+          cp .env services/identity-service/.env
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -185,6 +203,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Configure Environment Files
+        run: |
+          echo "DATABASE_URL=${{ env.DATABASE_URL }}" > .env
+          echo "DIRECT_URL=${{ env.DIRECT_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_APP_URL=${{ env.NEXT_PUBLIC_APP_URL }}" >> .env
+          cp .env apps/web/.env
+          cp .env services/identity-service/.env
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

@@ -23,6 +23,6 @@ export default defineConfig({
     command: "pnpm dev --port 3001",
     url: "http://localhost:3001",
     reuseExistingServer: true,
-    timeout: 30000,
+    timeout: 60000,
   },
 });
