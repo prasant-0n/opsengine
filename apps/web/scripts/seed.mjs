@@ -265,7 +265,7 @@ async function main() {
     "onboarding.convert_employee", "assistant.use", "assistant.manage", "leave.request.create", "leave.request.read_self",
     "leave.request.read_team", "leave.request.approve", "leave.balance.read_self", "leave.balance.read_team",
     "leave.balance.adjust", "leave.type.manage", "time.attendance.read_team", "time.attendance.correct_approve",
-    "org.manage_roles", "org.manage_employees", "document.read", "document.upload", "document.verify",
+    "org.read_directory", "org.manage_roles", "org.manage_employees", "document.read", "document.upload", "document.verify",
     "document.delete", "calendar.event.read", "calendar.event.create", "calendar.event.update", "calendar.event.delete",
     "meeting.note.manage", "control_plane.read", "control_plane.manage", "crm.account.read", "crm.account.manage",
     "project.read", "project.manage", "finance.invoice.read", "finance.invoice.manage", "report.read"
