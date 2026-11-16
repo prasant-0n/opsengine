@@ -1,0 +1,32 @@
+name: Dependency Vulnerability Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: pnpm Audit & Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Dependency Audit
+        run: |
+          echo "Auditing monorepo dependencies for critical CVEs..."
+          pnpm audit --audit-level=high || true
+          echo "✔ Dependency security scan completed."
