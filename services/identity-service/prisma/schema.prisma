@@ -1468,6 +1468,95 @@ model ExpenseReceipt {
   @@map("expense_receipts")
 }
 
+// ---------- Feature #40: Statutory Payroll, Taxes & Payslips (Module 5 & §18.7 Line 1315) ----------
+
+model SalaryStructure {
+  id                 String   @id @default(uuid()) @db.Uuid
+  tenantId           String   @db.Uuid @map("tenant_id")
+  employeeId         String   @db.Uuid @map("employee_id")
+  effectiveFrom      DateTime @db.Date @map("effective_from")
+  currency           String   @default("USD")
+  basicCents         BigInt   @default(0) @db.BigInt @map("basic_cents")
+  hraCents           BigInt   @default(0) @db.BigInt @map("hra_cents")
+  allowanceCents     BigInt   @default(0) @db.BigInt @map("allowance_cents")
+  pfEmployeeCents    BigInt   @default(0) @db.BigInt @map("pf_employee_cents")
+  pfEmployerCents    BigInt   @default(0) @db.BigInt @map("pf_employer_cents")
+  taxTdsCents        BigInt   @default(0) @db.BigInt @map("tax_tds_cents")
+  paymentMethod      String   @default("bank_transfer") @map("payment_method") // bank_transfer | check
+  bankName           String?  @map("bank_name")
+  bankAccountNumber  String?  @map("bank_account_number")
+  bankRoutingCode    String?  @map("bank_routing_code")
+  status             String   @default("active") // active | archived
+  createdAt          DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, employeeId, effectiveFrom], map: "uq_salary_struct_tenant_emp_effective")
+  @@index([tenantId, employeeId, status], map: "idx_salary_struct_tenant_emp_status")
+  @@map("salary_structures")
+}
+
+model PayrollRun {
+  id                   String    @id @default(uuid()) @db.Uuid
+  tenantId             String    @db.Uuid @map("tenant_id")
+  runNumber            String    @map("run_number") // e.g. PR-2026-11
+  periodYear           Int       @map("period_year")
+  periodMonth          Int       @map("period_month") // 1 - 12
+  periodStart          DateTime  @db.Date @map("period_start")
+  periodEnd            DateTime  @db.Date @map("period_end")
+  status               String    @default("draft") // draft | calculated | approved | disbursed | cancelled
+  totalGrossCents      BigInt    @default(0) @db.BigInt @map("total_gross_cents")
+  totalDeductionsCents BigInt    @default(0) @db.BigInt @map("total_deductions_cents")
+  totalNetCents        BigInt    @default(0) @db.BigInt @map("total_net_cents")
+  totalEmployees       Int       @default(0) @map("total_employees")
+  executedBy           String    @db.Uuid @map("executed_by")
+  approvedBy           String?   @db.Uuid @map("approved_by")
+  approvedAt           DateTime? @db.Timestamptz(6) @map("approved_at")
+  disbursedAt          DateTime? @db.Timestamptz(6) @map("disbursed_at")
+  batchExportRef       String?   @map("batch_export_ref")
+  createdAt            DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt            DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, periodYear, periodMonth], map: "uq_payroll_run_tenant_year_month")
+  @@index([tenantId, status], map: "idx_payroll_run_tenant_status")
+  @@map("payroll_runs")
+}
+
+model Payslip {
+  id                   String    @id @default(uuid()) @db.Uuid
+  tenantId             String    @db.Uuid @map("tenant_id")
+  payrollRunId         String    @db.Uuid @map("payroll_run_id")
+  employeeId           String    @db.Uuid @map("employee_id")
+  payslipNumber        String    @map("payslip_number") // e.g. PAY-202611-0001
+  periodYear           Int       @map("period_year")
+  periodMonth          Int       @map("period_month")
+  workingDays          Int       @default(30) @map("working_days")
+  workedDays           Float     @default(30) @map("worked_days")
+  unpaidLeaveDays      Float     @default(0) @map("unpaid_leave_days")
+  basicCents           BigInt    @default(0) @db.BigInt @map("basic_cents")
+  hraCents             BigInt    @default(0) @db.BigInt @map("hra_cents")
+  allowancesCents      BigInt    @default(0) @db.BigInt @map("allowances_cents")
+  grossPayCents        BigInt    @default(0) @db.BigInt @map("gross_pay_cents")
+  pfEmployeeCents      BigInt    @default(0) @db.BigInt @map("pf_employee_cents")
+  pfEmployerCents      BigInt    @default(0) @db.BigInt @map("pf_employer_cents")
+  taxTdsCents          BigInt    @default(0) @db.BigInt @map("tax_tds_cents")
+  lopDeductionCents    BigInt    @default(0) @db.BigInt @map("lop_deduction_cents")
+  totalDeductionsCents BigInt    @default(0) @db.BigInt @map("total_deductions_cents")
+  netPayCents          BigInt    @default(0) @db.BigInt @map("net_pay_cents")
+  currency             String    @default("USD")
+  checksumSha256       String    @map("checksum_sha256")
+  status               String    @default("draft") // draft | generated | published | paid
+  paymentReference     String?   @map("payment_reference")
+  paidAt               DateTime? @db.Timestamptz(6) @map("paid_at")
+  createdAt            DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt            DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, payrollRunId, employeeId], map: "uq_payslip_tenant_run_emp")
+  @@unique([tenantId, payslipNumber], map: "uq_payslip_tenant_number")
+  @@index([tenantId, employeeId, periodYear, periodMonth], map: "idx_payslip_tenant_emp_period")
+  @@index([tenantId, status], map: "idx_payslip_tenant_status")
+  @@map("payslips")
+}
+
 
 
 
