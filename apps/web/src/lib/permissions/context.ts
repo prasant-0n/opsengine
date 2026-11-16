@@ -12,7 +12,8 @@ export type ScopeType =
   | "PROJECT"
   | "GROUP"
   | "ASSIGNED_CASE"
-  | "TENANT";
+  | "TENANT"
+  | "ACCOUNT";
 
 export interface PermissionEntry {
   key: string;

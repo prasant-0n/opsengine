@@ -1,7 +1,7 @@
 # OpsEngine — Enterprise Operations Platform (SaaS CRM + HRMS + Workforce)
 
 [![CI Pipeline](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml/badge.svg)](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml)
-[![Tests Passing](https://img.shields.io/badge/tests-375%2F375%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
+[![Tests Passing](https://img.shields.io/badge/tests-388%2F388%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0%20App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.3-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -125,6 +125,13 @@ OpsEngine runs on **Path 1: Modern Serverless Cloud Mesh**, delivering enterpris
 - **Deterministic AI Guardrails**: Strict multi-tenant sandboxed retrieval, prompt injection defense, and automated PII redaction.
 - **Human Confirmation Pipeline**: Critical operational actions (project creation, financial adjustments, user transfers) are emitted as proposals requiring explicit human confirmation. The AI assistant **cannot self-approve** any mutating action.
 
+### 7. Customer Self-Service Support Portal & Deliverable Sign-Off
+- **Account-Scoped Client Access**: Dedicated customer collaboration portal (`/portal`) restricted strictly to authenticated client account contacts with multi-tenant ReBAC isolation.
+- **Support Desk & SLA Engine**: Bug, incident, and service request tracking with automated priority-driven SLA targets (Urgent: 1h/4h, High: 4h/12h, Medium: 8h/24h, Low: 24h/72h).
+- **Anti-Leakage Comment Separation**: Multi-layered server-side filtration guaranteeing internal employee deliberations (`isInternal: true`) are never leaked to external client API responses.
+- **Milestone Deliverable Review & Digital Sign-Off**: Deliverable artifact inspection and legal acceptance sign-off with SHA-256 tamper-evident digital signatures and audit evidence.
+- **Client Invoices & Online Settlement**: Direct billing visibility with one-click payment checkout links powered by the integrated payment gateway.
+
 ---
 
 ## Monorepo Structure
@@ -143,7 +150,7 @@ opsengine/
 │           ├── components/            # Reusable UI & Shell primitives
 │           ├── features/              # Vertical domain slices (HRMS, CRM, Finance)
 │           ├── lib/                   # Infrastructure clients (Prisma, R2, Webhooks, Telemetry)
-│           └── tests/                 # 36 Vitest unit & ReBAC test suites (375 tests)
+│           └── tests/                 # 37 Vitest unit & ReBAC test suites (388 tests)
 ├── packages/
 │   ├── api-contracts/                 # Shared TypeScript DTOs, schemas & env contracts
 │   ├── authorization-policy/          # ReBAC policy engine contracts
@@ -270,7 +277,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
   ├── PostgreSQL 16 Alpine Service Container
   ├── Prisma Migration Deployment (Direct Connection)
   ├── Enterprise Multi-Tenant Baseline Seed
-  └── 36 Vitest Suites (375/375 Unit, ReBAC & Negative Tests Passing)
+  └── 37 Vitest Suites (388/388 Unit, ReBAC & Negative Tests Passing)
         |
         v
   Stage 3: Standalone Production Build
@@ -287,7 +294,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
 ### Running Tests Locally
 
 ```bash
-# Run all 36 Vitest test suites (375 tests)
+# Run all 37 Vitest test suites (388 tests)
 pnpm test
 
 # Run TypeScript type checking across all 6 monorepo packages

@@ -268,7 +268,8 @@ async function main() {
     "org.read_directory", "org.manage_roles", "org.manage_employees", "document.read", "document.upload", "document.verify",
     "document.delete", "calendar.event.read", "calendar.event.create", "calendar.event.update", "calendar.event.delete",
     "meeting.note.manage", "control_plane.read", "control_plane.manage", "crm.account.read", "crm.account.manage",
-    "project.read", "project.manage", "finance.invoice.read", "finance.invoice.manage", "report.read"
+    "project.read", "project.manage", "finance.invoice.read", "finance.invoice.manage", "report.read",
+    "portal.ticket.read", "portal.ticket.create", "portal.ticket.comment", "portal.deliverable.read", "portal.deliverable.signoff", "portal.invoice.read"
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];
@@ -761,6 +762,90 @@ async function main() {
       status: "scheduled",
       organizerId: USER_A_LEAD1,
       capacity: 15,
+    },
+  });
+
+  // ---- Feature #38: Customer Self-Service Support Portal Seed ----
+  console.log("Seeding Customer Portal Contacts, Deliverables & Tickets...");
+  const CONTACT_JANE = "00000000-0000-4000-8000-00000000c001";
+  await prisma.crmContact.upsert({
+    where: { id: CONTACT_JANE },
+    update: {},
+    create: {
+      id: CONTACT_JANE,
+      tenantId: T_A,
+      accountId: ACC_NEXUS,
+      fullName: "Jane Doe",
+      email: "jane.nexus@nexusglobal.com",
+      title: "VP of Technology",
+      isPrimary: true,
+    },
+  });
+
+  const DELIV_1 = "00000000-0000-4000-8000-00000000d001";
+  await prisma.clientDeliverable.upsert({
+    where: { id: DELIV_1 },
+    update: {},
+    create: {
+      id: DELIV_1,
+      tenantId: T_A,
+      projectId: PROJ_APOLLO,
+      accountId: ACC_NEXUS,
+      title: "Sprint 42 Architecture Blueprint & Production Readiness Package",
+      description: "End-to-end architectural specifications, OpenAPI schemas, and disaster recovery runbook.",
+      deliverableUrl: "https://opsengine.cloud/artifacts/sprint-42-spec.pdf",
+      status: "pending_review",
+    },
+  });
+
+  const PORTAL_TICKET_1 = "00000000-0000-4000-8000-00000000fa01";
+  await prisma.ticket.upsert({
+    where: { id: PORTAL_TICKET_1 },
+    update: {},
+    create: {
+      id: PORTAL_TICKET_1,
+      tenantId: T_A,
+      accountId: ACC_NEXUS,
+      projectId: PROJ_APOLLO,
+      title: "Production Webhook Delivery Retries Delayed",
+      description: "Webhook retries are experiencing longer backoff intervals than expected during peak batch hours.",
+      type: "incident",
+      priority: "urgent",
+      status: "in_progress",
+      reporterId: USER_A_ADMIN,
+      slaDueAt: new Date(Date.now() + 4 * 3600 * 1000), // 4 hours remaining
+    },
+  });
+
+  const COMMENT_PUB = "00000000-0000-4000-8000-00000000ca01";
+  await prisma.ticketComment.upsert({
+    where: { id: COMMENT_PUB },
+    update: {},
+    create: {
+      id: COMMENT_PUB,
+      tenantId: T_A,
+      ticketId: PORTAL_TICKET_1,
+      authorId: USER_A_ADMIN,
+      authorType: "staff",
+      authorName: "Alex Mercer",
+      body: "We have acknowledged the incident and our core platform team is currently monitoring DLQ throughput.",
+      isInternal: false,
+    },
+  });
+
+  const COMMENT_INT = "00000000-0000-4000-8000-00000000ca02";
+  await prisma.ticketComment.upsert({
+    where: { id: COMMENT_INT },
+    update: {},
+    create: {
+      id: COMMENT_INT,
+      tenantId: T_A,
+      ticketId: PORTAL_TICKET_1,
+      authorId: USER_A_ADMIN,
+      authorType: "staff",
+      authorName: "Alex Mercer",
+      body: "Internal Note: Rate limit on third-party webhook receiver caused exponential backoff to spike. Do not disclose receiver endpoint.",
+      isInternal: true,
     },
   });
 
