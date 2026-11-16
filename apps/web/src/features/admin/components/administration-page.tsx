@@ -20,7 +20,9 @@ import {
   AlertCircle,
   Code2,
   Radio,
+  Webhook,
 } from "lucide-react";
+import { WebhooksManagement } from "./webhooks-management";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -104,7 +106,7 @@ interface UserItem {
 }
 
 export function AdministrationPage() {
-  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users" | "api" | "events">("workspace");
+  const [activeTab, setActiveTab] = useState<"workspace" | "roles" | "teams" | "users" | "api" | "events" | "webhooks">("workspace");
 
   // State: Outbox & Domain Events
   const [outboxData, setOutboxData] = useState<{
@@ -612,6 +614,18 @@ export function AdministrationPage() {
         >
           <Radio className="w-4 h-4" />
           <span>Events & Outbox</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("webhooks")}
+          className={`flex items-center gap-2 px-4 py-2.5 font-medium text-sm transition-colors border-b-2 -mb-px ${
+            activeTab === "webhooks"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Webhook className="w-4 h-4" />
+          <span>Webhooks & DLQ</span>
         </button>
       </div>
 
@@ -1302,6 +1316,11 @@ export function AdministrationPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Tab 7: Outbound Webhooks & DLQ */}
+      {activeTab === "webhooks" && (
+        <WebhooksManagement tenantId={workspace?.tenantId || "00000000-0000-4000-8000-0000000000aa"} />
       )}
 
       {/* Modal: Grant Role */}
