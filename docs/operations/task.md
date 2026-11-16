@@ -50,13 +50,15 @@ Every feature goes through these stages in order. Do not skip stages.
 33. Cryptographic Audit Trail Verification & Tamper-Evident Hash Chaining (PRD Module 16 & §14.3 complete)
 34. Cross-Module Handover Engine & Multi-Service Lifecycle Orchestrator (PRD §6.1, §6.2 & §6.4 complete)
 35. Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline (PRD Module 17 & §14.3 complete)
-36. Outbound Webhook Delivery Engine with HMAC Signatures, Exponential Retries & DLQ (PRD §11, §12.3 & §14.2)
+36. Outbound Webhook Delivery Engine with HMAC Signatures, Exponential Retries & DLQ (PRD §11, §12.3 & §14.2 complete)
+37. Payment Gateway Integration (Stripe & Razorpay Checkout, Webhooks & Automated Reconciliation — PRD Module 12 complete)
+38. Customer Self-Service Support Portal (Client Ticket Submission, Deliverable Approvals & Status Tracking — PRD Module 7 & §18.7)
 
 ## Current Active Feature
-Feature #35 — Agentic AI Assistant Tool Guardrails, Sandboxed Retrieval & Human Confirmation Pipeline: APPROVED 2026-11-10. Evidence: `features/ai-guardrails/approve.md` (Delivered anti-prompt injection scanner, secret & PII redactor, and Sandboxed Tool Registry in apps/web/src/lib/ai-guardrails; pre-retrieval and pre-execution ReBAC enforcement; mandatory Human-in-the-Loop interception for mutating tools with 15-minute expiring Action Proposals; strict hardcoded prohibition of autonomous governance decisions; live Next.js API endpoints /api/ai/chat, /api/ai/proposals/confirm, /api/ai/proposals/reject, and /api/ai/tools; 320/320 Vitest tests passing across 33 suites, 13/13 Playwright E2E tests passing, clean TypeScript compilation, and complete live verification).
+Feature #37 — Payment Gateway Integration: APPROVED 2026-11-16. Evidence: `features/payment-gateway/approve.md` (Delivered multi-gateway checkout session creation for Stripe and Razorpay, cryptographic webhook signature verification with replay attack defense, signed 72-hour client payment links, exactly-once idempotency guard, automated ledger reconciliation with BigInt integer cents, interactive PaymentModal UI in invoice detail, 15/15 new Vitest tests passing, 363/363 total tests across 35 test suites, clean TypeScript compilation, and verified multi-tenant isolation).
 
 ## Next Up
-Feature #36 — Outbound Webhook Delivery Engine with HMAC Signatures, Exponential Retries & DLQ (PRD §11, §12.3 & §14.2).
+Feature #38 — Customer Self-Service Support Portal (Client Ticket Submission, Deliverable Approvals & Status Tracking — PRD Module 7 & §18.7).
 
 ## Rules
 - One bounded context, one vertical slice at a time.
