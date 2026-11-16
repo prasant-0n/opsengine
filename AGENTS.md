@@ -1,13 +1,16 @@
 # AGENTS.md
 
 ## Repository status
-This repo is a fully bootstrapped monorepo with Turborepo, pnpm workspaces, Next.js 16 App Router, React 19, Prisma, PostgreSQL, Docker Compose, Vitest, and Playwright.
-Features #1 through #37 are complete and verified with 363/363 passing unit tests and clean TypeScript compilation.
+This repo is a fully bootstrapped monorepo with Turborepo 2, pnpm workspaces, Next.js 16 App Router, React 19, Prisma, PostgreSQL, Docker Compose, Vitest, and Playwright.
+Features #1 through #37 plus the Zero-Cost Enterprise Cloud DevOps Infrastructure Mesh (Neon, Cloudflare R2, Vercel, GitHub Actions CI/CD & Automated DR Cron) are complete and verified with 375/375 passing unit tests and clean TypeScript compilation.
 Current development state:
-- Web app: Next.js 16 (`apps/web`), accessible on port 3000 locally or port 3002 via Docker.
-- Database: PostgreSQL on port 5436 (Docker mapped `5436:5432`), schema synchronized via Prisma.
+- Web app: Next.js 16 (`apps/web`), accessible on port 3000 locally or port 3002 via Docker, configured for Vercel Hobby serverless deployment.
+- Database: PostgreSQL on port 5436 (Docker mapped `5436:5432`), schema synchronized via Prisma. Prepared for Neon Serverless Postgres with dual pooled (`DATABASE_URL`) and direct (`DIRECT_URL`) connection strings.
+- Object Storage: Cloudflare R2 (`apps/web/src/lib/storage/r2-client.ts`), 100% S3-compatible, zero AWS S3 dependencies, 10 GB free forever with $0 egress bandwidth fees.
 - Seed data: Seeded with multi-tenant showcase (`apps/web/scripts/seed.mjs`).
-- Tests: `pnpm test` (Vitest, 35 suites, 363 tests) and `pnpm test:e2e` (Playwright).
+- Tests: `pnpm test` (Vitest, 36 suites, 375 tests) and `pnpm test:e2e` (Playwright).
+- CI/CD: Multi-stage GitHub Actions pipeline (`.github/workflows/ci.yml`) featuring Gitleaks, Typecheck, DB migrations, Vitest, and Next.js standalone build.
+- Disaster Recovery: Nightly AES-256 encrypted `pg_dump` automated backup cron to Cloudflare R2 (`.github/workflows/db-backup-cron.yml`, `scripts/cloud-backup-r2.sh`).
 
 ## Binding rules from the PRD
 - Do not silently invent business rules, bypass authorization, or claim a feature complete without tests and evidence.
