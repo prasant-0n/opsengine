@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Receipt, Clock, CheckCircle2, DollarSign, AlertCircle, FileText } from "lucide-react";
+import { Plus, Receipt, Clock, CheckCircle2, DollarSign } from "lucide-react";
 
 interface ExpenseListProps {
   reports: any[];

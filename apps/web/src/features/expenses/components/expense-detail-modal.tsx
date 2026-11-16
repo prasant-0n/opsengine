@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, CheckCircle2, XCircle, DollarSign, AlertTriangle, ShieldCheck, FileText } from "lucide-react";
+import { X, CheckCircle2, DollarSign, AlertTriangle, FileText } from "lucide-react";
 
 interface DetailModalProps {
   report: any | null;

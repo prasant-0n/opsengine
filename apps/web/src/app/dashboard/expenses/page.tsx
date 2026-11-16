@@ -110,6 +110,11 @@ export default function ExpensesDashboardPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {loading && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse">
+          <span>Loading expense records...</span>
+        </div>
+      )}
       <ExpenseList
         reports={reports}
         currentView={currentView}

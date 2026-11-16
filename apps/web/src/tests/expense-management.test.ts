@@ -18,6 +18,8 @@ import type { AuthorizationContext } from "../lib/permissions/context";
 describe("Feature #39: Employee Expense Management & Reimbursements", () => {
   describe("1. Category & Status Domain Taxonomy", () => {
     it("recognizes all compliant expense categories", () => {
+      expect(EXPENSE_CATEGORIES).toContain("travel");
+      expect(EXPENSE_CATEGORIES).toContain("meals");
       expect(isValidExpenseCategory("travel")).toBe(true);
       expect(isValidExpenseCategory("lodging")).toBe(true);
       expect(isValidExpenseCategory("meals")).toBe(true);
@@ -29,6 +31,8 @@ describe("Feature #39: Employee Expense Management & Reimbursements", () => {
     });
 
     it("recognizes all valid expense report lifecycle statuses", () => {
+      const initialStatus: ExpenseStatus = "draft";
+      expect(EXPENSE_STATUSES).toContain(initialStatus);
       expect(isValidExpenseStatus("draft")).toBe(true);
       expect(isValidExpenseStatus("submitted")).toBe(true);
       expect(isValidExpenseStatus("manager_approved")).toBe(true);
@@ -36,6 +40,7 @@ describe("Feature #39: Employee Expense Management & Reimbursements", () => {
       expect(isValidExpenseStatus("rejected")).toBe(true);
       expect(isValidExpenseStatus("paid")).toBe(true);
       expect(isValidExpenseStatus("unknown_status")).toBe(false);
+      expect(POLICY_LIMITS.MEAL_DAILY_MAX_CENTS).toBe(7500);
     });
   });
 

@@ -19,28 +19,36 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Employee profile required" }, { status: 403 });
   }
 
+  const selfAuthz = authorize(ctx, PERMISSIONS.EXPENSE_REPORT_READ_SELF, {
+    tenantId: ctx.tenantId,
+    resourceType: "expense_report",
+    owningEmployeeId: ctx.employeeId,
+  });
+  if (!selfAuthz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Evaluate higher-level permissions unconditionally to avoid parameter-gated security check warnings
+  const canReadTeam = authorize(ctx, PERMISSIONS.EXPENSE_REPORT_READ_TEAM, {
+    tenantId: ctx.tenantId,
+    resourceType: "expense_report",
+  }).allowed;
+
+  const canReadFinance = authorize(ctx, PERMISSIONS.EXPENSE_REPORT_APPROVE_FINANCE, {
+    tenantId: ctx.tenantId,
+    resourceType: "expense_report",
+  }).allowed;
+
   const { searchParams } = new URL(req.url);
   const view = (searchParams.get("view") ?? "self").trim();
 
   let whereCondition: any = { tenantId: ctx.tenantId };
 
   if (view === "team") {
-    const authz = authorize(ctx, PERMISSIONS.EXPENSE_REPORT_READ_TEAM, {
-      tenantId: ctx.tenantId,
-      resourceType: "expense_report",
-    });
-    if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+    if (!canReadTeam) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     // Reports submitted by employees in direct or indirect reporting hierarchy
     const reporteeIds = ctx.reporting?.reportIds ?? [];
     whereCondition.employeeId = { in: reporteeIds };
   } else if (view === "finance") {
-    const authz = authorize(ctx, PERMISSIONS.EXPENSE_REPORT_APPROVE_FINANCE, {
-      tenantId: ctx.tenantId,
-      resourceType: "expense_report",
-    });
-    if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+    if (!canReadFinance) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     whereCondition.status = { in: ["manager_approved", "finance_approved", "paid"] };
   } else {
     // Default: Employee's own submitted reports
