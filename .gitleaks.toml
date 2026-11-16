@@ -1,0 +1,16 @@
+# Gitleaks Configuration for OpsEngine
+# Documentation: https://github.com/gitleaks/gitleaks
+
+[allowlist]
+description = "Allowlist for test fixtures and mock signatures in test suites"
+paths = [
+  '''apps/web/src/tests/.*''',
+  '''\.env\.example''',
+  '''apps/web/\.env\.example''',
+  '''docs/.*'''
+]
+regexes = [
+  '''whsec_test_.*''',
+  '''ci-testing-secret-.*''',
+  '''your-.*'''
+]
