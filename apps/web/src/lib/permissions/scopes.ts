@@ -8,6 +8,7 @@ export interface ResourceScope {
   projectId?: string | null;
   assignedEmployeeIds?: string[];
   groupId?: string | null;
+  accountId?: string | null;
 }
 
 // Returns true if the subject's scope entry covers the resource (PRD §3.4.4).
@@ -63,6 +64,11 @@ export function scopeAllows(
     case "ASSIGNED_CASE": {
       if (!resource?.assignedEmployeeIds) return false;
       return resource.assignedEmployeeIds.includes(ctx.employeeId ?? "");
+    }
+
+    case "ACCOUNT": {
+      if (!resource?.accountId) return false;
+      return scopeId ? resource.accountId === scopeId : true;
     }
 
     default:

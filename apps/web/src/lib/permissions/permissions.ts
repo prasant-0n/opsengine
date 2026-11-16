@@ -140,6 +140,13 @@ export const PERMISSIONS = {
   // SaaS Control Plane & Tenant Lifecycle (Module 0A)
   CONTROL_PLANE_READ: "control_plane.read",
   CONTROL_PLANE_MANAGE: "control_plane.manage",
+  // Customer Self-Service Portal (PRD Modules 7, 8, 9 & §18.7)
+  PORTAL_TICKET_READ: "portal.ticket.read",
+  PORTAL_TICKET_CREATE: "portal.ticket.create",
+  PORTAL_TICKET_COMMENT: "portal.ticket.comment",
+  PORTAL_DELIVERABLE_READ: "portal.deliverable.read",
+  PORTAL_DELIVERABLE_SIGNOFF: "portal.deliverable.signoff",
+  PORTAL_INVOICE_READ: "portal.invoice.read",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -459,6 +466,14 @@ export const ROLE_TEMPLATES: Record<
     // Finance (Module 12) — sales sees invoices for owned accounts; may request term approval
     { permissionKey: PERMISSIONS.FINANCE_INVOICE_READ, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.FINANCE_COMMERCIAL_TERMS_APPROVE, scopeType: "TENANT" },
+  ],
+  client: [
+    { permissionKey: PERMISSIONS.PORTAL_TICKET_READ, scopeType: "ACCOUNT" },
+    { permissionKey: PERMISSIONS.PORTAL_TICKET_CREATE, scopeType: "ACCOUNT" },
+    { permissionKey: PERMISSIONS.PORTAL_TICKET_COMMENT, scopeType: "ACCOUNT" },
+    { permissionKey: PERMISSIONS.PORTAL_DELIVERABLE_READ, scopeType: "ACCOUNT" },
+    { permissionKey: PERMISSIONS.PORTAL_DELIVERABLE_SIGNOFF, scopeType: "ACCOUNT" },
+    { permissionKey: PERMISSIONS.PORTAL_INVOICE_READ, scopeType: "ACCOUNT" },
   ],
 };
 

@@ -471,6 +471,7 @@ model Ticket {
   id           String    @id @default(uuid()) @db.Uuid
   tenantId     String    @db.Uuid @map("tenant_id")
   projectId    String?   @db.Uuid @map("project_id")
+  accountId    String?   @db.Uuid @map("account_id")
   title        String
   description  String?   @db.Text
   type         String    @default("task") // bug | feature | task | incident | support
@@ -478,12 +479,14 @@ model Ticket {
   priority     String    @default("medium") // low | medium | high | critical
   assigneeId   String?   @db.Uuid @map("assignee_id")
   reporterId   String?   @db.Uuid @map("reporter_id")
+  slaDueAt     DateTime? @db.Timestamptz(6) @map("sla_due_at")
   closedReason String?   @db.Text @map("closed_reason")
   createdAt    DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
   updatedAt    DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
 
   @@index([tenantId, status, createdAt], map: "idx_ticket_tenant_status_created")
   @@index([tenantId, projectId], map: "idx_ticket_tenant_project")
+  @@index([tenantId, accountId], map: "idx_ticket_tenant_account")
   @@map("tickets")
 }
 
@@ -1350,6 +1353,62 @@ model SupportSession {
   @@index([tenantId, operatorUserId], map: "idx_support_sessions_tenant_operator")
   @@map("support_sessions")
 }
+
+// ---- Feature #38: Customer Self-Service Support Portal & Deliverable Sign-Off ----
+
+model TicketComment {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  ticketId   String   @db.Uuid @map("ticket_id")
+  authorId   String   @db.Uuid @map("author_id")
+  authorType String   @default("staff") @map("author_type") // staff | client
+  authorName String   @map("author_name")
+  body       String   @db.Text
+  isInternal Boolean  @default(false) @map("is_internal") // if true, hidden from customer portal
+  createdAt  DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, ticketId, createdAt], map: "idx_ticket_comment_tenant_ticket")
+  @@map("ticket_comments")
+}
+
+model ClientDeliverable {
+  id             String   @id @default(uuid()) @db.Uuid
+  tenantId       String   @db.Uuid @map("tenant_id")
+  projectId      String   @db.Uuid @map("project_id")
+  milestoneId    String?  @db.Uuid @map("milestone_id")
+  accountId      String   @db.Uuid @map("account_id")
+  title          String
+  description    String?  @db.Text
+  deliverableUrl String?  @map("deliverable_url")
+  status         String   @default("pending_review") // pending_review | approved | changes_requested
+  submittedAt    DateTime @default(now()) @db.Timestamptz(6) @map("submitted_at")
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, accountId, status], map: "idx_client_deliv_tenant_account_status")
+  @@index([tenantId, projectId], map: "idx_client_deliv_tenant_project")
+  @@map("client_deliverables")
+}
+
+model ClientDeliverableSignOff {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @db.Uuid @map("tenant_id")
+  deliverableId String   @db.Uuid @map("deliverable_id")
+  accountId     String   @db.Uuid @map("account_id")
+  contactId     String?  @db.Uuid @map("contact_id")
+  signerName    String   @map("signer_name")
+  signerEmail   String   @map("signer_email")
+  status        String   @default("approved") // approved | changes_requested
+  signatureHash String   @map("signature_hash")
+  feedbackNotes String?  @db.Text @map("feedback_notes")
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  signedAt      DateTime @default(now()) @db.Timestamptz(6) @map("signed_at")
+
+  @@index([tenantId, deliverableId], map: "idx_deliv_signoff_tenant_deliv")
+  @@index([tenantId, accountId], map: "idx_deliv_signoff_tenant_account")
+  @@map("client_deliverable_signoffs")
+}
+
 
 
 
