@@ -193,7 +193,7 @@ describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
     });
 
     it("cross-tenant negative test: rejects authentication when user does not belong to target tenant", async () => {
-      // User A belongs to Tenant A; attempting to sign into Tenant B (Globex) must fail
+      // User A belongs to Tenant A; attempting to sign into Tenant B (Starlight) must fail
       const profile: GoogleProfile = {
         sub: "google-uid-cross-tenant",
         email: "admin@acme.opsengine.enterprise",
@@ -203,7 +203,7 @@ describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
       await expect(
         completeGoogleSSOFlow({
           profile,
-          domain: "globex.opsengine.enterprise", // Tenant B domain
+          domain: "starlight.opsengine.enterprise", // Tenant B domain
         })
       ).rejects.toThrow("USER_NOT_ENROLLED");
     });
