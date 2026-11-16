@@ -1,4 +1,4 @@
-name: CI Quality Gates
+name: OpsEngine Enterprise CI Pipeline
 
 on:
   push:
@@ -10,8 +10,157 @@ permissions:
   contents: read
 
 jobs:
-  verify:
-    name: Lint, Test & E2E Quality Gates
+  # ============================================================================
+  # STAGE 1: Quality, Security & Secret Detection
+  # ============================================================================
+  stage-1-quality-security:
+    name: "Stage 1: Quality & Security Guardrails"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install Monorepo Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd services/identity-service && npx prisma generate
+
+      - name: TypeScript Typecheck (@opsengine/web)
+        run: pnpm --filter @opsengine/web typecheck
+
+      - name: Monorepo Full Typecheck
+        run: pnpm typecheck
+
+  # ============================================================================
+  # STAGE 2: Serverless Database Migrations & Vitest Unit/ReBAC Suites
+  # ============================================================================
+  stage-2-database-testing:
+    name: "Stage 2: Database & Vitest Suites (36+ Suites, 375+ Tests)"
+    needs: [stage-1-quality-security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: opsengine
+          POSTGRES_PASSWORD: opsengine
+          POSTGRES_DB: opsengine_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      DIRECT_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      NEXTAUTH_SECRET: ci-testing-secret-32-chars-long-minimum!
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      AWS_SES_REGION: us-east-1
+      AWS_SES_FROM_EMAIL: noreply@opsengine.enterprise
+      CI: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd services/identity-service && npx prisma generate
+
+      - name: Apply Prisma Migrations (Direct Connection)
+        run: cd services/identity-service && npx prisma migrate deploy
+
+      - name: Seed Database Baseline
+        run: cd apps/web && node scripts/seed.mjs
+
+      - name: Run Vitest Suite (Monorepo All Packages)
+        run: pnpm test
+
+  # ============================================================================
+  # STAGE 3: Production Standalone Next.js 16 App Router Build
+  # ============================================================================
+  stage-3-production-build:
+    name: "Stage 3: Standalone Production Build"
+    needs: [stage-2-database-testing]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      DATABASE_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      DIRECT_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      NEXTAUTH_SECRET: ci-testing-secret-32-chars-long-minimum!
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd services/identity-service && npx prisma generate
+
+      - name: Build Standalone Next.js Application
+        run: pnpm --filter @opsengine/web build
+
+  # ============================================================================
+  # STAGE 4: Playwright End-to-End Integration Tests
+  # ============================================================================
+  stage-4-e2e-playwright:
+    name: "Stage 4: Playwright E2E Integration Suite"
+    needs: [stage-3-production-build]
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -32,14 +181,14 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
+      DIRECT_URL: postgresql://opsengine:opsengine@localhost:5432/opsengine_test
       NEXTAUTH_SECRET: ci-testing-secret-32-chars-long-minimum!
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
-      AWS_SES_REGION: us-east-1
-      AWS_SES_FROM_EMAIL: noreply@opsengine.enterprise
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
+      PLAYWRIGHT_TEST_BASE_URL: http://localhost:3001
       CI: true
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup pnpm
@@ -47,37 +196,28 @@ jobs:
         with:
           version: 9
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
         run: cd services/identity-service && npx prisma generate
 
-      - name: TypeScript Typecheck
-        run: pnpm --filter @opsengine/web typecheck
-
-      - name: Run Database Migrations
+      - name: Apply Prisma Migrations
         run: cd services/identity-service && npx prisma migrate deploy
 
       - name: Seed Database Baseline
         run: cd apps/web && node scripts/seed.mjs
 
-      - name: Run Vitest Unit & ReBAC Suite
-        run: pnpm --filter @opsengine/web test
-
-      - name: Install Playwright Chromium & Dependencies
+      - name: Install Playwright Chromium & OS Dependencies
         run: cd apps/web && npx playwright install --with-deps chromium
 
-      - name: Build Next.js Application (Standalone)
-        run: pnpm --filter @opsengine/web build
-
-      - name: Run Playwright End-to-End Suite
+      - name: Run Playwright E2E Tests
         run: cd apps/web && npx playwright test
 
       - name: Upload Playwright Test Report on Failure

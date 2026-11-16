@@ -1,0 +1,25 @@
+{
+  "drill_id": "dr_drill_20261109_215201Z",
+  "timestamp": "2026-11-09T21:52:06Z",
+  "source_database": "postgresql://opsengine:opsengine@localhost:5432/opsengine",
+  "sandbox_database": "opsengine_dr_sandbox",
+  "backup_archive": "/home/prasanta/Documents/opsengine/backups/opsengine_backup_20261109_215202Z.dump",
+  "status": "FAILED",
+  "metrics": {
+    "rto_achieved_seconds": 5,
+    "backup_duration_seconds": 1,
+    "restore_duration_seconds": 1,
+    "rpo_target_minutes": 15,
+    "rto_target_hours": 4,
+    "parity_checks_passed": 15,
+    "total_parity_checks": 15
+  },
+  "table_parity": { "_prisma_migrations": {"source": 16, "restored": 16, "parity": true}, "tenant_workspaces": {"source": 14, "restored": 14, "parity": true}, "tenant_subscriptions": {"source": 13, "restored": 13, "parity": true}, "auth_users": {"source": 23, "restored": 23, "parity": true}, "tenant_memberships": {"source": 23, "restored": 23, "parity": true}, "employees": {"source": 27, "restored": 27, "parity": true}, "teams": {"source": 7, "restored": 7, "parity": true}, "crm_accounts": {"source": 14, "restored": 14, "parity": true}, "crm_opportunities": {"source": 16, "restored": 16, "parity": true}, "projects": {"source": 16, "restored": 16, "parity": true}, "tickets": {"source": 19, "restored": 19, "parity": true}, "invoices": {"source": 4, "restored": 4, "parity": true}, "documents": {"source": 62, "restored": 62, "parity": true}, "audit_events": {"source": 887, "restored": 887, "parity": true}, "leave_requests": {"source": 2, "restored": 2, "parity": true} },
+  "security_and_isolation": {
+    "acme_corp_active": false,
+    "starlight_tech_active": false,
+    "null_tenant_id_violations": 0,
+    "orphan_ticket_violations": 0,
+    "orphan_invoice_line_violations": 0
+  }
+}

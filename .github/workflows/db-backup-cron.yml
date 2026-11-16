@@ -1,0 +1,54 @@
+name: Automated Cloud Database Backup & DR (Zero-Cost)
+
+on:
+  schedule:
+    # Nightly execution at 02:00 UTC (100% Free via GitHub Actions cron & Cloudflare R2)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      retention_days:
+        description: 'Backup retention in days (older archives pruned)'
+        required: false
+        default: '30'
+
+permissions:
+  contents: read
+
+jobs:
+  cloud-dr-backup:
+    name: Encrypted Database Dump & Cloudflare R2 Archival
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL 16 Client & OpenSSL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends postgresql-client-16 openssl awscli
+
+      - name: Execute Encrypted pg_dump & Cloudflare R2 Archival
+        env:
+          DATABASE_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
+          BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          CLOUDFLARE_R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}
+          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_R2_BACKUP_BUCKET: ${{ secrets.CLOUDFLARE_R2_BACKUP_BUCKET || 'opsengine-backups' }}
+        run: |
+          chmod +x ./scripts/cloud-backup-r2.sh
+          ./scripts/cloud-backup-r2.sh
+
+      - name: Verify Cloudflare R2 Backup Integrity
+        if: env.CLOUDFLARE_R2_ACCOUNT_ID != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ENDPOINT: https://${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.CLOUDFLARE_R2_BACKUP_BUCKET || 'opsengine-backups' }}
+        run: |
+          echo "[+] Listing latest backups from Cloudflare R2..."
+          aws s3 ls "s3://${BUCKET}/nightly/" --endpoint-url "${R2_ENDPOINT}" | tail -n 10
