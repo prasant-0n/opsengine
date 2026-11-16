@@ -35,8 +35,9 @@ jobs:
           subjectPatternError: "The subject must not start with an uppercase letter."
 
       - name: Verify PR Description Quality
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          PR_BODY="${{ github.event.pull_request.body }}"
           if [ -z "$PR_BODY" ] || [ ${#PR_BODY} -lt 30 ]; then
             echo "::error::PR description is too short or empty. Please use the PR template and provide architecture details and test evidence."
             exit 1

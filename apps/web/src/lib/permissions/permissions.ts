@@ -147,6 +147,13 @@ export const PERMISSIONS = {
   PORTAL_DELIVERABLE_READ: "portal.deliverable.read",
   PORTAL_DELIVERABLE_SIGNOFF: "portal.deliverable.signoff",
   PORTAL_INVOICE_READ: "portal.invoice.read",
+  // Expense Management & Reimbursements (Module 12 & §18.7)
+  EXPENSE_REPORT_READ_SELF: "expense.report.read_self",
+  EXPENSE_REPORT_CREATE: "expense.report.create",
+  EXPENSE_REPORT_READ_TEAM: "expense.report.read_team",
+  EXPENSE_REPORT_APPROVE_MANAGER: "expense.report.approve_manager",
+  EXPENSE_REPORT_APPROVE_FINANCE: "expense.report.approve_finance",
+  EXPENSE_REPORT_PAYOUT: "expense.report.payout",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -179,6 +186,8 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.DOCUMENT_UPLOAD, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.CALENDAR_EVENT_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.CALENDAR_EVENT_CREATE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.EXPENSE_REPORT_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.EXPENSE_REPORT_CREATE, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -415,6 +424,8 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.FINANCE_RECEIVABLE_RECORD_PAYMENT, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.FINANCE_RECEIVABLE_ADJUST, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.FINANCE_COMMERCIAL_TERMS_APPROVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.EXPENSE_REPORT_APPROVE_FINANCE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.EXPENSE_REPORT_PAYOUT, scopeType: "TENANT" },
   ],
   recruiter: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },

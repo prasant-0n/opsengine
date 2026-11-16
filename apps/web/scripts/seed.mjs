@@ -269,7 +269,8 @@ async function main() {
     "document.delete", "calendar.event.read", "calendar.event.create", "calendar.event.update", "calendar.event.delete",
     "meeting.note.manage", "control_plane.read", "control_plane.manage", "crm.account.read", "crm.account.manage",
     "project.read", "project.manage", "finance.invoice.read", "finance.invoice.manage", "report.read",
-    "portal.ticket.read", "portal.ticket.create", "portal.ticket.comment", "portal.deliverable.read", "portal.deliverable.signoff", "portal.invoice.read"
+    "portal.ticket.read", "portal.ticket.create", "portal.ticket.comment", "portal.deliverable.read", "portal.deliverable.signoff", "portal.invoice.read",
+    "expense.report.read_self", "expense.report.create", "expense.report.read_team", "expense.report.approve_manager", "expense.report.approve_finance", "expense.report.payout"
   ];
   for (let i = 0; i < permissionsA.length; i++) {
     const key = permissionsA[i];
@@ -846,6 +847,78 @@ async function main() {
       authorName: "Alex Mercer",
       body: "Internal Note: Rate limit on third-party webhook receiver caused exponential backoff to spike. Do not disclose receiver endpoint.",
       isInternal: true,
+    },
+  });
+
+  // ---- Feature #39: Expense Management & Reimbursements Seed ----
+  console.log("Seeding Employee Expense Reports & Itemized Claims...");
+  const EXP_REP_1 = "00000000-0000-4000-8000-00000000e001";
+  await prisma.expenseReport.upsert({
+    where: { id: EXP_REP_1 },
+    update: {},
+    create: {
+      id: EXP_REP_1,
+      tenantId: T_A,
+      employeeId: EMP_A_LEAD1,
+      title: "Q4 Client Technical Onsite & Infrastructure Workshop",
+      description: "Travel, lodging and meals for Apollo architecture review with Nexus Global Financials.",
+      currency: "USD",
+      totalAmountCents: 34500n, // $345.00
+      status: "manager_approved",
+      managerApproverId: EMP_A_ADMIN,
+      submittedAt: new Date("2026-11-10T10:00:00Z"),
+      approvedAt: new Date("2026-11-11T14:30:00Z"),
+    },
+  });
+
+  const EXP_ITEM_1 = "00000000-0000-4000-8000-00000000e101";
+  await prisma.expenseItem.upsert({
+    where: { id: EXP_ITEM_1 },
+    update: {},
+    create: {
+      id: EXP_ITEM_1,
+      tenantId: T_A,
+      reportId: EXP_REP_1,
+      category: "lodging",
+      description: "Business Hotel - 1 Night Stay (Within Policy)",
+      amountCents: 21000n, // $210.00
+      currency: "USD",
+      spentOn: new Date("2026-11-09T00:00:00Z"),
+      policyViolation: false,
+    },
+  });
+
+  const EXP_ITEM_2 = "00000000-0000-4000-8000-00000000e102";
+  await prisma.expenseItem.upsert({
+    where: { id: EXP_ITEM_2 },
+    update: {},
+    create: {
+      id: EXP_ITEM_2,
+      tenantId: T_A,
+      reportId: EXP_REP_1,
+      category: "meals",
+      description: "Working Dinner with Architecture Lead",
+      amountCents: 6500n, // $65.00
+      currency: "USD",
+      spentOn: new Date("2026-11-09T19:30:00Z"),
+      policyViolation: false,
+    },
+  });
+
+  const EXP_ITEM_3 = "00000000-0000-4000-8000-00000000e103";
+  await prisma.expenseItem.upsert({
+    where: { id: EXP_ITEM_3 },
+    update: {},
+    create: {
+      id: EXP_ITEM_3,
+      tenantId: T_A,
+      reportId: EXP_REP_1,
+      category: "travel",
+      description: "Airport Express Transit & Ground Transportation",
+      amountCents: 7000n, // $70.00
+      currency: "USD",
+      spentOn: new Date("2026-11-10T08:00:00Z"),
+      policyViolation: false,
     },
   });
 

@@ -1,7 +1,7 @@
 # OpsEngine — Enterprise Operations Platform (SaaS CRM + HRMS + Workforce)
 
 [![CI Pipeline](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml/badge.svg)](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml)
-[![Tests Passing](https://img.shields.io/badge/tests-388%2F388%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
+[![Tests Passing](https://img.shields.io/badge/tests-401%2F401%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0%20App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.3-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -132,6 +132,12 @@ OpsEngine runs on **Path 1: Modern Serverless Cloud Mesh**, delivering enterpris
 - **Milestone Deliverable Review & Digital Sign-Off**: Deliverable artifact inspection and legal acceptance sign-off with SHA-256 tamper-evident digital signatures and audit evidence.
 - **Client Invoices & Online Settlement**: Direct billing visibility with one-click payment checkout links powered by the integrated payment gateway.
 
+### 8. Employee Expense Management & Reimbursements
+- **Per-Diem Policy Engine**: Automated compliance checks for daily meal ($75.00) and lodging ($250.00) caps, plus mandatory receipt upload enforcement for expenses exceeding $50.00.
+- **Cloudflare R2 Receipt Storage**: Tamper-evident receipt storage with SHA-256 file checksums and zero AWS S3 dependencies ($0 egress bandwidth fees).
+- **Two-Stage Approval & SoD**: Stage 1 direct reporting manager approval, Stage 2 finance officer audit with strict Segregation of Duties (self-approval prohibited).
+- **Payment Voucher Disbursement**: Automated reimbursement voucher generation (`VOU-YYYY-XXXXXXXX`) and financial ledger reconciliation.
+
 ---
 
 ## Monorepo Structure
@@ -150,7 +156,7 @@ opsengine/
 │           ├── components/            # Reusable UI & Shell primitives
 │           ├── features/              # Vertical domain slices (HRMS, CRM, Finance)
 │           ├── lib/                   # Infrastructure clients (Prisma, R2, Webhooks, Telemetry)
-│           └── tests/                 # 37 Vitest unit & ReBAC test suites (388 tests)
+│           └── tests/                 # 38 Vitest unit & ReBAC test suites (401 tests)
 ├── packages/
 │   ├── api-contracts/                 # Shared TypeScript DTOs, schemas & env contracts
 │   ├── authorization-policy/          # ReBAC policy engine contracts
@@ -277,7 +283,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
   ├── PostgreSQL 16 Alpine Service Container
   ├── Prisma Migration Deployment (Direct Connection)
   ├── Enterprise Multi-Tenant Baseline Seed
-  └── 37 Vitest Suites (388/388 Unit, ReBAC & Negative Tests Passing)
+  └── 38 Vitest Suites (401/401 Unit, ReBAC & Negative Tests Passing)
         |
         v
   Stage 3: Standalone Production Build
@@ -294,7 +300,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
 ### Running Tests Locally
 
 ```bash
-# Run all 37 Vitest test suites (388 tests)
+# Run all 38 Vitest test suites (401 tests)
 pnpm test
 
 # Run TypeScript type checking across all 6 monorepo packages
