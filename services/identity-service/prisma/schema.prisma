@@ -1409,6 +1409,66 @@ model ClientDeliverableSignOff {
   @@map("client_deliverable_signoffs")
 }
 
+// ---- Feature #39: Employee Expense Management & Reimbursements ----
+
+model ExpenseReport {
+  id                String    @id @default(uuid()) @db.Uuid
+  tenantId          String    @db.Uuid @map("tenant_id")
+  employeeId        String    @db.Uuid @map("employee_id")
+  title             String
+  description       String?   @db.Text
+  currency          String    @default("USD")
+  totalAmountCents  BigInt    @default(0) @db.BigInt @map("total_amount_cents")
+  status            String    @default("draft") // draft | submitted | manager_approved | finance_approved | rejected | paid
+  managerApproverId String?   @db.Uuid @map("manager_approver_id")
+  financeApproverId String?   @db.Uuid @map("finance_approver_id")
+  rejectionReason   String?   @db.Text @map("rejection_reason")
+  voucherNumber     String?   @map("voucher_number")
+  submittedAt       DateTime? @db.Timestamptz(6) @map("submitted_at")
+  approvedAt        DateTime? @db.Timestamptz(6) @map("approved_at")
+  paidAt            DateTime? @db.Timestamptz(6) @map("paid_at")
+  createdAt         DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, employeeId, status], map: "idx_expense_rep_tenant_emp_status")
+  @@index([tenantId, status, createdAt], map: "idx_expense_rep_tenant_status_created")
+  @@map("expense_reports")
+}
+
+model ExpenseItem {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid @map("tenant_id")
+  reportId        String   @db.Uuid @map("report_id")
+  category        String   @default("other") // travel | lodging | meals | software | office_supplies | equipment | other
+  description     String
+  amountCents     BigInt   @db.BigInt @map("amount_cents")
+  currency        String   @default("USD")
+  spentOn         DateTime @default(now()) @db.Timestamptz(6) @map("spent_on")
+  receiptId       String?  @db.Uuid @map("receipt_id")
+  policyViolation Boolean  @default(false) @map("policy_violation")
+  violationReason String?  @db.Text @map("violation_reason")
+  createdAt       DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+  @@index([tenantId, reportId], map: "idx_expense_item_tenant_report")
+  @@map("expense_items")
+}
+
+model ExpenseReceipt {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String   @db.Uuid @map("tenant_id")
+  employeeId String   @db.Uuid @map("employee_id")
+  storageKey String   @map("storage_key")
+  fileName   String   @map("file_name")
+  fileSize   Int      @map("file_size")
+  mimeType   String   @map("mime_type")
+  sha256Hash String   @map("sha256_hash")
+  uploadedAt DateTime @default(now()) @db.Timestamptz(6) @map("uploaded_at")
+
+  @@index([tenantId, employeeId], map: "idx_expense_receipt_tenant_emp")
+  @@map("expense_receipts")
+}
+
+
 
 
 
