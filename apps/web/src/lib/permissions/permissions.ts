@@ -175,6 +175,10 @@ export const PERMISSIONS = {
   // Mobile PWA & Push Notifications (Module 14 & §18.7)
   NOTIFICATION_PUSH_SUBSCRIBE: "notification.push.subscribe",
   NOTIFICATION_PUSH_BROADCAST: "notification.push.broadcast",
+  // Accounting ERP Integrations (Module 12 & §18.7)
+  ERP_CONFIG_MANAGE: "finance.erp.manage",
+  ERP_SYNC_READ: "finance.erp.read",
+  ERP_SYNC_EXECUTE: "finance.erp.execute",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -294,6 +298,7 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LEAVE_BALANCE_READ_TEAM, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_READ_TEAM, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_CORRECT_APPROVE, scopeType: "REPORTING_TREE" },
+    { permissionKey: PERMISSIONS.ERP_SYNC_READ, scopeType: "TENANT" },
   ],
   hr: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -472,6 +477,9 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.APPRAISAL_CYCLE_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_SUBMIT, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.ERP_CONFIG_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.ERP_SYNC_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.ERP_SYNC_EXECUTE, scopeType: "TENANT" },
   ],
   recruiter: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
