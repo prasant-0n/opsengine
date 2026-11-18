@@ -1393,6 +1393,126 @@ async function main() {
     },
   });
 
+  // Formal Surveys, Pulse & Recognition Rewards (#45)
+  const BADGE_TECH = "00000000-0000-4000-8000-00000000ec01";
+  const BADGE_CUST = "00000000-0000-4000-8000-00000000ec02";
+  const BADGE_TEAM = "00000000-0000-4000-8000-00000000ec03";
+  const SURVEY_Q4 = "00000000-0000-4000-8000-00000000ec11";
+  const RECOG_1 = "00000000-0000-4000-8000-00000000ec21";
+
+  await prisma.recognitionBadge.upsert({
+    where: {
+      tenantId_code: {
+        tenantId: T_A,
+        code: "TECH_INNOVATOR",
+      },
+    },
+    update: {},
+    create: {
+      id: BADGE_TECH,
+      tenantId: T_A,
+      code: "TECH_INNOVATOR",
+      name: "Technical Innovator",
+      description: "Pioneering novel architectures, tools, and elegant problem-solving.",
+      icon: "cpu",
+      pointsValue: 50,
+      category: "innovation",
+      isActive: true,
+    },
+  });
+
+  await prisma.recognitionBadge.upsert({
+    where: {
+      tenantId_code: {
+        tenantId: T_A,
+        code: "CUSTOMER_CHAMP",
+      },
+    },
+    update: {},
+    create: {
+      id: BADGE_CUST,
+      tenantId: T_A,
+      code: "CUSTOMER_CHAMP",
+      name: "Customer Champion",
+      description: "Delivering exceptional client delight and exceeding SLA benchmarks.",
+      icon: "heart-handshake",
+      pointsValue: 75,
+      category: "customer_excellence",
+      isActive: true,
+    },
+  });
+
+  await prisma.recognitionBadge.upsert({
+    where: {
+      tenantId_code: {
+        tenantId: T_A,
+        code: "TEAM_PILLAR",
+      },
+    },
+    update: {},
+    create: {
+      id: BADGE_TEAM,
+      tenantId: T_A,
+      code: "TEAM_PILLAR",
+      name: "Team Pillar",
+      description: "Selflessly unblocking teammates, mentoring, and fostering psychological safety.",
+      icon: "users",
+      pointsValue: 50,
+      category: "teamwork",
+      isActive: true,
+    },
+  });
+
+  await prisma.survey.upsert({
+    where: { id: SURVEY_Q4 },
+    update: {},
+    create: {
+      id: SURVEY_Q4,
+      tenantId: T_A,
+      title: "Q4 Engineering Sentiment & eNPS Pulse",
+      description: "Anonymous quarterly pulse survey measuring developer velocity, tooling satisfaction, and culture.",
+      category: "enps",
+      status: "active",
+      isAnonymous: true,
+      questions: [
+        {
+          id: "q1",
+          type: "nps_10",
+          prompt: "How likely are you to recommend Acme Global as a great place to work and grow?",
+          required: true,
+        },
+        {
+          id: "q2",
+          type: "likert_5",
+          prompt: "I have the technical tooling and architectural clarity needed to perform my work effectively.",
+          required: true,
+        },
+        {
+          id: "q3",
+          type: "text",
+          prompt: "What is one team ritual or technical improvement we should prioritize next quarter?",
+          required: false,
+        },
+      ],
+      startsAt: new Date("2026-11-01T00:00:00Z"),
+    },
+  });
+
+  await prisma.employeeRecognition.upsert({
+    where: { id: RECOG_1 },
+    update: {},
+    create: {
+      id: RECOG_1,
+      tenantId: T_A,
+      senderId: EMP_A_LEAD1,
+      recipientId: EMP_A_DEV1,
+      badgeId: BADGE_TECH,
+      message: "Outstanding execution architecting the zero-cost DevOps infrastructure and LMS engine!",
+      pointsAwarded: 50,
+      createdAt: new Date("2026-11-18T05:30:00Z"),
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:

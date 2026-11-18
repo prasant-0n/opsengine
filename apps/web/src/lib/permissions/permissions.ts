@@ -185,6 +185,12 @@ export const PERMISSIONS = {
   LMS_ENROLLMENT_MANAGE_SELF: "lms.enrollment.manage_self",
   LMS_ENROLLMENT_MANAGE_TEAM: "lms.enrollment.manage_team",
   LMS_CERTIFICATION_VERIFY: "lms.certification.verify",
+  // Formal Surveys, Pulse & Recognition (PRD Modules 5, 18 & §18.7)
+  SURVEY_MANAGE: "survey.manage",
+  SURVEY_RESPOND: "survey.respond",
+  SURVEY_ANALYTICS_READ: "survey.analytics.read",
+  RECOGNITION_GIVE: "recognition.give",
+  RECOGNITION_READ: "recognition.read",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -227,6 +233,9 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.SURVEY_RESPOND, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -271,6 +280,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "TEAM" },
+    { permissionKey: PERMISSIONS.SURVEY_RESPOND, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "TEAM" },
+    { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
   ],
   senior_lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -315,6 +328,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.LMS_CERTIFICATION_VERIFY, scopeType: "REPORTING_TREE" },
+    { permissionKey: PERMISSIONS.SURVEY_RESPOND, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "REPORTING_TREE" },
+    { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
   ],
   hr: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -433,6 +450,12 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.LMS_CERTIFICATION_VERIFY, scopeType: "TENANT" },
+    // Formal Surveys, Pulse & Recognition
+    { permissionKey: PERMISSIONS.SURVEY_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.SURVEY_RESPOND, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
   ],
   delivery: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
