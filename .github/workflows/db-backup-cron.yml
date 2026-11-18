@@ -17,12 +17,12 @@ permissions:
 jobs:
   cloud-dr-backup:
     name: Encrypted Database Dump & Cloudflare R2 Archival
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install PostgreSQL 16 Client & OpenSSL
         run: |

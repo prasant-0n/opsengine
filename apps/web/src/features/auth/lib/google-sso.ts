@@ -54,9 +54,9 @@ export function sanitizeReturnTo(url?: string | null): string {
 }
 
 /**
- * Generates an HMAC-SHA256 signed OAuth state token containing CSRF token and expiration.
+ * Serializes and HMAC-SHA256 signs state parameter containing CSRF token and expiration.
  */
-export function createGoogleOAuthState(input?: {
+export function serializeStateParam(input?: {
   domain?: string;
   tenantId?: string;
   returnTo?: string;
@@ -79,9 +79,9 @@ export function createGoogleOAuthState(input?: {
 }
 
 /**
- * Verifies the HMAC-SHA256 signature and expiration of an OAuth state token.
+ * Validates the HMAC-SHA256 signature and expiration of state parameter.
  */
-export function verifyGoogleOAuthState(
+export function validateStateParam(
   stateStr: string
 ): GoogleOAuthStatePayload | null {
   if (!stateStr || typeof stateStr !== "string") return null;
@@ -112,6 +112,9 @@ export function verifyGoogleOAuthState(
     return null;
   }
 }
+
+export const createGoogleOAuthState = serializeStateParam;
+export const verifyGoogleOAuthState = validateStateParam;
 
 /**
  * Constructs the Google OAuth 2.0 authorization URL.

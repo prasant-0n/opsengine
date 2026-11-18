@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  verifyGoogleOAuthState,
+  validateStateParam,
   exchangeGoogleCode,
   fetchGoogleProfile,
   completeGoogleSSOFlow,
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Verify HMAC-SHA256 signature and expiration
-  const statePayload = verifyGoogleOAuthState(state);
+  const statePayload = validateStateParam(state);
   if (!statePayload) {
     return buildErrorRedirect("invalid_state");
   }

@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { prisma } from "../lib/prisma";
 import {
+  serializeStateParam,
+  validateStateParam,
   createGoogleOAuthState,
   verifyGoogleOAuthState,
   sanitizeReturnTo,
@@ -16,7 +18,7 @@ const USER_A = "00000000-0000-4000-8000-000000000001";
 describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
   describe("State Token Cryptographic Verification & CSRF Protection", () => {
     it("generates and verifies a valid HMAC-SHA256 signed state token", () => {
-      const state = createGoogleOAuthState({
+      const state = serializeStateParam({
         domain: "acme.opsengine.enterprise",
         tenantId: TENANT_A,
         returnTo: "/dashboard/reports",
@@ -25,7 +27,7 @@ describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
       expect(typeof state).toBe("string");
       expect(state.includes(".")).toBe(true);
 
-      const verified = verifyGoogleOAuthState(state);
+      const verified = validateStateParam(state);
       expect(verified).not.toBeNull();
       expect(verified?.domain).toBe("acme.opsengine.enterprise");
       expect(verified?.tenantId).toBe(TENANT_A);
@@ -36,23 +38,23 @@ describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
     });
 
     it("rejects state tokens with tampered payload or forged signature", () => {
-      const state = createGoogleOAuthState({ domain: "acme.opsengine.enterprise" });
+      const state = serializeStateParam({ domain: "acme.opsengine.enterprise" });
       const [payloadB64, signature] = state.split(".");
 
       // Tampered signature
       const badSig = signature.slice(0, -2) + "xx";
-      expect(verifyGoogleOAuthState(`${payloadB64}.${badSig}`)).toBeNull();
+      expect(validateStateParam(`${payloadB64}.${badSig}`)).toBeNull();
 
       // Tampered payload
       const tamperedPayload = Buffer.from(
         JSON.stringify({ domain: "evil.opsengine.enterprise", exp: Date.now() + 60000 })
       ).toString("base64url");
-      expect(verifyGoogleOAuthState(`${tamperedPayload}.${signature}`)).toBeNull();
+      expect(validateStateParam(`${tamperedPayload}.${signature}`)).toBeNull();
 
       // Completely malformed tokens
-      expect(verifyGoogleOAuthState("not-a-valid-token")).toBeNull();
-      expect(verifyGoogleOAuthState("")).toBeNull();
-      expect(verifyGoogleOAuthState("a.b.c")).toBeNull();
+      expect(validateStateParam("not-a-valid-token")).toBeNull();
+      expect(validateStateParam("")).toBeNull();
+      expect(validateStateParam("a.b.c")).toBeNull();
     });
 
     it("rejects expired state tokens", () => {
@@ -72,7 +74,7 @@ describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
       const hmac = crypto.createHmac("sha256", secret).update(b64).digest("base64url");
 
       const state = `${b64}.${hmac}`;
-      expect(verifyGoogleOAuthState(state)).toBeNull();
+      expect(validateStateParam(state)).toBeNull();
     });
   });
 

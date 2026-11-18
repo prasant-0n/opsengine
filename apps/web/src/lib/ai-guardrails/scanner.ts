@@ -4,7 +4,7 @@ export class InjectionScanner {
     /system\s+prompt\s+override/i,
     /you\s+are\s+now\s+(in\s+)?(developer|unrestricted|god|dan|jailbreak)\s+mode/i,
     /(exfiltrate|leak|dump|reveal)\s+(all\s+)?(data|secrets|keys|passwords|database|tenants)/i,
-    /<script\b[^>]*>[\s\S]*?<\/script\s*>/i,
+    /<script\b[^>]*>[\s\S]*?<\/script[^>]*>/i,
     /bypass\s+(all\s+)?(security|auth|checks|rules|policies)/i,
   ];
 

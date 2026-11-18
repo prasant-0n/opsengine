@@ -170,33 +170,86 @@ export function validateEmployeePatch(
     return { ok: false, error: "Body must be an object" };
   }
   const input = body as Record<string, unknown>;
-  const data: Record<string, unknown> = Object.create(null);
-  for (const [k, v] of Object.entries(input)) {
-    if (v === undefined || k === "__proto__" || k === "constructor" || k === "prototype") continue;
+
+  // Check for disallowed keys first
+  for (const k of Object.keys(input)) {
+    if (k === "__proto__" || k === "constructor" || k === "prototype") continue;
+    if (input[k] === undefined) continue;
     if (!PATCHABLE_KEYS.includes(k as (typeof PATCHABLE_KEYS)[number])) {
       return { ok: false, error: `Field not allowed: ${k}` };
     }
-    if (k === "employmentStatus") {
-      if (typeof v !== "string" || !EMPLOYMENT_STATUSES.includes(v as never)) {
-        return { ok: false, error: `Invalid employmentStatus: ${String(v)}` };
-      }
-      data[k] = v;
-    } else if (k === "probationEndsAt") {
-      const d = new Date(String(v));
-      if (Number.isNaN(d.getTime())) return { ok: false, error: "Invalid probationEndsAt" };
-      if (d.getTime() > now.getTime() + 2 * 365 * 24 * 3600 * 1000) {
-        return { ok: false, error: "probationEndsAt beyond 2 years" };
-      }
-      data[k] = d;
-      continue;
-    } else if (typeof v !== "string") {
-      return { ok: false, error: `Field ${k} must be a string` };
-    } else if (v.length > 300) {
-      return { ok: false, error: `Field ${k} too long` };
-    } else {
-      data[k] = v;
-    }
   }
-  if (Object.keys(data).length === 0) return { ok: false, error: "No valid fields" };
-  return { ok: true, data: { ...data } as PatchResult["data"] };
+
+  const patch: NonNullable<PatchResult["data"]> = {};
+
+  const validateStringField = (val: unknown, name: string): { ok: true; val: string } | { ok: false; error: string } => {
+    if (typeof val !== "string") return { ok: false, error: `Field ${name} must be a string` };
+    if (val.length > 300) return { ok: false, error: `Field ${name} too long` };
+    return { ok: true, val };
+  };
+
+  if (input.jobTitle !== undefined) {
+    const res = validateStringField(input.jobTitle, "jobTitle");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.jobTitle = res.val;
+  }
+  if (input.jobFamily !== undefined) {
+    const res = validateStringField(input.jobFamily, "jobFamily");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.jobFamily = res.val;
+  }
+  if (input.grade !== undefined) {
+    const res = validateStringField(input.grade, "grade");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.grade = res.val;
+  }
+  if (input.seniority !== undefined) {
+    const res = validateStringField(input.seniority, "seniority");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.seniority = res.val;
+  }
+  if (input.department !== undefined) {
+    const res = validateStringField(input.department, "department");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.department = res.val;
+  }
+  if (input.employmentType !== undefined) {
+    const res = validateStringField(input.employmentType, "employmentType");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.employmentType = res.val;
+  }
+  if (input.location !== undefined) {
+    const res = validateStringField(input.location, "location");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.location = res.val;
+  }
+  if (input.employeeNumber !== undefined) {
+    const res = validateStringField(input.employeeNumber, "employeeNumber");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.employeeNumber = res.val;
+  }
+  if (input.displayName !== undefined) {
+    const res = validateStringField(input.displayName, "displayName");
+    if (!res.ok) return { ok: false, error: res.error };
+    patch.displayName = res.val;
+  }
+  if (input.employmentStatus !== undefined) {
+    const v = input.employmentStatus;
+    if (typeof v !== "string" || !EMPLOYMENT_STATUSES.includes(v as never)) {
+      return { ok: false, error: `Invalid employmentStatus: ${String(v)}` };
+    }
+    patch.employmentStatus = v as (typeof EMPLOYMENT_STATUSES)[number];
+  }
+  if (input.probationEndsAt !== undefined) {
+    const v = input.probationEndsAt;
+    const d = new Date(String(v));
+    if (Number.isNaN(d.getTime())) return { ok: false, error: "Invalid probationEndsAt" };
+    if (d.getTime() > now.getTime() + 2 * 365 * 24 * 3600 * 1000) {
+      return { ok: false, error: "probationEndsAt beyond 2 years" };
+    }
+    patch.probationEndsAt = d;
+  }
+
+  if (Object.keys(patch).length === 0) return { ok: false, error: "No valid fields" };
+  return { ok: true, data: patch };
 }

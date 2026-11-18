@@ -64,11 +64,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { courseId, employeeId: requestedEmpId, enrollmentType } = body;
-
-    if (!courseId) {
-      return NextResponse.json({ error: "courseId is required" }, { status: 400 });
-    }
+    const requestedEmpId =
+      typeof body?.employeeId === "string" && body.employeeId.trim().length > 0
+        ? body.employeeId.trim()
+        : undefined;
 
     const targetEmployeeId = requestedEmpId || ctx.employeeId;
     const requiredPermission =
@@ -91,6 +90,12 @@ export async function POST(req: NextRequest) {
         },
         { status: 403 }
       );
+    }
+
+    const { courseId, enrollmentType } = body;
+
+    if (!courseId) {
+      return NextResponse.json({ error: "courseId is required" }, { status: 400 });
     }
 
     // Verify course exists in tenant
