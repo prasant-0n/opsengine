@@ -17,6 +17,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1169.0",
     "@opsengine/api-contracts": "workspace:*",
     "@opsengine/domain-events": "workspace:*",
+    "@opsengine/identity-service": "workspace:*",
     "@opsengine/logger": "workspace:*",
     "@opsengine/telemetry": "workspace:*",
     "@prisma/client": "^5.0.0",

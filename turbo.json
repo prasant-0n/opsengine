@@ -15,7 +15,9 @@
     "CLOUDFLARE_R2_ACCESS_KEY_ID",
     "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
     "CLOUDFLARE_R2_BUCKET_NAME",
-    "CLOUDFLARE_R2_PUBLIC_URL"
+    "CLOUDFLARE_R2_PUBLIC_URL",
+    "MOCK_GOOGLE_SSO",
+    "APP_VERSION"
   ],
   "tasks": {
     "build": {
@@ -26,8 +28,13 @@
         "DIRECT_URL",
         "NEXTAUTH_SECRET",
         "NEXT_PUBLIC_APP_URL",
-        "NODE_ENV"
+        "NODE_ENV",
+        "MOCK_GOOGLE_SSO",
+        "APP_VERSION"
       ]
+    },
+    "@opsengine/identity-service#build": {
+      "cache": false
     },
     "lint": {},
     "typecheck": {},
