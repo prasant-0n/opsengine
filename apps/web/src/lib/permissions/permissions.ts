@@ -191,6 +191,13 @@ export const PERMISSIONS = {
   SURVEY_ANALYTICS_READ: "survey.analytics.read",
   RECOGNITION_GIVE: "recognition.give",
   RECOGNITION_READ: "recognition.read",
+  // Corporate Travel & Itinerary Booking (PRD Modules 12, 18 & §18.7)
+  TRAVEL_REQUEST_CREATE: "travel.request.create",
+  TRAVEL_REQUEST_READ_SELF: "travel.request.read_self",
+  TRAVEL_REQUEST_READ_TEAM: "travel.request.read_team",
+  TRAVEL_APPROVE_MANAGER: "travel.approve.manager",
+  TRAVEL_APPROVE_FINANCE: "travel.approve.finance",
+  TRAVEL_DISBURSE_ADVANCE: "travel.disburse.advance",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -236,6 +243,8 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.SURVEY_RESPOND, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_SELF, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -284,6 +293,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_TEAM, scopeType: "TEAM" },
+    { permissionKey: PERMISSIONS.TRAVEL_APPROVE_MANAGER, scopeType: "TEAM" },
   ],
   senior_lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -332,6 +345,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_TEAM, scopeType: "REPORTING_TREE" },
+    { permissionKey: PERMISSIONS.TRAVEL_APPROVE_MANAGER, scopeType: "REPORTING_TREE" },
   ],
   hr: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -456,6 +473,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.SURVEY_ANALYTICS_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_GIVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.RECOGNITION_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_TEAM, scopeType: "TEAM" },
+    { permissionKey: PERMISSIONS.TRAVEL_APPROVE_MANAGER, scopeType: "TEAM" },
   ],
   delivery: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -525,6 +546,11 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.ERP_CONFIG_MANAGE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ERP_SYNC_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.ERP_SYNC_EXECUTE, scopeType: "TENANT" },
+    // Corporate Travel & Itinerary Booking (PRD Modules 12, 18 & §18.7)
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_REQUEST_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.TRAVEL_APPROVE_FINANCE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.TRAVEL_DISBURSE_ADVANCE, scopeType: "TENANT" },
   ],
   recruiter: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },

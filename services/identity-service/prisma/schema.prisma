@@ -1827,6 +1827,55 @@ model EmployeeRecognition {
   @@map("employee_recognitions")
 }
 
+model TravelRequest {
+  id                    String    @id @default(uuid()) @db.Uuid
+  tenantId              String    @db.Uuid @map("tenant_id")
+  employeeId            String    @db.Uuid @map("employee_id")
+  title                 String
+  purpose               String    @default("client_engagement") // client_engagement | sales_pitch | conference | internal_meeting
+  destinationCity       String    @map("destination_city")
+  destinationCountry    String    @map("destination_country")
+  startDate             DateTime  @db.Timestamptz(6) @map("start_date")
+  endDate               DateTime  @db.Timestamptz(6) @map("end_date")
+  estimatedTotalCents   BigInt    @default(0) @map("estimated_total_cents")
+  currency              String    @default("USD")
+  advanceAmountCents    BigInt    @default(0) @map("advance_amount_cents")
+  status                String    @default("submitted") // draft | submitted | manager_approved | finance_approved | rejected | cancelled | completed
+  projectId             String?   @db.Uuid @map("project_id")
+  clientAccountId       String?   @db.Uuid @map("client_account_id")
+  linkedExpenseReportId String?   @db.Uuid @map("linked_expense_report_id")
+  managerApproverId     String?   @db.Uuid @map("manager_approver_id")
+  managerApprovedAt     DateTime? @db.Timestamptz(6) @map("manager_approved_at")
+  financeApproverId     String?   @db.Uuid @map("finance_approver_id")
+  financeApprovedAt     DateTime? @db.Timestamptz(6) @map("finance_approved_at")
+  rejectionReason       String?   @db.Text @map("rejection_reason")
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, employeeId, status], map: "idx_travel_req_tenant_emp_status")
+  @@index([tenantId, status], map: "idx_travel_req_tenant_status")
+  @@map("travel_requests")
+}
+
+model TravelItineraryItem {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenantId         String    @db.Uuid @map("tenant_id")
+  travelRequestId  String    @db.Uuid @map("travel_request_id")
+  type             String    // flight | hotel | train | rental_car
+  carrierOrVendor  String    @map("carrier_or_vendor")
+  bookingReference String?   @map("booking_reference")
+  confirmationCode String?   @map("confirmation_code")
+  departureAt      DateTime? @db.Timestamptz(6) @map("departure_at")
+  arrivalAt        DateTime? @db.Timestamptz(6) @map("arrival_at")
+  costCents        BigInt    @default(0) @map("cost_cents")
+  notes            String?   @db.Text
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, travelRequestId], map: "idx_itinerary_tenant_req")
+  @@map("travel_itinerary_items")
+}
+
 
 
 

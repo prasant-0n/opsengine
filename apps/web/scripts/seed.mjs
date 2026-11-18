@@ -1513,6 +1513,92 @@ async function main() {
     },
   });
 
+  // Feature #46: Corporate Travel & Itinerary Bookings
+  const TRAVEL_REQ_1 = "00000000-0000-4000-8000-000000000081";
+  const TRAVEL_REQ_2 = "00000000-0000-4000-8000-000000000082";
+  const ITIN_FLIGHT_1 = "00000000-0000-4000-8000-000000000083";
+  const ITIN_HOTEL_1 = "00000000-0000-4000-8000-000000000084";
+
+  await prisma.travelRequest.upsert({
+    where: { id: TRAVEL_REQ_1 },
+    update: {},
+    create: {
+      id: TRAVEL_REQ_1,
+      tenantId: T_A,
+      employeeId: EMP_A_LEAD1,
+      title: "London Cloud Architecture Summit & Client Workshop",
+      purpose: "client_engagement",
+      destinationCity: "London",
+      destinationCountry: "United Kingdom",
+      startDate: new Date("2026-12-01T08:00:00Z"),
+      endDate: new Date("2026-12-05T18:00:00Z"),
+      estimatedTotalCents: 165000n, // $1,650.00
+      currency: "USD",
+      advanceAmountCents: 50000n, // $500.00 advance disbursed
+      status: "finance_approved",
+      managerApproverId: EMP_A_DIR,
+      managerApprovedAt: new Date("2026-11-15T10:00:00Z"),
+      financeApproverId: EMP_A_ADMIN,
+      financeApprovedAt: new Date("2026-11-16T14:30:00Z"),
+    },
+  });
+
+  await prisma.travelItineraryItem.upsert({
+    where: { id: ITIN_FLIGHT_1 },
+    update: {},
+    create: {
+      id: ITIN_FLIGHT_1,
+      tenantId: T_A,
+      travelRequestId: TRAVEL_REQ_1,
+      type: "flight",
+      carrierOrVendor: "British Airways (BA 178)",
+      bookingReference: "BA-LHR-921",
+      confirmationCode: "PNR-BA741",
+      departureAt: new Date("2026-12-01T08:00:00Z"),
+      arrivalAt: new Date("2026-12-01T20:00:00Z"),
+      costCents: 85000n,
+      notes: "Direct flight JFK -> LHR, Terminal 5",
+    },
+  });
+
+  await prisma.travelItineraryItem.upsert({
+    where: { id: ITIN_HOTEL_1 },
+    update: {},
+    create: {
+      id: ITIN_HOTEL_1,
+      tenantId: T_A,
+      travelRequestId: TRAVEL_REQ_1,
+      type: "hotel",
+      carrierOrVendor: "Hilton London Bankside",
+      bookingReference: "HLT-LON-4412",
+      confirmationCode: "CONF-HLT88",
+      departureAt: new Date("2026-12-01T15:00:00Z"),
+      arrivalAt: new Date("2026-12-05T11:00:00Z"),
+      costCents: 75000n,
+      notes: "Near Canary Wharf client headquarters. Includes breakfast.",
+    },
+  });
+
+  await prisma.travelRequest.upsert({
+    where: { id: TRAVEL_REQ_2 },
+    update: {},
+    create: {
+      id: TRAVEL_REQ_2,
+      tenantId: T_A,
+      employeeId: EMP_A_DEV1,
+      title: "San Francisco AI Systems Workshop",
+      purpose: "conference",
+      destinationCity: "San Francisco",
+      destinationCountry: "United States",
+      startDate: new Date("2026-12-10T09:00:00Z"),
+      endDate: new Date("2026-12-12T17:00:00Z"),
+      estimatedTotalCents: 95000n, // $950.00
+      currency: "USD",
+      advanceAmountCents: 0n,
+      status: "submitted",
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:
