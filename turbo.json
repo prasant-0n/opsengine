@@ -17,7 +17,8 @@
     "CLOUDFLARE_R2_BUCKET_NAME",
     "CLOUDFLARE_R2_PUBLIC_URL",
     "MOCK_GOOGLE_SSO",
-    "APP_VERSION"
+    "APP_VERSION",
+    "GEMINI_API_KEY"
   ],
   "tasks": {
     "build": {
@@ -30,7 +31,8 @@
         "NEXT_PUBLIC_APP_URL",
         "NODE_ENV",
         "MOCK_GOOGLE_SSO",
-        "APP_VERSION"
+        "APP_VERSION",
+        "GEMINI_API_KEY"
       ]
     },
     "@opsengine/identity-service#build": {
