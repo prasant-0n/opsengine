@@ -1656,6 +1656,51 @@ model PushSubscription {
   @@map("push_subscriptions")
 }
 
+model ErpIntegration {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid @map("tenant_id")
+  provider       String    // quickbooks | xero
+  status         String    @default("connected") // connected | disconnected | error | syncing
+  realmId        String?   @map("realm_id") // QuickBooks Realm ID or Xero Tenant ID
+  accessToken    String?   @db.Text @map("access_token")
+  refreshToken   String?   @db.Text @map("refresh_token")
+  tokenExpiresAt DateTime? @db.Timestamptz(6) @map("token_expires_at")
+  coaMapping     Json      @default("{}") @map("coa_mapping")
+  lastSyncAt     DateTime? @db.Timestamptz(6) @map("last_sync_at")
+  lastError      String?   @db.Text @map("last_error")
+  createdAt      DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, provider], map: "uq_erp_integration_tenant_provider")
+  @@index([tenantId, status], map: "idx_erp_integration_tenant_status")
+  @@map("erp_integrations")
+}
+
+model ErpSyncLog {
+  id              String    @id @default(uuid()) @db.Uuid
+  tenantId        String    @db.Uuid @map("tenant_id")
+  integrationId   String    @db.Uuid @map("integration_id")
+  provider        String    // quickbooks | xero
+  entityType      String    @map("entity_type") // invoice | payment | customer
+  entityId        String    @db.Uuid @map("entity_id")
+  externalId      String?   @map("external_id")
+  direction       String    @default("outbound") // outbound | inbound
+  status          String    @default("pending") // pending | success | failed | skipped
+  idempotencyKey  String    @map("idempotency_key")
+  payloadSnapshot Json?     @map("payload_snapshot")
+  errorMessage    String?   @db.Text @map("error_message")
+  retryCount      Int       @default(0) @map("retry_count")
+  syncedAt        DateTime? @db.Timestamptz(6) @map("synced_at")
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, provider, entityType, entityId, idempotencyKey], map: "uq_erp_sync_idempotency")
+  @@index([tenantId, entityType, status], map: "idx_erp_sync_tenant_entity_status")
+  @@index([tenantId, integrationId, status], map: "idx_erp_sync_tenant_integration")
+  @@map("erp_sync_logs")
+}
+
+
 
 
 

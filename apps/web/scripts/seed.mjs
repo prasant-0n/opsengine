@@ -1206,6 +1206,85 @@ async function main() {
     },
   });
 
+  // Accounting ERP Integrations (QuickBooks & Xero) (#43)
+  const ERP_INT_QBO_A = "00000000-0000-4000-8000-00000000ea01";
+  const ERP_INT_XERO_A = "00000000-0000-4000-8000-00000000ea02";
+  const ERP_SYNC_LOG_1 = "00000000-0000-4000-8000-00000000ea11";
+
+  await prisma.erpIntegration.upsert({
+    where: {
+      tenantId_provider: {
+        tenantId: T_A,
+        provider: "quickbooks",
+      },
+    },
+    update: {},
+    create: {
+      id: ERP_INT_QBO_A,
+      tenantId: T_A,
+      provider: "quickbooks",
+      status: "connected",
+      realmId: "934145214589",
+      coaMapping: {
+        revenueAccountCode: "4000",
+        receivablesAccountCode: "1100",
+        salesTaxAccountCode: "2200",
+        bankDepositAccountCode: "1000",
+      },
+      lastSyncAt: new Date("2026-11-18T04:00:00Z"),
+    },
+  });
+
+  await prisma.erpIntegration.upsert({
+    where: {
+      tenantId_provider: {
+        tenantId: T_A,
+        provider: "xero",
+      },
+    },
+    update: {},
+    create: {
+      id: ERP_INT_XERO_A,
+      tenantId: T_A,
+      provider: "xero",
+      status: "connected",
+      realmId: "xero-org-acme-corp",
+      coaMapping: {
+        revenueAccountCode: "200",
+        receivablesAccountCode: "120",
+        salesTaxAccountCode: "800",
+        bankDepositAccountCode: "090",
+      },
+      lastSyncAt: new Date("2026-11-18T04:05:00Z"),
+    },
+  });
+
+  await prisma.erpSyncLog.upsert({
+    where: {
+      tenantId_provider_entityType_entityId_idempotencyKey: {
+        tenantId: T_A,
+        provider: "quickbooks",
+        entityType: "invoice",
+        entityId: "00000000-0000-4000-8000-000000000111",
+        idempotencyKey: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      },
+    },
+    update: {},
+    create: {
+      id: ERP_SYNC_LOG_1,
+      tenantId: T_A,
+      integrationId: ERP_INT_QBO_A,
+      provider: "quickbooks",
+      entityType: "invoice",
+      entityId: "00000000-0000-4000-8000-000000000111",
+      externalId: "QBO-INV-1029",
+      direction: "outbound",
+      status: "success",
+      idempotencyKey: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      syncedAt: new Date("2026-11-18T04:00:00Z"),
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:

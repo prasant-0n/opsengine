@@ -1,7 +1,7 @@
 # OpsEngine — Enterprise Operations Platform (SaaS CRM + HRMS + Workforce)
 
 [![CI Pipeline](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml/badge.svg)](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml)
-[![Tests Passing](https://img.shields.io/badge/tests-446%2F446%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
+[![Tests Passing](https://img.shields.io/badge/tests-460%2F460%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0%20App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.3-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -158,6 +158,12 @@ OpsEngine runs on **Path 1: Modern Serverless Cloud Mesh**, delivering enterpris
 - **Anti-SSRF Protection**: Strict host allowlisting (Google FCM, Apple APNs, Mozilla autopush, Windows WNS) and private IP/loopback filtering for endpoint registration.
 - **ReBAC & Multi-Tenant Device Isolation**: Granular push subscriptions scoped strictly by tenant and user with automated cleanup of deactivated devices.
 
+### 12. Accounting ERP Integrations (QuickBooks Online & Xero)
+- **General Ledger Synchronization**: Automated bi-directional sync converting integer-cent invoices and payment reconciliations into Intuit QuickBooks Online and Xero JSON DTOs.
+- **Chart of Accounts (COA) Mapping**: Tenant-configurable mapping for professional services revenue, accounts receivable, sales tax liability, and bank deposits.
+- **Cryptographic Idempotency & Replay Defense**: SHA-256 payload hashing guaranteeing zero duplicate journal entries under high concurrency or retry loops.
+- **Sync Audit Ledger & Error Resolution**: Complete audit trail of outbound and inbound journal syncs with one-click retry for failed entries.
+
 ---
 
 ## Monorepo Structure
@@ -176,7 +182,7 @@ opsengine/
 │           ├── components/            # Reusable UI & Shell primitives
 │           ├── features/              # Vertical domain slices (HRMS, CRM, Finance)
 │           ├── lib/                   # Infrastructure clients (Prisma, R2, Webhooks, Telemetry)
-│           └── tests/                 # 41 Vitest unit & ReBAC test suites (446 tests)
+│           └── tests/                 # 42 Vitest unit & ReBAC test suites (460 tests)
 ├── packages/
 │   ├── api-contracts/                 # Shared TypeScript DTOs, schemas & env contracts
 │   ├── authorization-policy/          # ReBAC policy engine contracts
@@ -303,7 +309,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
   ├── PostgreSQL 16 Alpine Service Container
   ├── Prisma Migration Deployment (Direct Connection)
   ├── Enterprise Multi-Tenant Baseline Seed
-  └── 41 Vitest Suites (446/446 Unit, ReBAC & Negative Tests Passing)
+  └── 42 Vitest Suites (460/460 Unit, ReBAC & Negative Tests Passing)
         |
         v
   Stage 3: Standalone Production Build
@@ -320,7 +326,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
 ### Running Tests Locally
 
 ```bash
-# Run all 41 Vitest test suites (446 tests)
+# Run all 42 Vitest test suites (460 tests)
 pnpm test
 
 # Run TypeScript type checking across all 6 monorepo packages
