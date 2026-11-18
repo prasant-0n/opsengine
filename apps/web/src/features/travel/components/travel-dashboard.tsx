@@ -7,9 +7,7 @@ import {
   Users,
   Clock,
   DollarSign,
-  ShieldCheck,
   Search,
-  Filter,
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";

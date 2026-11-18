@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { X, Plane, AlertTriangle, CheckCircle, MapPin, DollarSign, Calendar } from "lucide-react";
+import { X, Plane, AlertTriangle, CheckCircle, MapPin, DollarSign } from "lucide-react";
 import {
   calculateTripDurationDays,
   evaluatePerDiemCompliance,

@@ -68,7 +68,7 @@ export function TravelRequestCard({
   onApprove,
   onBridgeExpenses,
 }: TravelRequestCardProps) {
-  let days = 1;
+  let days: number;
   try {
     days = calculateTripDurationDays(request.startDate, request.endDate);
   } catch {

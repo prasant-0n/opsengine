@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, ShieldCheck, CheckCircle2, AlertTriangle, DollarSign, CreditCard } from "lucide-react";
+import { X, ShieldCheck, CheckCircle2, CreditCard } from "lucide-react";
 import { TravelRequestData } from "./travel-request-card";
 
 interface TravelApprovalModalProps {

@@ -39,6 +39,23 @@ export async function POST(
     );
   }
 
+  // Authoritative base security check: User must hold travel approval permissions
+  const canManagerApprove = authorize(ctx, PERMISSIONS.TRAVEL_APPROVE_MANAGER, {
+    tenantId: ctx.tenantId,
+    owningEmployeeId: travelRequest.employeeId,
+    resourceType: "travel_request",
+  }).allowed;
+
+  const canFinanceApprove = authorize(ctx, PERMISSIONS.TRAVEL_APPROVE_FINANCE, {
+    tenantId: ctx.tenantId,
+    owningEmployeeId: travelRequest.employeeId,
+    resourceType: "travel_request",
+  }).allowed;
+
+  if (!canManagerApprove && !canFinanceApprove) {
+    return NextResponse.json({ error: "Unauthorized: Approval permissions required" }, { status: 403 });
+  }
+
   try {
     const body = await req.json();
     const { action, advanceAmountCents, rejectionReason } = body;
@@ -51,12 +68,7 @@ export async function POST(
     }
 
     if (action === "manager_approve") {
-      const authz = authorize(ctx, PERMISSIONS.TRAVEL_APPROVE_MANAGER, {
-        tenantId: ctx.tenantId,
-        owningEmployeeId: travelRequest.employeeId,
-        resourceType: "travel_request",
-      });
-      if (!authz.allowed) {
+      if (!canManagerApprove) {
         return NextResponse.json({ error: "Unauthorized: Manager approval required" }, { status: 403 });
       }
 
@@ -80,12 +92,7 @@ export async function POST(
     }
 
     if (action === "finance_approve") {
-      const authz = authorize(ctx, PERMISSIONS.TRAVEL_APPROVE_FINANCE, {
-        tenantId: ctx.tenantId,
-        owningEmployeeId: travelRequest.employeeId,
-        resourceType: "travel_request",
-      });
-      if (!authz.allowed) {
+      if (!canFinanceApprove) {
         return NextResponse.json({ error: "Unauthorized: Finance approval required" }, { status: 403 });
       }
 
