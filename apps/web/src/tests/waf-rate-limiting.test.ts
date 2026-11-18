@@ -43,6 +43,8 @@ describe("Web Application Firewall (WAF) & Rate Limiting Engine (PRD §4.1 & §1
         "http://localhost:3000/api/crm/accounts?query=%27%20OR%201=1--",
         "http://localhost:3000/api/finance/invoices?ref=INV;%20DROP%20TABLE%20invoices",
         "http://localhost:3000/api/employees?search=test%27%20OR%20%271%27=%271",
+        "http://localhost:3000/api/auth/login?user=admin%27--",
+        "http://localhost:3000/api/tickets?id=1%20--%20comment",
       ];
 
       for (const url of sqliPayloads) {
@@ -88,6 +90,8 @@ describe("Web Application Firewall (WAF) & Rate Limiting Engine (PRD §4.1 & §1
         "http://localhost:3000/api/finance/invoices?page=1&limit=25",
         "http://localhost:3000/api/health",
         "http://localhost:3000/api/metrics",
+        "http://localhost:3000/api/auth/google/callback?code=4/0AcvD--xyz123-abc_test&state=eyJjc3JmIjoiYTkw...--hmac",
+        "http://localhost:3000/api/tickets?ref=my--custom--slug",
       ];
 
       for (const url of benignUrls) {
