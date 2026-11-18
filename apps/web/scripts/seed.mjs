@@ -1189,6 +1189,23 @@ async function main() {
     },
   });
 
+  // Mobile PWA & Push Notification Subscriptions (#42)
+  const SUB_A_ADMIN = "00000000-0000-4000-8000-00000000fe01";
+  await prisma.pushSubscription.upsert({
+    where: { endpoint: "https://fcm.googleapis.com/fcm/send/demo-admin-token-42" },
+    update: {},
+    create: {
+      id: SUB_A_ADMIN,
+      tenantId: T_A,
+      userId: USER_A_ADMIN,
+      endpoint: "https://fcm.googleapis.com/fcm/send/demo-admin-token-42",
+      p256dh: "BMc_8_demo_public_key_mock_for_pwa_testing_only_base64_0123456789abcdef",
+      auth: "demo_auth_secret_mock_42",
+      userAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/130.0.0.0 Mobile",
+      isActive: true,
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:

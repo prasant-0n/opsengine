@@ -1,15 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PwaRegister, MobileNavigation } from "@/features/pwa";
 
 export const metadata: Metadata = {
   title: "OpsEngine",
   description:
     "Enterprise Ops SaaS — Multi-tenant CRM, HRMS and operations platform with hierarchical role-based access.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "OpsEngine",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: "/apple-touch-icon.png",
   },
@@ -54,7 +62,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <PwaRegister />
+          <MobileNavigation />
+        </ThemeProvider>
       </body>
     </html>
   );

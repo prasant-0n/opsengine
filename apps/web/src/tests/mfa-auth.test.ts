@@ -13,6 +13,9 @@ import { NextRequest } from "next/server";
 describe("Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up (PRD Module 1 & §14.3)", () => {
   let mfaService: MfaService;
 
+  // Helper to reliably compute timestamp in the next 30s step (offset +1, never +2)
+  const getNextStepTime = () => (Math.floor(Date.now() / 1000 / 30) + 1) * 30 * 1000 + 1000;
+
   beforeEach(() => {
     mfaService = new MfaService();
   });
@@ -146,8 +149,8 @@ describe("Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up (P
       const confirmCode = TotpEngine.generateTotp(setup.secretBase32);
       mfaService.confirm("usr_300", "tenant_alpha", confirmCode);
 
-      // Advance clock slightly (31s) so step advances and code is fresh
-      const stepUpTime = Date.now() + 31000;
+      // Advance clock to next step (offset +1) so step advances and code is fresh
+      const stepUpTime = getNextStepTime();
       const stepUpCode = TotpEngine.generateTotp(setup.secretBase32, stepUpTime);
 
       const stepUp = mfaService.issueStepUp("usr_300", "tenant_alpha", stepUpCode, "TENANT_ADMIN");
@@ -187,8 +190,8 @@ describe("Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up (P
       const bravoCode = TotpEngine.generateTotp(bravoSetup.secretBase32);
       mfaService.confirm("usr_bravo", "tenant_bravo", bravoCode);
 
-      // Fresh code for Bravo
-      const freshTime = Date.now() + 31000;
+      // Fresh code for Bravo in next step
+      const freshTime = getNextStepTime();
       const freshBravoCode = TotpEngine.generateTotp(bravoSetup.secretBase32, freshTime);
 
       // Bob from Tenant Bravo attempts to verify using his code against Tenant Alpha
@@ -224,8 +227,8 @@ describe("Enterprise Multi-Factor Authentication (TOTP 2FA) & Session Step-Up (P
       const confirmData = await confirmRes.json();
       expect(confirmData.status).toBe("ACTIVE");
 
-      // 3. Step-Up API (advance by 31s for fresh code)
-      const freshCode = TotpEngine.generateTotp(setupData.secretBase32, Date.now() + 31000);
+      // 3. Step-Up API (advance to next step for fresh code)
+      const freshCode = TotpEngine.generateTotp(setupData.secretBase32, getNextStepTime());
       const stepUpReq = new NextRequest("http://localhost:3000/api/auth/mfa/step-up", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-tenant-id": "tenant_api_test" },
