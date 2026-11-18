@@ -7,6 +7,9 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages/api-contracts/package.json ./packages/api-contracts/
+COPY packages/domain-events/package.json ./packages/domain-events/
+COPY packages/logger/package.json ./packages/logger/
+COPY packages/telemetry/package.json ./packages/telemetry/
 COPY services/identity-service/package.json ./services/identity-service/
 COPY apps/web/package.json ./apps/web/
 
@@ -17,6 +20,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages/api-contracts/node_modules ./packages/api-contracts/node_modules
+COPY --from=deps /app/packages/domain-events/node_modules ./packages/domain-events/node_modules
+COPY --from=deps /app/packages/logger/node_modules ./packages/logger/node_modules
+COPY --from=deps /app/packages/telemetry/node_modules ./packages/telemetry/node_modules
 COPY --from=deps /app/services/identity-service/node_modules ./services/identity-service/node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .

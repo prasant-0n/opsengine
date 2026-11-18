@@ -94,17 +94,42 @@ This runbook details the production architecture, cloud provisioning steps, auto
    ```
 5. *(Optional)* In bucket settings, enable a public development domain `pub-<hash>.r2.dev` or attach a custom subdomain (e.g. `cdn.opsengine.enterprise`).
 
-### Step 3: Vercel Production Deployment Setup
+### Step 3: Vercel Production Deployment Setup (Serverless)
 1. Log in to [https://vercel.com](https://vercel.com) and click **Add New > Project**.
 2. Select your GitHub repository `opsengine`.
 3. In the project setup wizard:
    - **Framework Preset**: Next.js
-   - **Root Directory**: `apps/web`
-   - **Build Command**: `pnpm --filter @opsengine/web build`
-   - **Output Directory**: `.next`
+   - **Root Directory**: `.` (or root of monorepo; root `vercel.json` configures everything)
+   - **Build Command**: `pnpm --filter @opsengine/identity-service db:generate && pnpm --filter @opsengine/web build`
+   - **Output Directory**: `apps/web/.next`
    - **Install Command**: `pnpm install`
-4. Expand **Environment Variables** and configure the variables documented in Section 4 below.
+4. Expand **Environment Variables** and configure:
+   - `DATABASE_URL`: Neon pooled connection string or Render Postgres external connection string
+   - `DIRECT_URL`: Neon direct connection string or same as DATABASE_URL
+   - `NEXTAUTH_SECRET`: 32+ character random secret
+   - `NEXT_PUBLIC_APP_URL`: Your Vercel production URL (e.g. `https://opsengine.vercel.app`)
+   - `MOCK_GOOGLE_SSO`: `true` (mock Google SSO until Google Cloud OAuth credentials are configured)
 5. Click **Deploy**. Vercel will trigger the standalone Next.js 16 App Router build and provision global Edge CDN endpoints.
+
+### Step 4: Render Production Deployment Setup (Docker Blueprint)
+OpsEngine includes a ready-to-use Render Blueprint (`render.yaml`) that spins up a managed PostgreSQL database and a Docker web service with automatic migrations.
+
+1. Log in to [https://dashboard.render.com](https://dashboard.render.com).
+2. Click **New > Blueprint**.
+3. Connect your GitHub repository `prasant-0n/opsengine` and select branch `main`.
+4. Render detects `render.yaml` and displays the Blueprint resources:
+   - **Database**: `opsengine-postgres` (Free tier PostgreSQL)
+   - **Web Service**: `opsengine-web` (Docker runtime, free plan, health check `/api/health`)
+5. Under `opsengine-web` environment variables:
+   - `DATABASE_URL` & `DIRECT_URL`: Auto-linked from `opsengine-postgres`
+   - `NEXTAUTH_SECRET`: Auto-generated high entropy key
+   - `MOCK_GOOGLE_SSO`: Pre-set to `"true"`
+   - `NEXT_PUBLIC_APP_URL`: Enter your Render service URL (e.g. `https://opsengine-web.onrender.com`)
+6. Click **Apply Blueprint**. Render builds the Docker image, applies database migrations via `entrypoint.sh`, and starts the container.
+7. Verify deployment health:
+   ```bash
+   curl -i https://<your-render-subdomain>.onrender.com/api/health
+   ```
 
 ---
 
