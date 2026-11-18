@@ -37,7 +37,7 @@ export async function GET(req: Request) {
         heapUsedMB: Math.round(memory.heapUsed / 1024 / 1024),
         rssMB: Math.round(memory.rss / 1024 / 1024),
       },
-      version: "1.0.0",
+      version: process.env.APP_VERSION || "1.46.2",
     },
     { status: isHealthy ? 200 : 503 }
   );
