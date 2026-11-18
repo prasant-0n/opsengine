@@ -43,11 +43,17 @@ export function TravelApprovalModal({
         ? Math.round(parseFloat(advanceAmountDollars) * 100)
         : undefined;
 
-      const res = await fetch(`/api/travel/requests/${travelRequest.id}/approve`, {
+      const endpoint =
+        action === "manager_approve"
+          ? `/api/travel/requests/${travelRequest.id}/approve-manager`
+          : action === "finance_approve"
+          ? `/api/travel/requests/${travelRequest.id}/approve-finance`
+          : `/api/travel/requests/${travelRequest.id}/reject`;
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action,
           advanceAmountCents: advanceCents,
           rejectionReason: rejectionReason.trim() || undefined,
         }),
