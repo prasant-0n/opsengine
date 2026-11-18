@@ -6,7 +6,7 @@ export interface WafInspectionResult {
 
 const SCANNER_REGEX = /(sqlmap|nikto|masscan|dirbuster|gobuster|wprecon|acunetix|nessus|zgrab)/i;
 const PATH_TRAVERSAL_REGEX = /((\.\.[\/\\])|\/etc\/(passwd|shadow|hosts)|\/windows\/win\.ini|boot\.ini)/i;
-const SQLI_REGEX = /(union\s+(all\s+)?select|;\s*drop\s+table|;\s*delete\s+from|'\s+or\s+1\s*=\s*1|'\s+or\s+'1'\s*=\s*'1|--|\/\*|\*\/)/i;
+const SQLI_REGEX = /(union\s+(all\s+)?select|;\s*drop\s+table|;\s*delete\s+from|'\s+or\s+1\s*=\s*1|'\s+or\s+'1'\s*=\s*'1|(?:\x27|\x22|;|\))\s*--|\s+--(?:\s|$)|\/\*|\*\/)/i;
 const XSS_REGEX = /(<script|<\/script|javascript:|onerror\s*=|onload\s*=|onclick\s*=|document\.cookie|<iframe|<svg\s+onload)/i;
 
 /**
