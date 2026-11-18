@@ -214,6 +214,13 @@ export const NAV_GROUPS: NavGroup[] = [
         permission: "finance.receivable.read",
         behavior: "hide",
       },
+      {
+        label: "Travel & Duty of Care",
+        href: "/dashboard/travel",
+        icon: "flight_takeoff",
+        permission: "travel.request.read_self",
+        behavior: "hide",
+      },
     ],
   },
   {
