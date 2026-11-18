@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { PushNotificationToggle } from "@/features/pwa";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -46,6 +47,10 @@ export default function NotificationsPage() {
           </button>
         </div>
       </header>
+
+      <div className="mb-6">
+        <PushNotificationToggle />
+      </div>
 
       <div className="panel">
         {loading ? (
