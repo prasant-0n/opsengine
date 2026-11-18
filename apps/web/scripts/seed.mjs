@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../src/lib/auth/crypto/index.ts";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -919,6 +920,157 @@ async function main() {
       currency: "USD",
       spentOn: new Date("2026-11-10T08:00:00Z"),
       policyViolation: false,
+    },
+  });
+
+  // 17. Feature #40: Statutory Payroll & Payslips
+  console.log("Seeding Statutory Payroll & Employee Compensation Packages...");
+  const SALARY_STRUCT_DEV1 = "00000000-0000-4000-8000-00000000fa01";
+  await prisma.salaryStructure.upsert({
+    where: { id: SALARY_STRUCT_DEV1 },
+    update: {},
+    create: {
+      id: SALARY_STRUCT_DEV1,
+      tenantId: T_A,
+      employeeId: EMP_A_DEV1,
+      effectiveFrom: new Date("2026-01-01"),
+      currency: "USD",
+      basicCents: 600000n, // $6,000.00
+      hraCents: 200000n, // $2,000.00
+      allowanceCents: 100000n, // $1,000.00
+      pfEmployeeCents: 50000n, // $500.00
+      pfEmployerCents: 50000n, // $500.00
+      taxTdsCents: 70000n, // $700.00
+      paymentMethod: "bank_transfer",
+      bankName: "JPMorgan Chase",
+      bankAccountNumber: "9876543210",
+      bankRoutingCode: "021000021",
+      status: "active",
+    },
+  });
+
+  const SALARY_STRUCT_QA = "00000000-0000-4000-8000-00000000fa02";
+  await prisma.salaryStructure.upsert({
+    where: { id: SALARY_STRUCT_QA },
+    update: {},
+    create: {
+      id: SALARY_STRUCT_QA,
+      tenantId: T_A,
+      employeeId: EMP_A_QA,
+      effectiveFrom: new Date("2026-01-01"),
+      currency: "USD",
+      basicCents: 500000n, // $5,000.00
+      hraCents: 150000n, // $1,500.00
+      allowanceCents: 80000n, // $800.00
+      pfEmployeeCents: 45000n, // $450.00
+      pfEmployerCents: 45000n, // $450.00
+      taxTdsCents: 55000n, // $550.00
+      paymentMethod: "bank_transfer",
+      bankName: "Bank of America",
+      bankAccountNumber: "1234567890",
+      bankRoutingCode: "026009593",
+      status: "active",
+    },
+  });
+
+  const PAY_RUN_OCT = "00000000-0000-4000-8000-00000000fb01";
+  await prisma.payrollRun.upsert({
+    where: { id: PAY_RUN_OCT },
+    update: {},
+    create: {
+      id: PAY_RUN_OCT,
+      tenantId: T_A,
+      runNumber: "PR-2026-10",
+      periodYear: 2026,
+      periodMonth: 10,
+      periodStart: new Date("2026-10-01"),
+      periodEnd: new Date("2026-10-31"),
+      status: "disbursed",
+      totalGrossCents: 1630000n, // $16,300.00
+      totalDeductionsCents: 220000n, // $2,200.00
+      totalNetCents: 1410000n, // $14,100.00
+      totalEmployees: 2,
+      executedBy: EMP_A_DIR,
+      approvedBy: EMP_A_ADMIN,
+      approvedAt: new Date("2026-10-30T10:00:00Z"),
+      disbursedAt: new Date("2026-10-31T09:00:00Z"),
+      batchExportRef: "BATCH-PR-2026-10-1730365200000",
+    },
+  });
+
+  const payslipDevHash = crypto
+    .createHash("sha256")
+    .update(`${T_A}|${PAY_RUN_OCT}|${EMP_A_DEV1}|PAY-202610-0001|2026|10|900000|120000|780000`, "utf8")
+    .digest("hex");
+
+  const PAYSLIP_DEV1 = "00000000-0000-4000-8000-00000000fc01";
+  await prisma.payslip.upsert({
+    where: { id: PAYSLIP_DEV1 },
+    update: {},
+    create: {
+      id: PAYSLIP_DEV1,
+      tenantId: T_A,
+      payrollRunId: PAY_RUN_OCT,
+      employeeId: EMP_A_DEV1,
+      payslipNumber: "PAY-202610-0001",
+      periodYear: 2026,
+      periodMonth: 10,
+      workingDays: 31,
+      workedDays: 31,
+      unpaidLeaveDays: 0,
+      basicCents: 600000n,
+      hraCents: 200000n,
+      allowancesCents: 100000n,
+      grossPayCents: 900000n,
+      pfEmployeeCents: 50000n,
+      pfEmployerCents: 50000n,
+      taxTdsCents: 70000n,
+      lopDeductionCents: 0n,
+      totalDeductionsCents: 120000n,
+      netPayCents: 780000n,
+      currency: "USD",
+      checksumSha256: payslipDevHash,
+      status: "published",
+      paymentReference: "ACH-PR-2026-10-0001",
+      paidAt: new Date("2026-10-31T09:00:00Z"),
+    },
+  });
+
+  const payslipQaHash = crypto
+    .createHash("sha256")
+    .update(`${T_A}|${PAY_RUN_OCT}|${EMP_A_QA}|PAY-202610-0002|2026|10|730000|100000|630000`, "utf8")
+    .digest("hex");
+
+  const PAYSLIP_QA = "00000000-0000-4000-8000-00000000fc02";
+  await prisma.payslip.upsert({
+    where: { id: PAYSLIP_QA },
+    update: {},
+    create: {
+      id: PAYSLIP_QA,
+      tenantId: T_A,
+      payrollRunId: PAY_RUN_OCT,
+      employeeId: EMP_A_QA,
+      payslipNumber: "PAY-202610-0002",
+      periodYear: 2026,
+      periodMonth: 10,
+      workingDays: 31,
+      workedDays: 31,
+      unpaidLeaveDays: 0,
+      basicCents: 500000n,
+      hraCents: 150000n,
+      allowancesCents: 80000n,
+      grossPayCents: 730000n,
+      pfEmployeeCents: 45000n,
+      pfEmployerCents: 45000n,
+      taxTdsCents: 55000n,
+      lopDeductionCents: 0n,
+      totalDeductionsCents: 100000n,
+      netPayCents: 630000n,
+      currency: "USD",
+      checksumSha256: payslipQaHash,
+      status: "published",
+      paymentReference: "ACH-PR-2026-10-0002",
+      paidAt: new Date("2026-10-31T09:00:00Z"),
     },
   });
 

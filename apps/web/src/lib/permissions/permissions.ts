@@ -154,6 +154,15 @@ export const PERMISSIONS = {
   EXPENSE_REPORT_APPROVE_MANAGER: "expense.report.approve_manager",
   EXPENSE_REPORT_APPROVE_FINANCE: "expense.report.approve_finance",
   EXPENSE_REPORT_PAYOUT: "expense.report.payout",
+  // Statutory Payroll, Taxes & Payslips (Module 5 & §18.7)
+  PAYROLL_STRUCTURE_MANAGE: "payroll.structure.manage",
+  PAYROLL_STRUCTURE_READ: "payroll.structure.read",
+  PAYROLL_RUN_EXECUTE: "payroll.run.execute",
+  PAYROLL_RUN_READ: "payroll.run.read",
+  PAYROLL_RUN_APPROVE: "payroll.run.approve",
+  PAYROLL_RUN_DISBURSE: "payroll.run.disburse",
+  PAYSLIP_READ_SELF: "payroll.payslip.read_self",
+  PAYSLIP_READ_ALL: "payroll.payslip.read_all",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -188,6 +197,7 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.CALENDAR_EVENT_CREATE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_CREATE, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.PAYSLIP_READ_SELF, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -426,6 +436,14 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.FINANCE_COMMERCIAL_TERMS_APPROVE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_APPROVE_FINANCE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_PAYOUT, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_STRUCTURE_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_STRUCTURE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_RUN_EXECUTE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_RUN_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_RUN_APPROVE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYROLL_RUN_DISBURSE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYSLIP_READ_ALL, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.PAYSLIP_READ_SELF, scopeType: "SELF" },
   ],
   recruiter: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },

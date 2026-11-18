@@ -1,7 +1,7 @@
 # OpsEngine — Enterprise Operations Platform (SaaS CRM + HRMS + Workforce)
 
 [![CI Pipeline](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml/badge.svg)](https://github.com/prasant-0n/opsengine/actions/workflows/ci.yml)
-[![Tests Passing](https://img.shields.io/badge/tests-401%2F401%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
+[![Tests Passing](https://img.shields.io/badge/tests-416%2F416%20passing-brightgreen.svg)](https://github.com/prasant-0n/opsengine)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.0%20App%20Router-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.3-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20Strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -138,6 +138,13 @@ OpsEngine runs on **Path 1: Modern Serverless Cloud Mesh**, delivering enterpris
 - **Two-Stage Approval & SoD**: Stage 1 direct reporting manager approval, Stage 2 finance officer audit with strict Segregation of Duties (self-approval prohibited).
 - **Payment Voucher Disbursement**: Automated reimbursement voucher generation (`VOU-YYYY-XXXXXXXX`) and financial ledger reconciliation.
 
+### 9. Statutory Payroll, Taxes & Tamper-Evident Payslips
+- **Compensation & Salary Structure Engine**: Itemized salary components (Basic, HRA, Special Allowances, PF/401k employee/employer contributions, and Tax TDS withholdings) represented purely in BigInt integer cents to eliminate floating-point drift.
+- **Attendance & LOP Integration**: Automatic calculation of working days, worked days, and attendance-linked Loss of Pay (LOP) deductions computed from verified unpaid leave records.
+- **Cryptographic SHA-256 Checksums**: Tamper-evident hash chaining securing every payslip record (`PAY-YYYYMM-XXXX`) against database manipulation or unauthorized salary adjustments.
+- **NACHA / ACH & NEFT Banking Direct Deposit**: Automated batch file export generator formatting compliant bank transfer records with header, detail lines, and checksum trailer control.
+- **Segregation of Duties (SoD)**: Enforces separation between the payroll calculation executor and the approving finance officer (self-approval strictly prohibited).
+
 ---
 
 ## Monorepo Structure
@@ -156,7 +163,7 @@ opsengine/
 │           ├── components/            # Reusable UI & Shell primitives
 │           ├── features/              # Vertical domain slices (HRMS, CRM, Finance)
 │           ├── lib/                   # Infrastructure clients (Prisma, R2, Webhooks, Telemetry)
-│           └── tests/                 # 38 Vitest unit & ReBAC test suites (401 tests)
+│           └── tests/                 # 39 Vitest unit & ReBAC test suites (416 tests)
 ├── packages/
 │   ├── api-contracts/                 # Shared TypeScript DTOs, schemas & env contracts
 │   ├── authorization-policy/          # ReBAC policy engine contracts
@@ -283,7 +290,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
   ├── PostgreSQL 16 Alpine Service Container
   ├── Prisma Migration Deployment (Direct Connection)
   ├── Enterprise Multi-Tenant Baseline Seed
-  └── 38 Vitest Suites (401/401 Unit, ReBAC & Negative Tests Passing)
+  └── 39 Vitest Suites (416/416 Unit, ReBAC & Negative Tests Passing)
         |
         v
   Stage 3: Standalone Production Build
@@ -300,7 +307,7 @@ OpsEngine enforces strict quality and security gates on every pull request and p
 ### Running Tests Locally
 
 ```bash
-# Run all 38 Vitest test suites (401 tests)
+# Run all 39 Vitest test suites (416 tests)
 pnpm test
 
 # Run TypeScript type checking across all 6 monorepo packages
