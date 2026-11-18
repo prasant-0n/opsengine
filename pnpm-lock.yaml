@@ -32,6 +32,9 @@ importers:
       '@opsengine/domain-events':
         specifier: workspace:*
         version: link:../../packages/domain-events
+      '@opsengine/identity-service':
+        specifier: workspace:*
+        version: link:../../services/identity-service
       '@opsengine/logger':
         specifier: workspace:*
         version: link:../../packages/logger
