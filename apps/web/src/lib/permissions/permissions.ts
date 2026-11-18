@@ -179,6 +179,12 @@ export const PERMISSIONS = {
   ERP_CONFIG_MANAGE: "finance.erp.manage",
   ERP_SYNC_READ: "finance.erp.read",
   ERP_SYNC_EXECUTE: "finance.erp.execute",
+  // Learning Management System (LMS) & Skill Certifications (PRD Modules 5, 6 & §18.7)
+  LMS_COURSE_MANAGE: "lms.course.manage",
+  LMS_COURSE_READ: "lms.course.read",
+  LMS_ENROLLMENT_MANAGE_SELF: "lms.enrollment.manage_self",
+  LMS_ENROLLMENT_MANAGE_TEAM: "lms.enrollment.manage_team",
+  LMS_CERTIFICATION_VERIFY: "lms.certification.verify",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -219,6 +225,8 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.APPRAISAL_CYCLE_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_SUBMIT, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -260,6 +268,9 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.LEAVE_BALANCE_READ_TEAM, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_READ_TEAM, scopeType: "TEAM" },
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_CORRECT_APPROVE, scopeType: "TEAM" },
+    { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "TEAM" },
   ],
   senior_lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -299,6 +310,11 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_READ_TEAM, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.TIME_ATTENDANCE_CORRECT_APPROVE, scopeType: "REPORTING_TREE" },
     { permissionKey: PERMISSIONS.ERP_SYNC_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_COURSE_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "REPORTING_TREE" },
+    { permissionKey: PERMISSIONS.LMS_CERTIFICATION_VERIFY, scopeType: "REPORTING_TREE" },
   ],
   hr: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -411,6 +427,12 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.APPROVAL_WORKFLOW_READ, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.APPROVAL_WORKFLOW_MANAGE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.APPROVAL_DELEGATE, scopeType: "TENANT" },
+    // Learning Management System (LMS)
+    { permissionKey: PERMISSIONS.LMS_COURSE_MANAGE, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_COURSE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.LMS_CERTIFICATION_VERIFY, scopeType: "TENANT" },
   ],
   delivery: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
