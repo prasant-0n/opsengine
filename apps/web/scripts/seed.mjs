@@ -1285,6 +1285,114 @@ async function main() {
     },
   });
 
+  // Learning Management System (LMS) & Skill Certifications (#44)
+  const COURSE_SEC_101 = "00000000-0000-4000-8000-00000000eb01";
+  const COURSE_K8S_201 = "00000000-0000-4000-8000-00000000eb02";
+  const ENROLLMENT_SEC_DEV1 = "00000000-0000-4000-8000-00000000eb11";
+  const SKILL_CERT_AWS_DEV1 = "00000000-0000-4000-8000-00000000eb21";
+
+  await prisma.course.upsert({
+    where: {
+      tenantId_code: {
+        tenantId: T_A,
+        code: "CRS-SEC-101",
+      },
+    },
+    update: {},
+    create: {
+      id: COURSE_SEC_101,
+      tenantId: T_A,
+      code: "CRS-SEC-101",
+      title: "Information Security & SOC 2 Compliance Awareness",
+      description: "Mandatory enterprise statutory compliance covering data privacy, access controls, and phishing defense.",
+      category: "compliance",
+      passingScore: 80,
+      durationMinutes: 45,
+      validityMonths: 12,
+      modules: [
+        { id: "mod-1", title: "Data Classification & GDPR/SOC 2" },
+        { id: "mod-2", title: "Phishing Defense & Incident Escalation" },
+      ],
+      isActive: true,
+    },
+  });
+
+  await prisma.course.upsert({
+    where: {
+      tenantId_code: {
+        tenantId: T_A,
+        code: "CRS-K8S-201",
+      },
+    },
+    update: {},
+    create: {
+      id: COURSE_K8S_201,
+      tenantId: T_A,
+      code: "CRS-K8S-201",
+      title: "Enterprise Kubernetes & Cloud Native Microservices",
+      description: "Advanced container orchestration, multi-tenant networking, and zero-downtime rolling updates.",
+      category: "technical",
+      passingScore: 85,
+      durationMinutes: 120,
+      validityMonths: null,
+      modules: [
+        { id: "mod-1", title: "Pod Security Standards & NetworkPolicies" },
+        { id: "mod-2", title: "Autoscaling with KEDA & Ingress Controllers" },
+      ],
+      isActive: true,
+    },
+  });
+
+  await prisma.courseEnrollment.upsert({
+    where: {
+      tenantId_courseId_employeeId: {
+        tenantId: T_A,
+        courseId: COURSE_SEC_101,
+        employeeId: EMP_A_DEV1,
+      },
+    },
+    update: {},
+    create: {
+      id: ENROLLMENT_SEC_DEV1,
+      tenantId: T_A,
+      courseId: COURSE_SEC_101,
+      employeeId: EMP_A_DEV1,
+      enrollmentType: "mandatory",
+      status: "completed",
+      progressPercent: 100,
+      score: 95,
+      completedAt: new Date("2026-11-18T05:00:00Z"),
+      expiresAt: new Date("2027-11-18T05:00:00Z"),
+    },
+  });
+
+  await prisma.skillCertification.upsert({
+    where: {
+      tenantId_employeeId_skillName_credentialId: {
+        tenantId: T_A,
+        employeeId: EMP_A_DEV1,
+        skillName: "AWS Certified Solutions Architect",
+        credentialId: "AWS-PSA-10827",
+      },
+    },
+    update: {},
+    create: {
+      id: SKILL_CERT_AWS_DEV1,
+      tenantId: T_A,
+      employeeId: EMP_A_DEV1,
+      skillName: "AWS Certified Solutions Architect",
+      proficiencyLevel: "advanced",
+      issuingAuthority: "Amazon Web Services",
+      credentialId: "AWS-PSA-10827",
+      verificationUrl: "https://credly.com/org/aws/badge/solutions-architect",
+      status: "verified",
+      verifiedBy: EMP_A_LEAD1,
+      verifiedAt: new Date("2026-11-18T05:10:00Z"),
+      verificationHash: "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0",
+      issuedAt: new Date("2026-01-15T00:00:00Z"),
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:
