@@ -241,7 +241,7 @@ describe("Module 11 & §14.2 — Outbound Webhook Delivery Engine with HMAC Sign
 
   describe("5. Delivery Dispatch, Backoff Retries & Dead Letter Queue (DLQ)", () => {
     it("dispatches successful delivery and records response status & latency", async () => {
-      const ep = globalWebhookEngine.registerEndpoint(TENANT_A, {
+      globalWebhookEngine.registerEndpoint(TENANT_A, {
         name: "Fast Receiver",
         url: "https://fast.example.com/webhook",
         eventTypes: ["*"],
@@ -272,7 +272,7 @@ describe("Module 11 & §14.2 — Outbound Webhook Delivery Engine with HMAC Sign
     });
 
     it("schedules exponential retry for transient 500 error", async () => {
-      const ep = globalWebhookEngine.registerEndpoint(TENANT_A, {
+      globalWebhookEngine.registerEndpoint(TENANT_A, {
         name: "Flaky Receiver",
         url: "https://flaky.example.com/webhook",
         eventTypes: ["*"],
@@ -300,7 +300,7 @@ describe("Module 11 & §14.2 — Outbound Webhook Delivery Engine with HMAC Sign
     });
 
     it("immediately transitions non-transient 400 error to DEAD_LETTER without retrying", async () => {
-      const ep = globalWebhookEngine.registerEndpoint(TENANT_A, {
+      globalWebhookEngine.registerEndpoint(TENANT_A, {
         name: "Strict Receiver",
         url: "https://strict.example.com/webhook",
         eventTypes: ["*"],
@@ -327,7 +327,7 @@ describe("Module 11 & §14.2 — Outbound Webhook Delivery Engine with HMAC Sign
     });
 
     it("exhausts retries and transitions to DEAD_LETTER on maximum attempts (5)", async () => {
-      const ep = globalWebhookEngine.registerEndpoint(TENANT_A, {
+      globalWebhookEngine.registerEndpoint(TENANT_A, {
         name: "Down Receiver",
         url: "https://down.example.com/webhook",
         eventTypes: ["*"],
@@ -355,7 +355,7 @@ describe("Module 11 & §14.2 — Outbound Webhook Delivery Engine with HMAC Sign
     });
 
     it("replays a dead-lettered delivery and resets attempt counter", async () => {
-      const ep = globalWebhookEngine.registerEndpoint(TENANT_A, {
+      globalWebhookEngine.registerEndpoint(TENANT_A, {
         name: "Recovered Receiver",
         url: "https://recovered.example.com/webhook",
         eventTypes: ["*"],

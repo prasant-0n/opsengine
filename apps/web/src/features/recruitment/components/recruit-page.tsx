@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useShell } from "@/components/layout/shell-context";
 import {
   REQUISITION_STATUSES,
-  CANDIDATE_STATUSES,
   INTERVIEW_TYPES,
 } from "@/features/recruitment/lib/recruitment";
 

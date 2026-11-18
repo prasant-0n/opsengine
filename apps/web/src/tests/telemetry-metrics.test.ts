@@ -6,14 +6,10 @@ import {
   formatTraceparent,
   withSpan,
   Span,
-  Counter,
-  Gauge,
-  Histogram,
   MetricRegistry,
   defaultRegistry,
   recordHttpRequest,
   recordRebacDecision,
-  opsengineMetrics,
 } from "@opsengine/telemetry";
 import { createLogger, sanitizeMetadata } from "@opsengine/logger";
 import { GET as getMetrics } from "../app/api/metrics/route";

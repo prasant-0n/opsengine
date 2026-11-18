@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Target, CheckCircle2, TrendingUp, Plus, ChevronDown, ChevronRight, Award } from "lucide-react";
+import { Target, Plus, ChevronDown, ChevronRight } from "lucide-react";
 
 interface OkrTrackerProps {
   objectives: any[];

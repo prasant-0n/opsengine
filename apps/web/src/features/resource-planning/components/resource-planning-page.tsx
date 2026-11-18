@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useShell } from "@/components/layout/shell-context";
 
 function statusBadge(status: string): string {
   switch (status) {
@@ -17,7 +16,6 @@ function statusBadge(status: string): string {
 }
 
 export default function ResourcePlanningPage() {
-  const { can } = useShell();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

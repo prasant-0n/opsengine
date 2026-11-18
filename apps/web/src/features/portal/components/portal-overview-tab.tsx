@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { LifeBuoy, CheckCircle2, Clock, FileText, AlertTriangle } from "lucide-react";
+import { LifeBuoy, CheckCircle2, Clock, FileText } from "lucide-react";
 
 interface OverviewProps {
   tickets: any[];

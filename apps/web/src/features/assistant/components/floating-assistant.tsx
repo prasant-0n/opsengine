@@ -11,7 +11,6 @@ import {
   X,
   Minimize2,
   ChevronRight,
-  ShieldCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

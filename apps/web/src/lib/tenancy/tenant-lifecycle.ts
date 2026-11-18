@@ -4,9 +4,8 @@
  * PRD Module 0A & §18.7 (Runbooks: Tenant Quarantine)
  */
 
-import { TenantLifecycleRecord, TenantLifecycleState, PurgeReceipt } from "./types";
+import { TenantLifecycleRecord } from "./types";
 import { globalEventBus, createDomainEvent, DomainEventNames } from "@opsengine/domain-events";
-import { randomUUID } from "node:crypto";
 
 export class TenantLifecycleService {
   private states = new Map<string, TenantLifecycleRecord>();

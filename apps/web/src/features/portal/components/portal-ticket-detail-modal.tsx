@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Send, User, ShieldCheck, Clock, AlertCircle } from "lucide-react";
+import { X, Send, User, ShieldCheck, Clock } from "lucide-react";
 
 interface TicketDetailModalProps {
   ticket: any | null;

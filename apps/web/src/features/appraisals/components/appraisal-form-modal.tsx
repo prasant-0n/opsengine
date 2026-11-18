@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Award, Star, AlertCircle } from "lucide-react";
+import { X, Award, AlertCircle } from "lucide-react";
 
 interface AppraisalFormModalProps {
   isOpen: boolean;

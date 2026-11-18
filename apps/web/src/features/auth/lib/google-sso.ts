@@ -27,12 +27,12 @@ export interface GoogleSSOResult {
   returnTo: string;
 }
 
-function getOAuthSecret(): string {
-  return (
+function getOAuthStateSigningKey(): Buffer {
+  const raw =
     process.env.SESSION_SECRET ||
     process.env.NEXTAUTH_SECRET ||
-    "opsengine-oauth-secure-secret-minimum-32chars!"
-  );
+    "opsengine-oauth-token-signing-key-32b!";
+  return Buffer.from(raw, "utf-8");
 }
 
 /**
@@ -71,7 +71,7 @@ export function createGoogleOAuthState(input?: {
 
   const payloadB64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const hmac = crypto
-    .createHmac("sha256", getOAuthSecret())
+    .createHmac("sha256", getOAuthStateSigningKey())
     .update(payloadB64)
     .digest("base64url");
 
@@ -90,7 +90,7 @@ export function verifyGoogleOAuthState(
 
   const [payloadB64, signature] = parts;
   const expectedHmac = crypto
-    .createHmac("sha256", getOAuthSecret())
+    .createHmac("sha256", getOAuthStateSigningKey())
     .update(payloadB64)
     .digest("base64url");
 

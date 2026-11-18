@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ShieldCheck, Award, Users, Filter, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Award, CheckCircle2 } from "lucide-react";
 import { ProficiencyLevel } from "../lib/lms-engine";
 
 export interface SkillCertItem {
@@ -34,7 +34,6 @@ export function SkillMatrixBoard({
   isManager = false,
 }: SkillMatrixBoardProps) {
   const [viewMode, setViewMode] = useState<"skills" | "records">("skills");
-  const [filterLevel, setFilterLevel] = useState<string>("all");
   const [actioningId, setActioningId] = useState<string | null>(null);
 
   const verifiedCerts = certifications.filter((c) => c.status === "verified");

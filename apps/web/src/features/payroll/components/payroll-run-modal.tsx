@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Calculator, CheckCircle2, Send, Download, AlertCircle, FileText } from "lucide-react";
+import { X, Calculator, CheckCircle2, Send, Download, AlertCircle } from "lucide-react";
 import { formatCentsToAmount } from "../lib/payroll-engine";
 
 interface PayrollRunModalProps {

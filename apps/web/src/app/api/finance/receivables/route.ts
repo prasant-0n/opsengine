@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { requireFinanceAuthz, isResponse, serializeReceivable, serializePayment } from "../_lib";
-import { agingBucket, AGING_BUCKETS, isOverdue } from "@/features/finance/lib/finance";
+import { agingBucket, isOverdue } from "@/features/finance/lib/finance";
 
 export const dynamic = "force-dynamic";
 

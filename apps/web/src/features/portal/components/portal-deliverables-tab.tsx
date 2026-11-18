@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle2, Clock, AlertTriangle, ExternalLink, ShieldCheck, FileCheck } from "lucide-react";
+import { CheckCircle2, ExternalLink, ShieldCheck, FileCheck } from "lucide-react";
 
 interface DeliverablesTabProps {
   deliverables: any[];

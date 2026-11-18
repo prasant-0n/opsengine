@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = React.useState<"dark" | "light">("dark");
 
   const applyTheme = React.useCallback((t: Theme) => {
-    let resolved: "dark" | "light" = "dark";
+    let resolved: "dark" | "light";
     if (t === "system") {
       const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       resolved = systemDark ? "dark" : "light";

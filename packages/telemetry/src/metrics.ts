@@ -14,7 +14,13 @@ function serializeLabels(labels?: Record<string, string>): string {
   }
   const pairs = Object.entries(labels)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([k, v]) => `${k}="${String(v).replace(/"/g, '\\"')}"`);
+    .map(([k, v]) => {
+      const sanitized = String(v)
+        .replace(/\\/g, "\\\\")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, "\\n");
+      return `${k}="${sanitized}"`;
+    });
   return `{${pairs.join(",")}}`;
 }
 

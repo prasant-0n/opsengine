@@ -4,7 +4,6 @@ import { getSessionToken } from "@/lib/auth/session-cookie";
 import { buildAuthContext, authorize } from "@/lib/permissions";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { prisma } from "@/lib/prisma";
-import { INTERVIEW_STATUSES } from "@/features/recruitment/lib/recruitment";
 
 export const dynamic = "force-dynamic";
 type Params = { params: Promise<{ id: string }> };

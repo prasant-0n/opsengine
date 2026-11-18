@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Target, Award, Sliders, Calendar, Plus, Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { OkrTracker } from "./okr-tracker";
 import { CalibrationBoard } from "./calibration-board";
 

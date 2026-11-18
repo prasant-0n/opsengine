@@ -17,12 +17,18 @@ export async function GET(req: NextRequest) {
   const view = searchParams.get("view"); // "team" | "self"
   const status = searchParams.get("status");
 
-  if (view === "team") {
-    const authz = authorize(ctx, PERMISSIONS.LEAVE_REQUEST_READ_TEAM, {
-      tenantId: ctx.tenantId,
-    });
-    if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const isTeam = view === "team";
+  const requiredPermission = isTeam
+    ? PERMISSIONS.LEAVE_REQUEST_READ_TEAM
+    : PERMISSIONS.LEAVE_REQUEST_READ_SELF;
 
+  const authz = authorize(ctx, requiredPermission, {
+    tenantId: ctx.tenantId,
+    owningEmployeeId: isTeam ? undefined : ctx.employeeId,
+  });
+  if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  if (isTeam) {
     const requests = await prisma.leaveRequest.findMany({
       where: {
         tenantId: ctx.tenantId,
@@ -61,12 +67,6 @@ export async function GET(req: NextRequest) {
   if (!ctx.employeeId) {
     return NextResponse.json({ error: "No employee profile found" }, { status: 400 });
   }
-
-  const authz = authorize(ctx, PERMISSIONS.LEAVE_REQUEST_READ_SELF, {
-    tenantId: ctx.tenantId,
-    owningEmployeeId: ctx.employeeId,
-  });
-  if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const requests = await prisma.leaveRequest.findMany({
     where: {

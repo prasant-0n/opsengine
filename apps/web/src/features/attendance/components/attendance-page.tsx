@@ -5,10 +5,7 @@ import {
   Clock,
   LogIn,
   LogOut,
-  Calendar,
   AlertCircle,
-  CheckCircle2,
-  HelpCircle,
   FileEdit,
 } from "lucide-react";
 import {
@@ -43,8 +40,6 @@ export function AttendancePage() {
   const [status, setStatus] = useState<string>("not_checked_in");
   const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null);
   const [history, setHistory] = useState<AttendanceRecord[]>([]);
-  const [corrections, setCorrections] = useState<AttendanceCorrection[]>([]);
-  const [loading, setLoading] = useState(true);
   const [punching, setPunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(new Date());
@@ -67,7 +62,6 @@ export function AttendancePage() {
 
   const fetchAttendance = useCallback(async () => {
     try {
-      setLoading(true);
       setError(null);
       const res = await fetch("/api/attendance/summary");
       if (!res.ok) throw new Error("Failed to load attendance records");
@@ -75,11 +69,8 @@ export function AttendancePage() {
       setStatus(data.status);
       setTodayRecord(data.todayRecord);
       setHistory(data.history ?? []);
-      setCorrections(data.corrections ?? []);
     } catch (err: any) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -108,7 +99,6 @@ export function AttendancePage() {
 
   const handleOpenCorrection = (rec: AttendanceRecord) => {
     setSelectedDay(rec);
-    const dateStr = rec.workDate.slice(0, 10);
     setCorrectionForm({
       proposedCheckIn: rec.checkInAt ? rec.checkInAt.slice(11, 16) : "09:00",
       proposedCheckOut: rec.checkOutAt ? rec.checkOutAt.slice(11, 16) : "18:00",

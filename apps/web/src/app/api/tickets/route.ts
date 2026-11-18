@@ -5,8 +5,6 @@ import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { prisma } from "@/lib/prisma";
 import {
   TICKET_STATUSES,
-  TICKET_TYPES,
-  TICKET_PRIORITIES,
   isValidTicketType,
   isValidTicketPriority,
 } from "@/features/projects/lib/projects";

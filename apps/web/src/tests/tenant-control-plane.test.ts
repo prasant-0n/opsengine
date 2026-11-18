@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { prisma } from "../lib/prisma";
 import {
   getTenantWorkspacesPortfolio,
@@ -11,7 +11,6 @@ import {
 } from "../features/control-plane/lib/control-plane-service";
 
 const TENANT_A = "00000000-0000-4000-8000-0000000000aa";
-const TENANT_B = "00000000-0000-4000-8000-0000000000bb";
 const OPERATOR_USER = "00000000-0000-4000-8000-000000000001"; // USER_A (superadmin)
 
 describe("Module 0A — SaaS Control Plane, Tenant Lifecycle, Plans & Entitlements", () => {

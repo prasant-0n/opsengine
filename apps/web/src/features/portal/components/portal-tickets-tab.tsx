@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { LifeBuoy, Plus, AlertCircle, Clock, CheckCircle2, MessageSquare } from "lucide-react";
+import { LifeBuoy, Plus, AlertCircle, Clock, MessageSquare } from "lucide-react";
 
 interface TicketsTabProps {
   tickets: any[];

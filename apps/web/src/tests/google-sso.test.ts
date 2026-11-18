@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { prisma } from "../lib/prisma";
 import {
   createGoogleOAuthState,
@@ -11,9 +11,7 @@ import {
 import { buildAuthContext } from "../lib/permissions";
 
 const TENANT_A = "00000000-0000-4000-8000-0000000000aa";
-const TENANT_B = "00000000-0000-4000-8000-0000000000bb";
 const USER_A = "00000000-0000-4000-8000-000000000001";
-const USER_B = "00000000-0000-4000-8000-000000000002";
 
 describe("Module 1 — Google OAuth 2.0 / SSO Integration", () => {
   describe("State Token Cryptographic Verification & CSRF Protection", () => {

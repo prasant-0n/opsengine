@@ -22,7 +22,6 @@ export function PaymentModal({
 }: PaymentModalProps) {
   const [provider, setProvider] = useState<"stripe" | "razorpay">("stripe");
   const [loading, setLoading] = useState(false);
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +43,7 @@ export function PaymentModal({
         body: JSON.stringify({ provider }),
       });
       const data = await res.json();
-      if (data.success && data.session) {
-        setCheckoutUrl(data.session.checkoutUrl);
+      if (data.success && data.session?.checkoutUrl) {
         window.open(data.session.checkoutUrl, "_blank");
       } else {
         setError(data.details || data.error || "Failed to create checkout session");

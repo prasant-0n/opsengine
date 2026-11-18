@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileText, CreditCard, CheckCircle2, Clock } from "lucide-react";
+import { FileText, CreditCard, CheckCircle2 } from "lucide-react";
 
 interface InvoicesTabProps {
   invoices: any[];

@@ -17,7 +17,6 @@ import {
   FileText,
   ShieldCheck,
   AlertCircle,
-  HelpCircle,
 } from "lucide-react";
 
 interface AuditRow {

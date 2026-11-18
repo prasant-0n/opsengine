@@ -112,6 +112,10 @@ export class MfaService {
     tenantId: string,
     code: string
   ): { valid: boolean; method?: "TOTP" | "BACKUP_CODE"; error?: string } {
+    if (!userId || !tenantId || !code) {
+      return { valid: false, error: "userId, tenantId, and code are required to verify MFA" };
+    }
+
     const key = this.getKey(tenantId, userId);
     const enrollment = this.enrollments.get(key);
 

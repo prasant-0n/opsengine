@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 import {
   calculatePayslipAmounts,
   generatePayslipChecksum,
-  canTransitionPayrollRun,
 } from "@/features/payroll/lib/payroll-engine";
 
 export const dynamic = "force-dynamic";

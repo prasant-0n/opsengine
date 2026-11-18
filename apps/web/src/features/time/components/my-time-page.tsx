@@ -8,7 +8,6 @@ import {
   formatMinutes,
   deriveDailyReport,
   weekRange,
-  sumTimeEntries,
 } from "@/features/time/lib/time";
 
 function planBadge(status: string): string {

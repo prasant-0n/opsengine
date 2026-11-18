@@ -12,14 +12,10 @@ import {
   XCircle,
   Clock,
   Lock,
-  ShieldCheck,
   AlertCircle,
   Trash2,
-  Filter,
   Search,
   RefreshCw,
-  Plus,
-  Eye,
   FileCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
