@@ -163,6 +163,15 @@ export const PERMISSIONS = {
   PAYROLL_RUN_DISBURSE: "payroll.run.disburse",
   PAYSLIP_READ_SELF: "payroll.payslip.read_self",
   PAYSLIP_READ_ALL: "payroll.payslip.read_all",
+  // Performance Appraisals & OKR 360-Degree Reviews (Module 5 & §18.7)
+  OKR_MANAGE: "okr.manage",
+  OKR_READ: "okr.read",
+  APPRAISAL_CYCLE_MANAGE: "appraisal.cycle.manage",
+  APPRAISAL_CYCLE_READ: "appraisal.cycle.read",
+  APPRAISAL_REVIEW_SUBMIT: "appraisal.review.submit",
+  APPRAISAL_REVIEW_READ_SELF: "appraisal.review.read_self",
+  APPRAISAL_REVIEW_READ_TEAM: "appraisal.review.read_team",
+  APPRAISAL_CALIBRATE: "appraisal.calibrate",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -198,6 +207,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_READ_SELF, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.EXPENSE_REPORT_CREATE, scopeType: "SELF" },
     { permissionKey: PERMISSIONS.PAYSLIP_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.OKR_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.APPRAISAL_CYCLE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_SUBMIT, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_READ_SELF, scopeType: "SELF" },
   ],
   lead: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },
@@ -444,6 +457,10 @@ export const ROLE_TEMPLATES: Record<
     { permissionKey: PERMISSIONS.PAYROLL_RUN_DISBURSE, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.PAYSLIP_READ_ALL, scopeType: "TENANT" },
     { permissionKey: PERMISSIONS.PAYSLIP_READ_SELF, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.OKR_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.APPRAISAL_CYCLE_READ, scopeType: "TENANT" },
+    { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_SUBMIT, scopeType: "SELF" },
+    { permissionKey: PERMISSIONS.APPRAISAL_REVIEW_READ_SELF, scopeType: "SELF" },
   ],
   recruiter: [
     { permissionKey: PERMISSIONS.PROFILE_READ_SELF, scopeType: "SELF" },

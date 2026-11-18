@@ -1557,6 +1557,88 @@ model Payslip {
   @@map("payslips")
 }
 
+// ---------- Feature #41: Performance Appraisals & OKR 360-Degree Reviews (Module 5 & §18.7 Line 1315) ----------
+
+model OkrObjective {
+  id               String   @id @default(uuid()) @db.Uuid
+  tenantId         String   @db.Uuid @map("tenant_id")
+  title            String
+  description      String?  @db.Text
+  level            String   @default("company") // company | department | individual
+  ownerEmployeeId  String?  @db.Uuid @map("owner_employee_id")
+  department       String?
+  periodYear       Int      @map("period_year")
+  periodQuarter    Int      @map("period_quarter") // 1 - 4
+  progressPercent  Float    @default(0.0) @map("progress_percent")
+  status           String   @default("active") // draft | active | closed
+  createdAt        DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, periodYear, periodQuarter], map: "idx_okr_obj_tenant_period")
+  @@index([tenantId, ownerEmployeeId], map: "idx_okr_obj_tenant_owner")
+  @@map("okr_objectives")
+}
+
+model OkrKeyResult {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenantId          String   @db.Uuid @map("tenant_id")
+  objectiveId       String   @db.Uuid @map("objective_id")
+  title             String
+  targetValue       Float    @default(100.0) @map("target_value")
+  currentValue      Float    @default(0.0) @map("current_value")
+  unit              String   @default("%")
+  confidenceScore   Float    @default(0.7) @map("confidence_score") // 0.0 - 1.0
+  linkedProjectId   String?  @db.Uuid @map("linked_project_id")
+  linkedMilestoneId String?  @db.Uuid @map("linked_milestone_id")
+  createdAt         DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt         DateTime @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, objectiveId], map: "idx_okr_kr_tenant_obj")
+  @@map("okr_key_results")
+}
+
+model AppraisalCycle {
+  id                    String    @id @default(uuid()) @db.Uuid
+  tenantId              String    @db.Uuid @map("tenant_id")
+  name                  String
+  periodYear            Int       @map("period_year")
+  periodQuarter         Int?      @map("period_quarter")
+  startDate             DateTime  @db.Date @map("start_date")
+  endDate               DateTime  @db.Date @map("end_date")
+  selfReviewDeadline    DateTime  @db.Date @map("self_review_deadline")
+  managerReviewDeadline DateTime  @db.Date @map("manager_review_deadline")
+  status                String    @default("planning") // planning | active | calibration | closed
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@index([tenantId, periodYear, status], map: "idx_appraisal_cycle_tenant_period")
+  @@map("appraisal_cycles")
+}
+
+model AppraisalReview {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenantId           String    @db.Uuid @map("tenant_id")
+  cycleId            String    @db.Uuid @map("cycle_id")
+  employeeId         String    @db.Uuid @map("employee_id")
+  reviewerEmployeeId String    @db.Uuid @map("reviewer_employee_id")
+  reviewType         String    @map("review_type") // self | manager | peer | upward
+  competencyRatings  Json      @default("{}") @map("competency_ratings")
+  overallRating      Float     @default(3.0) @map("overall_rating")
+  strengthsSummary   String?   @db.Text @map("strengths_summary")
+  growthAreas        String?   @db.Text @map("growth_areas")
+  okrScore           Float     @default(0.0) @map("okr_score")
+  recommendation     String    @default("none") // none | promotion | compensation_increase | pip
+  status             String    @default("draft") // draft | submitted | calibrated | acknowledged
+  submittedAt        DateTime? @db.Timestamptz(6) @map("submitted_at")
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+  @@unique([tenantId, cycleId, employeeId, reviewerEmployeeId, reviewType], map: "uq_appraisal_rev_tenant_cycle_emp_rev_type")
+  @@index([tenantId, cycleId, employeeId], map: "idx_appraisal_rev_tenant_cycle_emp")
+  @@index([tenantId, reviewerEmployeeId], map: "idx_appraisal_rev_tenant_reviewer")
+  @@map("appraisal_reviews")
+}
+
 
 
 
