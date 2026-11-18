@@ -1074,6 +1074,121 @@ async function main() {
     },
   });
 
+  // 18. Feature #41: Performance Appraisals, OKRs & 360 Feedback
+  console.log("Seeding Performance Appraisals, Corporate OKRs & 360 Feedback...");
+  const OKR_OBJ_1 = "00000000-0000-4000-8000-00000000fd01";
+  await prisma.okrObjective.upsert({
+    where: { id: OKR_OBJ_1 },
+    update: {},
+    create: {
+      id: OKR_OBJ_1,
+      tenantId: T_A,
+      title: "Scale Core Platform to 99.99% Availability & Sub-100ms Latency",
+      description: "Cloud-native infrastructure hardening, distributed caching, and automated failover.",
+      level: "company",
+      ownerEmployeeId: EMP_A_ADMIN,
+      department: "Engineering",
+      periodYear: 2026,
+      periodQuarter: 4,
+      progressPercent: 82.5,
+      status: "active",
+    },
+  });
+
+  const OKR_KR_1 = "00000000-0000-4000-8000-00000000fe01";
+  await prisma.okrKeyResult.upsert({
+    where: { id: OKR_KR_1 },
+    update: {},
+    create: {
+      id: OKR_KR_1,
+      tenantId: T_A,
+      objectiveId: OKR_OBJ_1,
+      title: "Achieve p95 API Latency below 85ms across all tenant workloads",
+      targetValue: 85.0,
+      currentValue: 82.0,
+      unit: "ms",
+      confidenceScore: 0.9,
+    },
+  });
+
+  const OKR_KR_2 = "00000000-0000-4000-8000-00000000fe02";
+  await prisma.okrKeyResult.upsert({
+    where: { id: OKR_KR_2 },
+    update: {},
+    create: {
+      id: OKR_KR_2,
+      tenantId: T_A,
+      objectiveId: OKR_OBJ_1,
+      title: "Maintain 100% test pass rate across 40+ automated CI suites",
+      targetValue: 100.0,
+      currentValue: 100.0,
+      unit: "%",
+      confidenceScore: 1.0,
+    },
+  });
+
+  const APPRAISAL_CYCLE_2026 = "00000000-0000-4000-8000-00000000ff01";
+  await prisma.appraisalCycle.upsert({
+    where: { id: APPRAISAL_CYCLE_2026 },
+    update: {},
+    create: {
+      id: APPRAISAL_CYCLE_2026,
+      tenantId: T_A,
+      name: "2026 Q4 Annual Performance Review & Calibration",
+      periodYear: 2026,
+      periodQuarter: 4,
+      startDate: new Date("2026-10-01"),
+      endDate: new Date("2026-12-15"),
+      selfReviewDeadline: new Date("2026-11-15"),
+      managerReviewDeadline: new Date("2026-11-30"),
+      status: "active",
+    },
+  });
+
+  const REVIEW_DEV1_SELF = "00000000-0000-4000-8000-00000000ea01";
+  await prisma.appraisalReview.upsert({
+    where: { id: REVIEW_DEV1_SELF },
+    update: {},
+    create: {
+      id: REVIEW_DEV1_SELF,
+      tenantId: T_A,
+      cycleId: APPRAISAL_CYCLE_2026,
+      employeeId: EMP_A_DEV1,
+      reviewerEmployeeId: EMP_A_DEV1,
+      reviewType: "self",
+      competencyRatings: { technical: 5, delivery: 4, collaboration: 4, ownership: 5, leadership: 4 },
+      overallRating: 4.4,
+      strengthsSummary: "Architected Zero-Cost Enterprise Cloud DevOps mesh and delivered high-concurrency payroll engine.",
+      growthAreas: "Expand cross-departmental pre-sales customer architecture presentations.",
+      okrScore: 88.0,
+      recommendation: "promotion",
+      status: "submitted",
+      submittedAt: new Date("2026-11-10T14:00:00Z"),
+    },
+  });
+
+  const REVIEW_DEV1_MGR = "00000000-0000-4000-8000-00000000ea02";
+  await prisma.appraisalReview.upsert({
+    where: { id: REVIEW_DEV1_MGR },
+    update: {},
+    create: {
+      id: REVIEW_DEV1_MGR,
+      tenantId: T_A,
+      cycleId: APPRAISAL_CYCLE_2026,
+      employeeId: EMP_A_DEV1,
+      reviewerEmployeeId: EMP_A_LEAD1,
+      reviewType: "manager",
+      competencyRatings: { technical: 5, delivery: 5, collaboration: 4, ownership: 5, leadership: 4 },
+      overallRating: 4.6,
+      strengthsSummary: "Outstanding technical depth, flawless code review standards, and autonomous execution.",
+      growthAreas: "Continue mentoring junior engineers on distributed systems and cryptographic audit proofs.",
+      okrScore: 92.0,
+      recommendation: "promotion",
+      status: "submitted",
+      submittedAt: new Date("2026-11-12T16:00:00Z"),
+    },
+  });
+
   console.log("==> Enterprise Multi-Tenant Demo Showcase Seed Complete!");
   console.log(`
 Summary of Seeded Data:
