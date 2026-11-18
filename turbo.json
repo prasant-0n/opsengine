@@ -18,7 +18,10 @@
     "CLOUDFLARE_R2_PUBLIC_URL",
     "MOCK_GOOGLE_SSO",
     "APP_VERSION",
-    "GEMINI_API_KEY"
+    "GEMINI_API_KEY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "GOOGLE_OAUTH_REDIRECT_URI"
   ],
   "tasks": {
     "build": {
@@ -32,7 +35,10 @@
         "NODE_ENV",
         "MOCK_GOOGLE_SSO",
         "APP_VERSION",
-        "GEMINI_API_KEY"
+        "GEMINI_API_KEY",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "GOOGLE_OAUTH_REDIRECT_URI"
       ]
     },
     "@opsengine/identity-service#build": {
