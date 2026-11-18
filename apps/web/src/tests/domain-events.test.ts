@@ -323,7 +323,7 @@ describe("Multi-Tenant Domain Event Bus & Outbox Integration Pipeline (PRD §11 
         payload: { days: 3 },
       });
 
-      const msg = outbox.enqueue(event);
+      outbox.enqueue(event);
       const batchResult = await outbox.processBatch(eventBus);
 
       expect(batchResult.processed).toBe(1);

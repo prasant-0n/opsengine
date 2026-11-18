@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, ShieldCheck, CheckCircle2, Download, Building2, User, Calendar, DollarSign } from "lucide-react";
+import { X, ShieldCheck } from "lucide-react";
 import { formatCentsToAmount } from "../lib/payroll-engine";
 
 interface PayslipViewerModalProps {

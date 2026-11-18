@@ -4,7 +4,6 @@ import {
   TICKET_STATUSES,
   TICKET_TYPES,
   TICKET_PRIORITIES,
-  MILESTONE_STATUSES,
   canTransitionProject,
   canTransitionTicket,
   isGovernedProjectStatus,

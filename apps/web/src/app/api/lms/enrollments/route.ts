@@ -71,28 +71,26 @@ export async function POST(req: NextRequest) {
     }
 
     const targetEmployeeId = requestedEmpId || ctx.employeeId;
+    const requiredPermission =
+      requestedEmpId && requestedEmpId !== ctx.employeeId
+        ? PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM
+        : PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF;
 
-    if (targetEmployeeId !== ctx.employeeId) {
-      const authz = authorize(ctx, PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM, {
-        tenantId: ctx.tenantId,
-        owningEmployeeId: targetEmployeeId,
-        resourceType: "lms_enrollment",
-      });
-      if (!authz.allowed) {
-        return NextResponse.json(
-          { error: "Forbidden: insufficient permissions to assign courses to team members" },
-          { status: 403 }
-        );
-      }
-    } else {
-      const authz = authorize(ctx, PERMISSIONS.LMS_ENROLLMENT_MANAGE_SELF, {
-        tenantId: ctx.tenantId,
-        owningEmployeeId: ctx.employeeId,
-        resourceType: "lms_enrollment",
-      });
-      if (!authz.allowed) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+    const authz = authorize(ctx, requiredPermission, {
+      tenantId: ctx.tenantId,
+      owningEmployeeId: targetEmployeeId,
+      resourceType: "lms_enrollment",
+    });
+    if (!authz.allowed) {
+      return NextResponse.json(
+        {
+          error:
+            requiredPermission === PERMISSIONS.LMS_ENROLLMENT_MANAGE_TEAM
+              ? "Forbidden: insufficient permissions to assign courses to team members"
+              : "Forbidden",
+        },
+        { status: 403 }
+      );
     }
 
     // Verify course exists in tenant

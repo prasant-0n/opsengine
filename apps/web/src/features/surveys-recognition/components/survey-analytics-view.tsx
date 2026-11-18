@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TrendingUp, Users, Award, ShieldCheck, BarChart3, ChevronLeft } from "lucide-react";
+import { BarChart3, ChevronLeft } from "lucide-react";
 import { SurveyAnalyticsResult } from "../lib/surveys-engine";
 
 interface SurveyAnalyticsViewProps {

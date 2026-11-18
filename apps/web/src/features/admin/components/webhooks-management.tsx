@@ -7,13 +7,10 @@ import {
   RefreshCw,
   AlertCircle,
   CheckCircle2,
-  Clock,
   Send,
   Trash2,
   Key,
-  ExternalLink,
   ShieldAlert,
-  Copy,
   Check,
 } from "lucide-react";
 
@@ -50,7 +47,6 @@ interface WebhooksManagementProps {
 export function WebhooksManagement({ tenantId }: WebhooksManagementProps) {
   const [subTab, setSubTab] = useState<"endpoints" | "deliveries" | "dlq">("endpoints");
   const [endpoints, setEndpoints] = useState<WebhookEndpoint[]>([]);
-  const [deliveries, setDeliveries] = useState<WebhookDelivery[]>([]);
   const [dlq, setDlq] = useState<WebhookDelivery[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

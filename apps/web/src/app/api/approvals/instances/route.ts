@@ -14,19 +14,20 @@ export async function GET(req: NextRequest) {
   const ctx = await buildAuthContext(token);
   if (!ctx) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const authz = authorize(ctx, PERMISSIONS.APPROVAL_READ, {
-    tenantId: ctx.tenantId,
-    resourceType: "approval_instance",
-    owningEmployeeId: ctx.employeeId,
-  });
-  if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  if (!ctx.employeeId) return NextResponse.json({ error: "No employee profile" }, { status: 403 });
-
   const { searchParams } = new URL(req.url);
   const view = (searchParams.get("view") ?? "assigned").trim();
   const statusFilter = (searchParams.get("status") ?? "").trim();
   const subjectTypeFilter = (searchParams.get("subjectType") ?? "").trim();
   const overdueOnly = searchParams.get("overdue") === "1";
+
+  const isAllView = view === "all";
+  const authz = authorize(ctx, PERMISSIONS.APPROVAL_READ, {
+    tenantId: ctx.tenantId,
+    resourceType: "approval_instance",
+    ...(isAllView ? {} : { owningEmployeeId: ctx.employeeId }),
+  });
+  if (!authz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!ctx.employeeId) return NextResponse.json({ error: "No employee profile" }, { status: 403 });
 
   const baseWhere: any = { tenantId: ctx.tenantId };
   if (statusFilter) baseWhere.status = statusFilter;
@@ -39,8 +40,6 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
   } else if (view === "all") {
-    const tenantAuthz = authorize(ctx, PERMISSIONS.APPROVAL_READ, { tenantId: ctx.tenantId, resourceType: "approval_instance" });
-    if (!tenantAuthz.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     instances = await prisma.approvalInstance.findMany({ where: baseWhere, orderBy: { createdAt: "desc" } });
   } else {
     // assigned: pending instances where the actor is a resolved approver on the current step.
@@ -73,11 +72,13 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date();
-  const enriched = instances.map((i) => ({
-    ...i,
-    amountCents: i.amountCents !== null ? String(i.amountCents) : null,
-    overdue: isInstanceOverdue(i.dueAt, i.status, now),
-  }));
+  const enriched = instances
+    .map((i) => ({
+      ...i,
+      amountCents: i.amountCents !== null ? String(i.amountCents) : null,
+      overdue: isInstanceOverdue(i.dueAt, i.status, now),
+    }))
+    .filter((i) => !overdueOnly || i.overdue);
   return NextResponse.json({ instances: enriched });
 }
 

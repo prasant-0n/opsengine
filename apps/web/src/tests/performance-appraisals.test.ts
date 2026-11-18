@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   APPRAISAL_CYCLE_STATUSES,
   APPRAISAL_REVIEW_TYPES,
-  REVIEW_STATUSES,
   RECOMMENDATIONS,
   calculateCompositeAppraisalScore,
   calculateOkrProgress,

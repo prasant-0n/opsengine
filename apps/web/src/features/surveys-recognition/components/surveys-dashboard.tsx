@@ -10,7 +10,6 @@ import {
   HeartHandshake,
   MessageSquare,
   Sparkles,
-  TrendingUp,
   Gift,
   ArrowLeft,
   CheckCircle2,

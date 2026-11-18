@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionToken } from "@/lib/auth/session-cookie";
-import { buildAuthContext, authorize } from "@/lib/permissions";
+import { buildAuthContext } from "@/lib/permissions";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { prisma } from "@/lib/prisma";
 import {

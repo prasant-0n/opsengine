@@ -6,7 +6,6 @@ import {
   Search,
   Command,
   ArrowRight,
-  Clock,
   Loader2,
   FileText,
   User,

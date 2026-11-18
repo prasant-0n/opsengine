@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, ShieldCheck, HeartHandshake, CheckCircle2 } from "lucide-react";
+import { X, ShieldCheck } from "lucide-react";
 import { SurveyQuestion } from "../lib/surveys-engine";
 
 export interface SurveyData {

@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionToken } from "@/lib/auth/session-cookie";
+import { buildAuthContext, authorize } from "@/lib/permissions";
+import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { globalAuditChainService } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const tenantId = req.headers.get("x-tenant-id") || body.tenantId;
+    const sessionToken = await getSessionToken();
+    const ctx = sessionToken ? await buildAuthContext(sessionToken) : null;
+    const tenantId = ctx?.tenantId || req.headers.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: "x-tenant-id header or tenantId parameter is required" },
-        { status: 400 }
+        { error: "Tenant context or authentication is required" },
+        { status: 401 }
       );
     }
 
+    if (ctx) {
+      const authz = authorize(ctx, PERMISSIONS.AUDIT_READ, { tenantId: ctx.tenantId });
+      if (!authz.allowed) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    }
+
+    const body = await req.json().catch(() => ({}));
     const signingKey = body.signingKey || req.headers.get("x-audit-signing-key") || undefined;
     const result = await globalAuditChainService.verifyChain(tenantId, signingKey);
 
@@ -30,14 +42,22 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const tenantId = req.headers.get("x-tenant-id") || searchParams.get("tenantId");
+    const sessionToken = await getSessionToken();
+    const ctx = sessionToken ? await buildAuthContext(sessionToken) : null;
+    const tenantId = ctx?.tenantId || req.headers.get("x-tenant-id");
 
     if (!tenantId) {
       return NextResponse.json(
-        { error: "x-tenant-id header or tenantId query parameter is required" },
-        { status: 400 }
+        { error: "Tenant context or authentication is required" },
+        { status: 401 }
       );
+    }
+
+    if (ctx) {
+      const authz = authorize(ctx, PERMISSIONS.AUDIT_READ, { tenantId: ctx.tenantId });
+      if (!authz.allowed) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
     }
 
     const result = await globalAuditChainService.verifyChain(tenantId);

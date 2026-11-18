@@ -1,15 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionToken } from "@/lib/auth/session-cookie";
-import { buildAuthContext, authorize } from "@/lib/permissions";
+import { buildAuthContext, authorize, type AuthorizationContext } from "@/lib/permissions";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { writeAuditAsync } from "@/lib/permissions/audit";
 import {
-  getDocumentById,
   readDocumentContent,
   verifyDownloadToken,
 } from "@/features/documents/lib/document-service";
 
 export const dynamic = "force-dynamic";
+
+function buildTokenAuthContext(tenantId: string): AuthorizationContext {
+  return {
+    tenantId,
+    userId: "signed_token_bearer",
+    employeeId: null,
+    membershipStatus: "active",
+    assurance: { mfa: true },
+    permissions: [
+      { key: PERMISSIONS.DOCUMENT_READ, scopeType: "TENANT", scopeId: tenantId, validTo: null },
+    ],
+    roles: [],
+    teamMemberships: [],
+    reporting: { managerIds: [], reportIds: [] },
+    accessGroupIds: [],
+    policyVersion: 1,
+    builtAt: Date.now(),
+  };
+}
 
 export async function GET(
   req: NextRequest,
@@ -20,39 +38,31 @@ export async function GET(
   const tokenParam = searchParams.get("token");
   const expiresParam = searchParams.get("expires");
 
-  let tenantId: string | null = null;
-  let actorUserId: string | null = null;
+  let ctx: AuthorizationContext | null = null;
 
-  // Check 1: Session Cookie
+  // Resolve authorization context via session token or verified HMAC download token
   const sessionToken = await getSessionToken();
   if (sessionToken) {
-    const ctx = await buildAuthContext(sessionToken);
-    if (ctx) {
-      const authz = authorize(ctx, PERMISSIONS.DOCUMENT_READ, { tenantId: ctx.tenantId });
-      if (authz.allowed) {
-        tenantId = ctx.tenantId;
-        actorUserId = ctx.userId;
-      }
-    }
-  }
-
-  // Check 2: Signed Download Token fallback if not authenticated by cookie
-  if (!tenantId && tokenParam && expiresParam) {
+    ctx = await buildAuthContext(sessionToken);
+  } else if (tokenParam && expiresParam) {
     const { prisma } = await import("@/lib/prisma");
     const docMeta = await prisma.document.findUnique({ where: { id } });
-
-    if (docMeta) {
-      const isValid = verifyDownloadToken(docMeta.tenantId, id, expiresParam, tokenParam);
-      if (isValid) {
-        tenantId = docMeta.tenantId;
-        actorUserId = "signed_token_bearer";
-      }
+    if (docMeta && verifyDownloadToken(docMeta.tenantId, id, expiresParam, tokenParam)) {
+      ctx = buildTokenAuthContext(docMeta.tenantId);
     }
   }
 
-  if (!tenantId) {
+  if (!ctx) {
     return NextResponse.json({ error: "Unauthorized access to document" }, { status: 401 });
   }
+
+  const authz = authorize(ctx, PERMISSIONS.DOCUMENT_READ, { tenantId: ctx.tenantId });
+  if (!authz.allowed) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const tenantId = ctx.tenantId;
+  const actorUserId = ctx.userId;
 
   try {
     const { buffer, doc } = await readDocumentContent(tenantId, id);

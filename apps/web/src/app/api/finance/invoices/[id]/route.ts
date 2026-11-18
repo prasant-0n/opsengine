@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { requireFinanceAuthz, isResponse, serializeInvoice, serializeLine, serializeReceivable, serializePayment, serializeAdjustment } from "../../_lib";
-import { isDraftEditable, DEFAULT_TERMS_DAYS } from "@/features/finance/lib/finance";
+import { isDraftEditable } from "@/features/finance/lib/finance";
 
 export const dynamic = "force-dynamic";
 

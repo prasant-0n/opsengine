@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useShell } from "@/components/layout/shell-context";
-import { formatCents, MILESTONE_STATUSES } from "@/features/projects/lib/projects";
+import { formatCents } from "@/features/projects/lib/projects";
 
 function statusBadge(status: string): string {
   switch (status) {

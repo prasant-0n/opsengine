@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { BrandLockup, BrandMark } from "@/components/layout/brand";
+import { motion, AnimatePresence } from "framer-motion";
+import { BrandMark } from "@/components/layout/brand";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { ShimmeringText } from "@/components/ui/shimmering-text";
 import { TypewriterRotate } from "@/components/ui/typewriter-rotate";
@@ -17,22 +17,16 @@ import {
 import {
   ArrowRight,
   ShieldCheck,
-  Zap,
   Users,
   CheckCircle2,
   Sparkles,
-  Layers,
   BarChart3,
   Terminal,
   Cpu,
   Lock,
   Workflow,
-  Globe2,
-  CalendarCheck,
   Receipt,
-  Search,
   ChevronRight,
-  Laptop,
 } from "lucide-react";
 
 const STATS = [

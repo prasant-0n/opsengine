@@ -1,25 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { globalMfaService } from "@/lib/auth";
+import { globalMfaService, rateLimit, clientIp } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const tenantId = req.headers.get("x-tenant-id") || body.tenantId;
-    const userId = body.userId;
-    const code = body.code;
+  if (!rateLimit(`mfa-verify:${clientIp(req)}`, 10, 60_000)) {
+    return NextResponse.json({ error: "Too many attempts. Try again shortly." }, { status: 429 });
+  }
 
-    if (!userId || !tenantId || !code) {
-      return NextResponse.json(
-        { error: "userId, tenantId, and code are required to verify MFA" },
-        { status: 400 }
-      );
-    }
+  try {
+    const body = await req.json().catch(() => ({}));
+    const tenantId = typeof req.headers.get("x-tenant-id") === "string" ? req.headers.get("x-tenant-id")! : (typeof body?.tenantId === "string" ? body.tenantId : "");
+    const userId = typeof body?.userId === "string" ? body.userId : "";
+    const code = typeof body?.code === "string" ? body.code : "";
 
     const result = globalMfaService.verify(userId, tenantId, code);
     if (!result.valid) {
+      const status = result.error?.includes("required") ? 400 : 401;
       return NextResponse.json(
         { error: result.error || "MFA verification failed" },
-        { status: 401 }
+        { status }
       );
     }
 

@@ -1,16 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
-  FileText,
   DollarSign,
-  Calendar,
-  Building2,
   Plus,
   ShieldCheck,
-  CheckCircle2,
-  Clock,
-  Download,
 } from "lucide-react";
 import { formatCentsToAmount } from "../lib/payroll-engine";
 

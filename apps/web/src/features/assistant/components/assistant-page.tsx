@@ -1,13 +1,11 @@
 "use client";
 
-import { useShell } from "@/components/layout/shell-context";
 import { useAssistant } from "./assistant-context";
 import { AssistantConversationView } from "./assistant-conversation-view";
-import { Sparkles, Bot, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function AssistantPage() {
-  const { can } = useShell();
   const { enabled } = useAssistant();
 
   if (enabled === null) {

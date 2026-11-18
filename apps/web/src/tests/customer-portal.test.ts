@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
 import {
-  PORTAL_TICKET_TYPES,
-  PORTAL_TICKET_PRIORITIES,
-  SLA_TARGETS,
   calculateSlaTarget,
   getSlaStatus,
   isValidPortalTicketType,

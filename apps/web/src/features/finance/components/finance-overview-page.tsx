@@ -21,7 +21,6 @@ function agingBadge(bucket: string): string {
 
 export default function FinanceOverviewPage() {
   const [receivables, setReceivables] = useState<any[]>([]);
-  const [summary, setSummary] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +36,6 @@ export default function FinanceOverviewPage() {
       }
       const data = await res.json();
       setReceivables(data.receivables ?? []);
-      setSummary(data.summary ?? {});
     } finally {
       setLoading(false);
     }

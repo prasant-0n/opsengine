@@ -16,25 +16,26 @@ export async function GET(req: NextRequest) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
 
-  const loginRedirect = (errorCode: string) => {
-    const url = new URL("/auth/login", req.url);
-    url.searchParams.set("error", errorCode);
+  const buildErrorRedirect = (errorCode: string) => {
+    const safeError = errorCode.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32) || "oauth_failed";
+    const url = new URL("/auth/login", req.nextUrl.origin);
+    url.searchParams.set("error", safeError);
     return NextResponse.redirect(url);
   };
 
   // Google returned an error or user cancelled
   if (errorParam) {
-    return loginRedirect(errorParam);
+    return buildErrorRedirect(errorParam);
   }
 
   if (!code || !state) {
-    return loginRedirect("invalid_state");
+    return buildErrorRedirect("invalid_state");
   }
 
   // Verify HMAC-SHA256 signature and expiration
   const statePayload = verifyGoogleOAuthState(state);
   if (!statePayload) {
-    return loginRedirect("invalid_state");
+    return buildErrorRedirect("invalid_state");
   }
 
   try {
@@ -83,17 +84,17 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     const message = err?.message || "";
     if (message.includes("USER_NOT_ENROLLED")) {
-      return loginRedirect("user_not_enrolled");
+      return buildErrorRedirect("user_not_enrolled");
     }
     if (message.includes("MEMBERSHIP_INACTIVE")) {
-      return loginRedirect("membership_inactive");
+      return buildErrorRedirect("membership_inactive");
     }
     if (message.includes("TENANT_NOT_FOUND") || message.includes("TENANT_INACTIVE")) {
-      return loginRedirect("tenant_not_found");
+      return buildErrorRedirect("tenant_not_found");
     }
     if (message.includes("EMAIL_NOT_VERIFIED")) {
-      return loginRedirect("email_not_verified");
+      return buildErrorRedirect("email_not_verified");
     }
-    return loginRedirect("auth_failed");
+    return buildErrorRedirect("auth_failed");
   }
 }

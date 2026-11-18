@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertCircle, RefreshCw, Unlink, Settings } from "lucide-react";
+import { CheckCircle2, AlertCircle, Unlink, Settings } from "lucide-react";
 import { ChartOfAccountsMapping } from "../lib/erp-engine";
 
 interface ErpIntegrationCardProps {

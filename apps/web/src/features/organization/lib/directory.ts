@@ -170,9 +170,9 @@ export function validateEmployeePatch(
     return { ok: false, error: "Body must be an object" };
   }
   const input = body as Record<string, unknown>;
-  const data: Record<string, unknown> = {};
+  const data: Record<string, unknown> = Object.create(null);
   for (const [k, v] of Object.entries(input)) {
-    if (v === undefined) continue;
+    if (v === undefined || k === "__proto__" || k === "constructor" || k === "prototype") continue;
     if (!PATCHABLE_KEYS.includes(k as (typeof PATCHABLE_KEYS)[number])) {
       return { ok: false, error: `Field not allowed: ${k}` };
     }
@@ -198,5 +198,5 @@ export function validateEmployeePatch(
     }
   }
   if (Object.keys(data).length === 0) return { ok: false, error: "No valid fields" };
-  return { ok: true, data: data as PatchResult["data"] };
+  return { ok: true, data: { ...data } as PatchResult["data"] };
 }

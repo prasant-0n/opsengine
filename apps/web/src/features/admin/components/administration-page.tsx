@@ -11,7 +11,6 @@ import {
   Plus,
   Trash2,
   CheckCircle2,
-  XCircle,
   Sparkles,
   Layers,
   FolderTree,
@@ -120,7 +119,6 @@ export function AdministrationPage() {
   // State: Workspace
   const [workspace, setWorkspace] = useState<WorkspaceInfo | null>(null);
   const [stats, setStats] = useState<WorkspaceStats | null>(null);
-  const [wsLoading, setWsLoading] = useState(true);
   const [savingWs, setSavingWs] = useState(false);
 
   // State: Roles & Grants
@@ -170,7 +168,6 @@ export function AdministrationPage() {
 
   // Fetch Workspace Details
   const fetchWorkspace = useCallback(async () => {
-    setWsLoading(true);
     try {
       const res = await fetch("/api/admin/workspace");
       if (!res.ok) throw new Error("Failed to load workspace");
@@ -179,8 +176,6 @@ export function AdministrationPage() {
       setStats(data.stats);
     } catch (e: any) {
       showBanner(e.message, true);
-    } finally {
-      setWsLoading(false);
     }
   }, []);
 

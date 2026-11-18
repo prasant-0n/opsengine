@@ -253,7 +253,7 @@ export async function deleteDocument(tenantId: string, documentId: string, actor
     throw new Error("Cannot delete document under active legal hold");
   }
 
-  const updated = await prisma.document.update({
+  await prisma.document.update({
     where: { id: doc.id },
     data: { isArchived: true },
   });

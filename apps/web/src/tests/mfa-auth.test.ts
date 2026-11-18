@@ -6,7 +6,6 @@ import {
 } from "../lib/auth";
 import { POST as postSetupRoute } from "../app/api/auth/mfa/setup/route";
 import { POST as postConfirmRoute } from "../app/api/auth/mfa/confirm/route";
-import { POST as postVerifyRoute } from "../app/api/auth/mfa/verify/route";
 import { POST as postStepUpRoute } from "../app/api/auth/mfa/step-up/route";
 import { NextRequest } from "next/server";
 

@@ -105,7 +105,7 @@ describe("Module 12 — Payment Gateway Integration (Stripe & Razorpay Checkout,
         tokenSecret
       );
 
-      const [serialized, sig] = token.split(".");
+      const [, sig] = token.split(".");
       // Tamper base64 payload to request $1000 instead of $50
       const tamperedPayload = Buffer.from(
         JSON.stringify({ invoiceId: INVOICE_A, tenantId: TENANT_A, amountCents: 100000, currency: "USD" })

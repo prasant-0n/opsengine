@@ -13,7 +13,6 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 const SUGGESTED_PROMPTS = [
   "How many active employees are in our organization?",

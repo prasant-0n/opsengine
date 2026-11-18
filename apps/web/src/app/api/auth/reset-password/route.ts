@@ -14,11 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { resetToken, newPassword } = body;
-    if (
-      typeof resetToken !== "string" ||
-      typeof newPassword !== "string" ||
-      newPassword.length < 8
-    ) {
+    if (typeof resetToken !== "string" || typeof newPassword !== "string") {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
     // Look up tenant before reset for cache invalidation

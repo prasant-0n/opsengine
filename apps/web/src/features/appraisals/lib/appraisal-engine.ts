@@ -108,7 +108,7 @@ export function calculateCompositeAppraisalScore(
   const rawFinal = totalWeight > 0 ? weightedSum / totalWeight : 3.0;
   const finalScore = Math.round(rawFinal * 10) / 10; // Round to 1 decimal place
 
-  let performanceBand = "Meets Expectations";
+  let performanceBand: string;
   if (finalScore >= 4.5) performanceBand = "Exceptional / Far Exceeds";
   else if (finalScore >= 3.8) performanceBand = "Exceeds Expectations";
   else if (finalScore >= 2.8) performanceBand = "Consistently Delivers / Meets Expectations";

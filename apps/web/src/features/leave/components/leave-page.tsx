@@ -2,13 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import {
-  Calendar as CalendarIcon,
   Plus,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Ban,
-  UserCheck,
   AlertCircle,
   Users,
 } from "lucide-react";
@@ -68,7 +62,6 @@ export function LeavePage() {
   const [teamRequests, setTeamRequests] = useState<LeaveRequestItem[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<LeaveRequestItem[]>([]);
   const [activeTab, setActiveTab] = useState<"my_leaves" | "team_requests" | "calendar">("my_leaves");
-  const [loading, setLoading] = useState(true);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +77,6 @@ export function LeavePage() {
 
   const fetchData = useCallback(async () => {
     try {
-      setLoading(true);
       setError(null);
       const [balRes, reqRes] = await Promise.all([
         fetch("/api/leave/balances"),
@@ -119,8 +111,6 @@ export function LeavePage() {
       }
     } catch (err: any) {
       setError(err.message || "Failed to load leave records");
-    } finally {
-      setLoading(false);
     }
   }, [form.leaveTypeId]);
 

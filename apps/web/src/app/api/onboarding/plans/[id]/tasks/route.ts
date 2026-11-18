@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PERMISSIONS } from "@/lib/permissions/permissions";
 import { requireOnboardingAuthz, isResponse } from "../../../_lib";
-import { isKnownTaskCategory, wouldCreateCycle } from "@/features/onboarding/lib/onboarding";
+import { isKnownTaskCategory } from "@/features/onboarding/lib/onboarding";
 import { recomputePlanStatus } from "@/features/onboarding/lib/onboarding-service";
 
 export const dynamic = "force-dynamic";

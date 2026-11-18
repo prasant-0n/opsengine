@@ -26,6 +26,16 @@ export interface SendEmailParams {
   textBody?: string;
 }
 
+function stripHtml(input: string): string {
+  let prev = "";
+  let curr = input;
+  while (curr !== prev) {
+    prev = curr;
+    curr = curr.replace(/<[^>]+>/g, "");
+  }
+  return curr.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+}
+
 export async function sendEmail({ to, subject, htmlBody, textBody }: SendEmailParams): Promise<boolean> {
   const client = getSesClient();
   if (!client) {
@@ -41,7 +51,7 @@ export async function sendEmail({ to, subject, htmlBody, textBody }: SendEmailPa
         Subject: { Data: subject, Charset: "UTF-8" },
         Body: {
           Html: { Data: htmlBody, Charset: "UTF-8" },
-          Text: { Data: textBody || htmlBody.replace(/<[^>]*>?/gm, ""), Charset: "UTF-8" },
+          Text: { Data: textBody || stripHtml(htmlBody), Charset: "UTF-8" },
         },
       },
     });

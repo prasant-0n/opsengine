@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sliders, Award, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Sliders } from "lucide-react";
 
 interface CalibrationBoardProps {
   cycles: any[];

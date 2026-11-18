@@ -2,7 +2,6 @@ import { LoginRequest, LoginResponse } from "@opsengine/api-contracts";
 import { authRepository } from "../repositories/auth.repository";
 import { comparePassword } from "../lib/crypto";
 import { createSession, setSessionCookie } from "../lib/session";
-import { sendOtpEmail } from "../lib/ses";
 
 export async function loginUseCase(input: LoginRequest): Promise<LoginResponse> {
   const { domain, email, password } = input;

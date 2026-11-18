@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageSquare, ShieldCheck, BarChart3, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
+import { MessageSquare, ShieldCheck, BarChart3, ChevronRight } from "lucide-react";
 import { SurveyData } from "./survey-response-modal";
 
 interface SurveysListProps {
