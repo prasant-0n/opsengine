@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  createGoogleOAuthState,
+  serializeStateParam,
   getGoogleAuthUrl,
 } from "@/features/auth/lib/google-sso";
 
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     process.env.GOOGLE_OAUTH_REDIRECT_URI ||
     `${baseUrl}/api/auth/google/callback`;
 
-  const state = createGoogleOAuthState({ domain, returnTo });
+  const state = serializeStateParam({ domain, returnTo });
 
   if (isMock && searchParams.get("mock") === "true") {
     // Automated dev/mock testing pathway

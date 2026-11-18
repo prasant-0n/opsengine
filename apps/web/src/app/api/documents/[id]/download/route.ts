@@ -29,28 +29,48 @@ function buildTokenAuthContext(tenantId: string): AuthorizationContext {
   };
 }
 
+async function resolveDownloadContext(
+  req: NextRequest,
+  documentId: string
+): Promise<AuthorizationContext | null> {
+  // Strategy 1: Active user session
+  const sessionToken = await getSessionToken();
+  if (sessionToken) {
+    return await buildAuthContext(sessionToken);
+  }
+
+  // Strategy 2: Cryptographically verified download link
+  const { searchParams } = new URL(req.url);
+  const token = searchParams.get("token");
+  const expires = searchParams.get("expires");
+
+  if (!token || !expires) {
+    return null;
+  }
+
+  const { prisma } = await import("@/lib/prisma");
+  const docMeta = await prisma.document.findUnique({
+    where: { id: documentId },
+    select: { tenantId: true },
+  });
+  if (!docMeta) {
+    return null;
+  }
+
+  const isVerified = verifyDownloadToken(docMeta.tenantId, documentId, expires, token);
+  if (!isVerified) {
+    return null;
+  }
+
+  return buildTokenAuthContext(docMeta.tenantId);
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const { searchParams } = new URL(req.url);
-  const tokenParam = searchParams.get("token");
-  const expiresParam = searchParams.get("expires");
-
-  let ctx: AuthorizationContext | null = null;
-
-  // Resolve authorization context via session token or verified HMAC download token
-  const sessionToken = await getSessionToken();
-  if (sessionToken) {
-    ctx = await buildAuthContext(sessionToken);
-  } else if (tokenParam && expiresParam) {
-    const { prisma } = await import("@/lib/prisma");
-    const docMeta = await prisma.document.findUnique({ where: { id } });
-    if (docMeta && verifyDownloadToken(docMeta.tenantId, id, expiresParam, tokenParam)) {
-      ctx = buildTokenAuthContext(docMeta.tenantId);
-    }
-  }
+  const ctx = await resolveDownloadContext(req, id);
 
   if (!ctx) {
     return NextResponse.json({ error: "Unauthorized access to document" }, { status: 401 });

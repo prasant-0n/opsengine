@@ -27,13 +27,24 @@ export interface SendEmailParams {
 }
 
 function stripHtml(input: string): string {
-  let prev = "";
-  let curr = input;
-  while (curr !== prev) {
-    prev = curr;
-    curr = curr.replace(/<[^>]+>/g, "");
+  if (!input || typeof input !== "string") return "";
+  let insideTag = false;
+  let result = "";
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    if (ch === "<") {
+      insideTag = true;
+    } else if (ch === ">") {
+      insideTag = false;
+    } else if (!insideTag) {
+      result += ch;
+    }
   }
-  return curr.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  return result
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .trim();
 }
 
 export async function sendEmail({ to, subject, htmlBody, textBody }: SendEmailParams): Promise<boolean> {
