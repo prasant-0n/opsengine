@@ -137,7 +137,7 @@ export async function uploadDocument(
   const sanitized = path.basename(fileName).replace(/[^a-zA-Z0-9._-]/g, "_");
   const docId = crypto.randomUUID();
   const storageKey = `${tenantId}/${docId}/${sanitized}`;
-  const fullDiskPath = path.join(STORAGE_ROOT, storageKey);
+  const fullDiskPath = path.join(/*turbopackIgnore: true*/ STORAGE_ROOT, storageKey);
 
   // Ensure parent directory
   await fs.mkdir(path.dirname(fullDiskPath), { recursive: true });
@@ -208,8 +208,8 @@ export function verifyDownloadToken(tenantId: string, documentId: string, expire
 
 export async function readDocumentContent(tenantId: string, documentId: string): Promise<{ buffer: Buffer; doc: any }> {
   const doc = await getDocumentById(tenantId, documentId);
-  const fullDiskPath = path.join(STORAGE_ROOT, doc.storageKey);
-  const buffer = await fs.readFile(fullDiskPath);
+  const fullDiskPath = path.join(/*turbopackIgnore: true*/ STORAGE_ROOT, doc.storageKey);
+  const buffer = await fs.readFile(/*turbopackIgnore: true*/ fullDiskPath);
   return { buffer, doc };
 }
 
