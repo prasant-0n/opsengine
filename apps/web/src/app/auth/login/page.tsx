@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { BrandLockup, BrandMark } from "@/components/layout/brand";
 
 export default function LoginPage() {
@@ -228,11 +229,11 @@ export default function LoginPage() {
 
           <div className="relative mt-5 py-0.5">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-outline-20" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center">
-              <span className="px-2 text-[10px] font-mono uppercase tracking-wider text-outline bg-card">
-                Or
+              <span className="px-2 text-xs text-muted-foreground bg-card">
+                or
               </span>
             </div>
           </div>
@@ -249,16 +250,18 @@ export default function LoginPage() {
             Continue with Google / SSO
           </button>
 
-          <div className="mt-5 space-y-2">
-            <p className="text-xs font-mono text-outline">
-              <span className="font-medium text-on-surface">Forgot password?</span>{" "}
-              Reset via root recovery channel
+          <div className="mt-5 space-y-1 text-center">
+            <p className="text-xs text-muted-foreground">
+              Forgot password?{" "}
+              <Link href="/auth/forgot-password" className="text-primary hover:underline">
+                Reset your password
+              </Link>
             </p>
-            <p className="text-xs font-mono text-outline">
-              Need help?{" "}
-              <span className="text-primary underline underline-offset-4 hover:text-primary-fixed cursor-pointer">
-                Contact IT Support
-              </span>
+            <p className="text-xs text-muted-foreground">
+              Need a new workspace?{" "}
+              <Link href="/auth/tenant-selector" className="text-primary hover:underline">
+                Find your organization
+              </Link>
             </p>
           </div>
 

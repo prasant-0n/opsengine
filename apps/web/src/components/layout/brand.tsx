@@ -17,20 +17,7 @@ export function BrandMark({
       className={className}
       style={{ display: "block", flexShrink: 0 }}
     >
-      <defs>
-        <linearGradient
-          id="oe-brand-grad"
-          x1="32"
-          y1="0"
-          x2="32"
-          y2="64"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#6366F1" />
-          <stop offset="1" stopColor="#4F46E5" />
-        </linearGradient>
-      </defs>
-      <rect width="64" height="64" rx="13" fill="url(#oe-brand-grad)" />
+      <rect width="64" height="64" rx="14" fill="#3B5BF5" />
       <circle cx="32" cy="32" r="13.5" fill="none" stroke="#FFFFFF" strokeWidth="5" />
       <g stroke="#FFFFFF" strokeWidth="4.5" strokeLinecap="round">
         <line x1="48" y1="32" x2="54" y2="32" />
@@ -42,7 +29,7 @@ export function BrandMark({
         <line x1="32" y1="16" x2="32" y2="10" />
         <line x1="43.31" y1="20.69" x2="47.56" y2="16.44" />
       </g>
-      <circle cx="32" cy="32" r="4.5" fill="#06B6D4" />
+      <circle cx="32" cy="32" r="4.5" fill="#38BDF8" />
     </svg>
   );
 }

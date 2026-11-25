@@ -219,6 +219,7 @@ body {
    ========================================================================== */
 .mono {
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .muted {
@@ -281,18 +282,17 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-action), #3b55db);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 2px 8px -2px rgba(79, 107, 247, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-action-hover), #2e43be);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px -2px rgba(79, 107, 247, 0.45);
+  background-color: hsl(var(--primary) / 0.9);
+  border-color: hsl(var(--primary) / 0.9);
 }
 .btn-primary:active:not(:disabled) {
-  transform: translateY(0);
+  background-color: hsl(var(--primary) / 0.8);
 }
 
 .btn-secondary {
@@ -521,9 +521,6 @@ body {
   display: flex;
   flex-direction: column;
   background-color: hsl(var(--background));
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(79, 107, 247, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
 }
 
 .auth-topbar {
@@ -564,9 +561,9 @@ body {
   max-width: 440px;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: calc(var(--radius) + 4px);
-  padding: 2.25rem;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.2);
 }
 
 .form-header {
@@ -697,9 +694,6 @@ body {
   display: flex;
   min-height: 100vh;
   background-color: hsl(var(--background));
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(79, 107, 247, 0.05) 0px, transparent 40%),
-    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.04) 0px, transparent 40%);
 }
 
 .shell-sidebar {
@@ -748,8 +742,6 @@ body {
   font-size: 0.6875rem;
   font-family: var(--font-mono);
   color: var(--tenant-cyan);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .sidebar-nav {
@@ -768,9 +760,7 @@ body {
 
 .nav-group-label {
   font-size: 0.6875rem;
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
   color: hsl(var(--muted-foreground));
   padding: 0.25rem 0.5rem;
 }
@@ -803,10 +793,9 @@ body {
 }
 
 .nav-entry-active {
-  background: linear-gradient(90deg, hsla(var(--primary), 0.16), hsla(var(--primary), 0.04));
-  color: hsl(var(--primary));
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--foreground));
   font-weight: 600;
-  border-left: 2px solid hsl(var(--primary));
 }
 
 .nav-entry-locked {
@@ -825,7 +814,6 @@ body {
   border-radius: 3px;
   background-color: hsl(var(--secondary));
   color: hsl(var(--muted-foreground));
-  text-transform: uppercase;
 }
 
 .sidebar-footer {
@@ -837,8 +825,7 @@ body {
 .sidebar-footer-row {
   color: hsl(var(--muted-foreground));
   font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 .sidebar-footer-tenant {
@@ -921,7 +908,6 @@ body {
 .shell-user-role {
   font-size: 0.6875rem;
   color: hsl(var(--muted-foreground));
-  text-transform: uppercase;
 }
 
 .shell-menu {
@@ -1021,6 +1007,13 @@ body {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
+.card {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
 .panel-header, .panel-head {
   display: flex;
   align-items: center;
@@ -1067,10 +1060,8 @@ body {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid hsl(var(--border));
   color: hsl(var(--muted-foreground));
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.6875rem;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  font-size: 0.75rem;
   background-color: hsla(var(--secondary), 0.5);
 }
 
@@ -1078,6 +1069,7 @@ body {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid hsl(var(--border));
   color: hsl(var(--foreground));
+  font-variant-numeric: tabular-nums;
 }
 
 .data-table tr:hover td {
@@ -1131,14 +1123,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.35), 0 0 15px -3px rgba(79, 107, 247, 0.15);
-  border-color: hsla(var(--primary), 0.4);
+  border-color: hsl(var(--border) / 1.8);
+  background-color: hsl(var(--secondary) / 0.4);
 }
 
 .kpi-header {
@@ -1149,8 +1140,7 @@ body {
 
 .kpi-label {
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
   color: hsl(var(--muted-foreground));
 }
 
@@ -1162,6 +1152,7 @@ body {
   font-size: 1.75rem;
   font-weight: 700;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   color: hsl(var(--foreground));
 }

@@ -4,9 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrandMark } from "@/components/layout/brand";
-import { ShimmerButton } from "@/components/ui/shimmer-button";
-import { ShimmeringText } from "@/components/ui/shimmering-text";
-import { TypewriterRotate } from "@/components/ui/typewriter-rotate";
 import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
@@ -239,18 +236,15 @@ export default function LandingPageView() {
           <div className="flex items-center gap-3">
             <Link
               href="/auth/login"
-              className="text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg text-[#cbd5e1] hover:text-white hover:bg-[#1e293b]/60 transition-colors"
+              className="text-xs sm:text-sm font-medium px-3.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
             >
               Sign In
             </Link>
-            <Link href="/auth/login">
-              <ShimmerButton
-                shimmerColor="rgba(79, 107, 247, 0.4)"
-                background="hsl(226 84% 64%)"
-                className="text-xs sm:text-sm font-semibold px-4 py-2 sm:px-5 sm:py-2.5 text-white shadow-lg shadow-[#4f6bf7]/25"
-              >
-                Launch Console
-              </ShimmerButton>
+            <Link
+              href="/auth/login"
+              className="text-xs sm:text-sm font-medium px-4 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 shadow-sm transition-opacity"
+            >
+              Launch Console
             </Link>
           </div>
         </div>
@@ -258,82 +252,59 @@ export default function LandingPageView() {
 
       {/* Hero Section */}
       <section className="relative z-10 pt-16 sm:pt-24 lg:pt-28 pb-16 sm:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Modern Pill Badge without icon */}
+        {/* Enterprise Architecture Badge */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0f172a]/90 border border-[#334155]/70 text-xs font-semibold tracking-wide text-[#cbd5e1] mb-8 backdrop-blur-xl shadow-lg shadow-[#0f172a]/50 hover:border-[#4f6bf7]/50 transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-card border border-border text-xs font-medium text-muted-foreground mb-8 shadow-sm"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] animate-pulse" />
-          <span>Next-Gen Multi-Tenant Operating System for Tech Services</span>
-          <span className="text-[#475569]">|</span>
-          <span className="text-[#38bdf8] font-mono text-[11px]">v1.2 Production Ready</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span>Multi-Tenant Operations &amp; Workforce ERP</span>
+          <span className="text-muted-foreground/60">|</span>
+          <span className="font-mono text-[11px] text-foreground">v1.47 Verified</span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-[clamp(1.85rem,3.4vw+0.5rem,3.25rem)] max-w-4xl mx-auto text-white tracking-tight leading-[1.25] flex flex-col items-center justify-center text-center gap-y-2 sm:gap-y-3"
+          className="text-[clamp(2.2rem,4vw+0.5rem,3.75rem)] max-w-4xl mx-auto text-foreground font-bold tracking-tight leading-[1.15] text-center"
         >
-          {/* Row 1: Premium Shimmering Statement */}
-          <span className="block">
-            <ShimmeringText
-              text="One powerful, unified operating system designed to"
-              className="text-[clamp(1.85rem,3.4vw+0.5rem,3.25rem)] font-extrabold tracking-tight leading-[1.25]"
-              shimmerColor="#e0f2fe"
-              duration={1.0}
-            />
-          </span>
-
-          {/* Row 2: Rotating Typewriter Focus Word */}
-          <span className="inline-flex items-center justify-center min-h-[1.3em]">
-            <TypewriterRotate
-              words={["scale.", "revenue.", "talent.", "operations."]}
-              typingSpeed={120}
-              deletingSpeed={180}
-              pauseDuration={4200}
-              className="bg-gradient-to-r from-[#38bdf8] via-[#818cf8] to-[#c084fc] bg-clip-text text-transparent font-extrabold text-[clamp(2rem,3.8vw+0.5rem,3.6rem)] leading-[1.25]"
-              cursorClassName="bg-[#38bdf8]"
-            />
-          </span>
+          Unified Enterprise Operations &amp; Workforce Management
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="font-body-lg max-w-2xl mx-auto text-[#94a3b8] mt-6 leading-relaxed font-normal"
+          className="font-body-lg max-w-2xl mx-auto text-muted-foreground mt-6 leading-relaxed font-normal"
         >
-          Eliminate siloed spreadsheets and fragmented tools. OpsEngine unifies CRM deals,
-          Darwinbox-grade HRMS, resource allocations, ticket delivery, and commercial billing into
-          a single, mathematically verified ReBAC architecture.
+          Eliminate fragmented spreadsheets and point solutions. OpsEngine standardizes CRM pipelines,
+          statutory HRMS, resource capacity planning, sprint delivery, and milestone-linked billing
+          into a mathematically verified, tenant-isolated architecture.
         </motion.p>
 
-        {/* Action CTAs & Social Proof Chips */}
+        {/* Action CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
         >
-          <Link href="/auth/login" className="w-full sm:w-auto">
-            <ShimmerButton
-              shimmerColor="rgba(255, 255, 255, 0.45)"
-              background="hsl(226 84% 64%)"
-              className="w-full sm:w-auto h-12 px-8 text-sm sm:text-base font-bold text-white shadow-xl shadow-[#4f6bf7]/30 flex items-center justify-center gap-2.5 active:scale-95 transition-transform"
-            >
-              Start Free Workspace
-              <ArrowRight className="w-4 h-4" />
-            </ShimmerButton>
+          <Link
+            href="/auth/login"
+            className="w-full sm:w-auto h-11 px-6 rounded-md bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold shadow-sm flex items-center justify-center gap-2 transition-opacity"
+          >
+            Launch Console
+            <ArrowRight className="w-4 h-4" />
           </Link>
           <a
             href="#modules"
-            className="w-full sm:w-auto h-12 px-7 rounded-lg bg-[#0f172a]/90 hover:bg-[#1e293b] text-[#cbd5e1] hover:text-white border border-[#1e293b] hover:border-[#38bdf8]/40 text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm"
+            className="w-full sm:w-auto h-11 px-6 rounded-md bg-secondary hover:bg-secondary/80 text-foreground border border-border text-sm font-medium transition-colors flex items-center justify-center gap-2"
           >
-            Explore Platform Tour
-            <ChevronRight className="w-4 h-4 text-[#64748b]" />
+            Explore Platform Architecture
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </a>
         </motion.div>
 
@@ -375,7 +346,7 @@ export default function LandingPageView() {
                 <span className="text-[11px] font-mono text-[#64748b] ml-2">opsengine.internal/dashboard</span>
               </div>
               <div className="flex items-center gap-2 text-[11px] font-mono text-[#94a3b8]">
-                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 Active Session: SBU-Global
               </div>
             </div>
@@ -414,23 +385,20 @@ export default function LandingPageView() {
               ].map((kpi, idx) => {
                 const isActive = activeKpiIndex === idx;
                 return (
-                  <motion.div
+                  <div
                     key={idx}
-                    animate={{
-                      scale: isActive ? 1.05 : 1,
-                      borderColor: isActive ? "rgba(99, 102, 241, 0.8)" : "rgba(30, 41, 59, 1)",
-                      backgroundColor: isActive ? "rgba(15, 23, 42, 0.95)" : "rgba(15, 23, 42, 0.7)",
-                    }}
-                    transition={{ duration: 0.35, ease: "easeInOut" }}
-                    className={`p-4 rounded-lg border transition-shadow ${isActive ? "shadow-lg shadow-[#4f6bf7]/20 ring-1 ring-[#4f6bf7]/40" : ""
-                      }`}
+                    className={`p-4 rounded-lg border transition-colors ${
+                      isActive
+                        ? "border-primary/60 bg-secondary/70"
+                        : "border-border bg-card/60"
+                    }`}
                   >
-                    <div className="text-xs text-[#94a3b8] font-medium">{kpi.label}</div>
-                    <div className="text-xl sm:text-2xl font-bold text-white mt-1">{kpi.value}</div>
-                    <div className={`text-xs ${kpi.color} flex items-center gap-1 mt-2`}>
+                    <div className="text-xs text-muted-foreground font-medium">{kpi.label}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-foreground mt-1 tabular-nums">{kpi.value}</div>
+                    <div className={`text-xs ${kpi.color} flex items-center gap-1 mt-2 font-medium`}>
                       {kpi.sub}
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -439,16 +407,16 @@ export default function LandingPageView() {
       </section>
 
       {/* Stats Proof Ribbon */}
-      <section className="relative z-10 border-y border-[#1e293b]/70 bg-[#0c1222]/80 backdrop-blur-md py-10">
+      <section className="relative z-10 border-y border-border bg-card/50 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
             {STATS.map((stat, idx) => (
               <div key={idx} className="flex flex-col items-center">
-                <span className="font-display-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-[#cbd5e1] to-[#93c5fd]">
+                <span className="font-display-xl font-bold text-foreground tabular-nums">
                   {stat.value}
                 </span>
-                <span className="text-sm font-semibold text-white mt-1">{stat.label}</span>
-                <span className="text-xs text-[#64748b] mt-0.5">{stat.sub}</span>
+                <span className="text-sm font-semibold text-foreground mt-1">{stat.label}</span>
+                <span className="text-xs text-muted-foreground mt-0.5">{stat.sub}</span>
               </div>
             ))}
           </div>
@@ -524,16 +492,13 @@ export default function LandingPageView() {
                   ))}
                 </ul>
                 <div className="pt-4 flex items-center gap-4">
-                  <Link href="/auth/login">
-                    <ShimmerButton
-                      shimmerColor="rgba(79, 107, 247, 0.4)"
-                      background="hsl(222 35% 15%)"
-                      className="text-xs font-semibold px-4 py-2 text-white border border-[#334155]"
-                    >
-                      Configure {selectedModule.name}
-                    </ShimmerButton>
+                  <Link
+                    href="/auth/login"
+                    className="text-xs font-semibold px-4 py-2 rounded-md bg-secondary hover:bg-secondary/80 text-foreground border border-border transition-colors"
+                  >
+                    Configure {selectedModule.name}
                   </Link>
-                  <span className="text-xs font-mono text-[#38bdf8] bg-[#0284c7]/10 px-3 py-1.5 rounded-full border border-[#0284c7]/20">
+                  <span className="text-xs font-mono text-primary bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20">
                     {selectedModule.metric}
                   </span>
                 </div>
@@ -644,23 +609,19 @@ export default function LandingPageView() {
 
       {/* Pre-Footer Conversion CTA Banner */}
       <section className="relative z-10 py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl p-8 sm:p-14 bg-gradient-to-r from-[#1e1b4b]/80 via-[#1e293b]/90 to-[#0f172a]/80 border border-[#3730a3]/50 shadow-2xl relative overflow-hidden text-center">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[#4f6bf7]/20 rounded-full blur-3xl pointer-events-none" />
-          <h2 className="font-display-xl text-white tracking-tight max-w-3xl mx-auto">
+        <div className="rounded-2xl p-8 sm:p-12 bg-card border border-border shadow-md text-center">
+          <h2 className="font-display-xl text-foreground font-bold tracking-tight max-w-3xl mx-auto">
             Ready to standardize your enterprise operations?
           </h2>
-          <p className="font-body-lg text-[#cbd5e1] max-w-xl mx-auto mt-4">
-            Join hundreds of forward-thinking technology services companies running on OpsEngine.
+          <p className="font-body-lg text-muted-foreground max-w-xl mx-auto mt-4">
+            Join forward-thinking technology services companies running on OpsEngine.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/login" className="w-full sm:w-auto">
-              <ShimmerButton
-                shimmerColor="rgba(255, 255, 255, 0.4)"
-                background="hsl(226 84% 64%)"
-                className="w-full sm:w-auto h-12 px-8 text-sm sm:text-base font-bold text-white shadow-xl shadow-[#4f6bf7]/40"
-              >
-                Access Production Workspace
-              </ShimmerButton>
+            <Link
+              href="/auth/login"
+              className="w-full sm:w-auto h-12 px-8 rounded-md bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold shadow-sm flex items-center justify-center transition-opacity"
+            >
+              Access Production Workspace
             </Link>
           </div>
         </div>

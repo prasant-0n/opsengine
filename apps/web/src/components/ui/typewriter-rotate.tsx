@@ -12,13 +12,13 @@ interface TypewriterRotateProps {
 }
 
 /**
- * High-performance, silky-smooth Typewriter with frame-optimized interval management.
+ * High-performance, clean rotating focal word display.
  */
 export function TypewriterRotate({
   words,
-  typingSpeed = 120,
-  deletingSpeed = 180,
-  pauseDuration = 4200,
+  typingSpeed = 100,
+  deletingSpeed = 140,
+  pauseDuration = 3500,
   className = "",
   cursorClassName = "",
 }: TypewriterRotateProps) {
@@ -53,12 +53,11 @@ export function TypewriterRotate({
   }, [currentText, isDeleting, currentWordIndex, words, typingSpeed, deletingSpeed, pauseDuration]);
 
   return (
-    <span className={`inline-flex items-center tracking-tight select-none ${className}`}>
-      <span className="drop-shadow-[0_0_24px_rgba(56,189,248,0.3)]">
-        {currentText}
-      </span>
+    <span className={`inline-flex items-center tracking-tight select-none text-primary font-bold ${className}`}>
+      <span>{currentText}</span>
       <span
-        className={`inline-block w-[3.5px] h-[0.88em] ml-1.5 bg-[#38bdf8] rounded-full align-middle animate-pulse shadow-[0_0_12px_#38bdf8] ${cursorClassName}`}
+        className={`inline-block w-[2px] h-[0.85em] ml-1 bg-primary align-middle ${cursorClassName}`}
+        aria-hidden="true"
       />
     </span>
   );
