@@ -25,6 +25,23 @@ export function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
+  const userInitials = whoami?.userName
+    ? whoami.userName
+        .trim()
+        .split(/\s+/)
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : whoami?.userEmail
+    ? whoami.userEmail.slice(0, 2).toUpperCase()
+    : whoami
+    ? whoami.userId.slice(0, 2).toUpperCase()
+    : "…";
+
+  const userDisplayName =
+    whoami?.userName || whoami?.userEmail || (whoami ? whoami.userId.slice(0, 8) : "loading");
+
   function cycleTheme() {
     if (theme === "dark") setTheme("light");
     else if (theme === "light") setTheme("system");
@@ -81,11 +98,11 @@ export function Topbar() {
             onClick={() => setMenuOpen((o) => !o)}
           >
             <span className="workspace-badge" aria-hidden="true">
-              {whoami ? whoami.userId.slice(0, 2).toUpperCase() : "…"}
+              {userInitials}
             </span>
             <span className="shell-user-meta">
-              <span className="shell-user-id mono">
-                {whoami ? whoami.userId.slice(0, 8) : "loading"}
+              <span className="shell-user-id truncate max-w-[120px]">
+                {userDisplayName}
               </span>
               <span className="shell-user-role font-label-sm">
                 {whoami?.roles.map((r) => r.key).join(", ") || "—"}
@@ -97,9 +114,29 @@ export function Topbar() {
           </button>
 
           {menuOpen && (
-            <div className="shell-menu" role="menu">
-              <div className="p-2 border-b border-border/60 text-xs font-mono text-muted-foreground">
-                Workspace: {whoami?.tenantId.slice(0, 8)}
+            <div className="shell-menu w-64 min-w-[256px] max-w-[320px] shadow-xl" role="menu">
+              <div className="p-3 border-b border-border/60 space-y-1.5 min-w-0">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                  Workspace
+                </div>
+                <div className="font-semibold text-xs text-foreground truncate" title={whoami?.tenantName}>
+                  {whoami?.tenantName || "Acme Global Enterprise"}
+                </div>
+                {whoami?.tenantSlug && (
+                  <div className="min-w-0">
+                    <span
+                      className="inline-block max-w-full text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-muted-foreground border border-border/50 truncate"
+                      title={whoami.tenantSlug}
+                    >
+                      {whoami.tenantSlug}
+                    </span>
+                  </div>
+                )}
+                {whoami?.userEmail && (
+                  <div className="text-[11px] text-muted-foreground truncate font-mono pt-1 border-t border-border/30" title={whoami.userEmail}>
+                    {whoami.userEmail}
+                  </div>
+                )}
               </div>
               <button
                 type="button"

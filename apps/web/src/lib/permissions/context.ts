@@ -24,7 +24,11 @@ export interface PermissionEntry {
 
 export interface AuthorizationContext {
   tenantId: string;
+  tenantName?: string;
+  tenantSlug?: string;
   userId: string;
+  userName?: string;
+  userEmail?: string;
   employeeId: string | null;
   membershipStatus: "active" | "suspended" | "left";
   assurance: { mfa: boolean };
@@ -99,7 +103,7 @@ export async function buildAuthContext(
 
   const now = new Date();
 
-  const [roleGrants, permissionGrants, teamMemberships, reportRows, groupMemberships, policy] =
+  const [roleGrants, permissionGrants, teamMemberships, reportRows, groupMemberships, policy, workspace, user] =
     await Promise.all([
       prisma.roleGrant.findMany({
         where: {
@@ -149,6 +153,14 @@ export async function buildAuthContext(
           })
         : Promise.resolve([]),
       prisma.policyVersion.findFirst({ where: { tenantId, active: true } }),
+      prisma.tenantWorkspace.findFirst({
+        where: { tenantId },
+        select: { name: true, slug: true },
+      }),
+      prisma.authUser.findUnique({
+        where: { id: userId },
+        select: { email: true },
+      }),
     ]);
 
   const activeReporting = reportRows.filter(
@@ -157,7 +169,11 @@ export async function buildAuthContext(
 
   const ctx: AuthorizationContext = {
     tenantId,
+    tenantName: workspace?.name ?? "OpsEngine Enterprise",
+    tenantSlug: workspace?.slug ?? "opsengine",
     userId,
+    userName: employee?.displayName ?? user?.email?.split("@")[0] ?? "User",
+    userEmail: user?.email ?? employee?.workEmail ?? "",
     employeeId: employee?.id ?? null,
     membershipStatus: membership.status as "active" | "suspended" | "left",
     assurance: { mfa: false },

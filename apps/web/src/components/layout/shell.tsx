@@ -143,7 +143,18 @@ function ShellInner({ children }: { children: React.ReactNode }) {
 
 function TenantLabel() {
   const { whoami } = useShell();
-  return <div className="sidebar-footer-tenant mono">{whoami?.tenantId ?? "—"}</div>;
+  return (
+    <div className="sidebar-footer-tenant flex flex-col gap-0.5 min-w-0 w-full overflow-hidden">
+      <span className="font-semibold text-xs text-foreground truncate block max-w-full" title={whoami?.tenantName}>
+        {whoami?.tenantName || (whoami?.tenantId ? whoami.tenantId.slice(0, 8) : "—")}
+      </span>
+      {whoami?.tenantSlug && (
+        <span className="text-[10px] font-mono text-muted-foreground truncate block max-w-full" title={whoami.tenantSlug}>
+          {whoami.tenantSlug}
+        </span>
+      )}
+    </div>
+  );
 }
 
 export function Shell({ children }: { children: React.ReactNode }) {

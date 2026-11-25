@@ -831,9 +831,8 @@ body {
 .sidebar-footer-tenant {
   font-size: 0.75rem;
   color: hsl(var(--foreground));
-  white-space: nowrap;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   margin-top: 0.2rem;
 }
 
@@ -913,14 +912,18 @@ body {
 .shell-menu {
   position: absolute;
   right: 0;
-  top: 120%;
-  width: 190px;
-  background-color: hsl(var(--popover));
+  top: calc(100% + 0.5rem);
+  min-width: 240px;
+  max-width: 320px;
+  width: max-content;
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
   padding: 0.35rem;
   z-index: 50;
+  box-sizing: border-box;
 }
 
 .shell-menu-item {

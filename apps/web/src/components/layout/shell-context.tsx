@@ -4,7 +4,11 @@ import * as React from "react";
 
 export interface Whoami {
   tenantId: string;
+  tenantName?: string;
+  tenantSlug?: string;
   userId: string;
+  userName?: string;
+  userEmail?: string;
   employeeId: string | null;
   membershipStatus: string;
   assurance: string;

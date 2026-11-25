@@ -14,7 +14,11 @@ export async function GET() {
   // Return safe projection (no internal audit refs)
   return NextResponse.json({
     tenantId: ctx.tenantId,
+    tenantName: ctx.tenantName,
+    tenantSlug: ctx.tenantSlug,
     userId: ctx.userId,
+    userName: ctx.userName,
+    userEmail: ctx.userEmail,
     employeeId: ctx.employeeId,
     membershipStatus: ctx.membershipStatus,
     assurance: ctx.assurance,
