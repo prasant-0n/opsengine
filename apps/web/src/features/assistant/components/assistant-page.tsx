@@ -2,7 +2,7 @@
 
 import { useAssistant } from "./assistant-context";
 import { AssistantConversationView } from "./assistant-conversation-view";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Bot, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default function AssistantPage() {
@@ -38,16 +38,16 @@ export default function AssistantPage() {
         <div>
           <h1 className="flex items-center gap-2">
             AI Assistant
-            <Sparkles className="w-5 h-5 text-cyan-400" />
+            <Bot className="w-5 h-5 text-primary" />
           </h1>
           <p className="muted mono">assistant.use · Powered by Gemini</p>
         </div>
-        <Badge variant="default" className="shadow-sm">
+        <Badge variant="default" className="shadow-xs gap-1.5 font-mono text-xs">
           <ShieldCheck className="w-3.5 h-3.5" /> Enterprise Governed
         </Badge>
       </header>
 
-      <div className="panel flex-1 overflow-hidden p-0 rounded-xl border border-border/80 shadow-md">
+      <div className="panel flex-1 overflow-hidden p-0 rounded-xl border border-border bg-card shadow-xs">
         <AssistantConversationView />
       </div>
     </div>

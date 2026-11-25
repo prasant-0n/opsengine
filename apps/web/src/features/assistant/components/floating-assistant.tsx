@@ -62,30 +62,23 @@ export function FloatingAssistant() {
             transition={{ type: "spring", stiffness: 350, damping: 25 }}
             className="fixed bottom-6 right-6 z-40"
           >
-            <MagneticTooltip content="Open AI Assistant">
-              <ShimmerButton
+            <MagneticTooltip content="Open Assistant">
+              <button
                 ref={triggerRef}
+                type="button"
                 onClick={openDrawer}
-                shimmerColor="#22D3EE"
-                shimmerSize="0.1em"
-                shimmerDuration="3.5s"
-                borderRadius="24px"
-                className="w-14 h-14 !p-0 shadow-2xl shadow-indigo-950/60"
-                aria-label="Open AI Assistant"
+                className="w-12 h-12 rounded-full bg-card hover:bg-secondary text-foreground border border-border shadow-md flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Open Assistant"
               >
-                <div className="relative flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-[#22D3EE] transition-transform duration-200 group-hover:scale-110" />
-                  <Sparkles className="w-3 h-3 text-[#6366F1] absolute -top-1 -right-1" />
-                </div>
+                <Bot className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
 
-                {/* Micro ping badge when conversation is active */}
+                {/* Subtle active status dot */}
                 {hasUnreadOrActive && (
-                  <span className="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22D3EE] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#22D3EE]" />
+                  <span className="absolute top-2 right-2 flex h-2 w-2">
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
                   </span>
                 )}
-              </ShimmerButton>
+              </button>
             </MagneticTooltip>
           </motion.div>
         )}
@@ -104,21 +97,21 @@ export function FloatingAssistant() {
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="fixed right-0 top-1/2 -translate-y-1/2 z-40"
           >
-            <MagneticTooltip content="Reopen AI Assistant">
+            <MagneticTooltip content="Reopen Assistant">
               <button
                 type="button"
                 onClick={openDrawer}
-                aria-label="Reopen AI Assistant"
-                className="flex items-center gap-1.5 py-3.5 px-2 rounded-l-2xl bg-[#171B27]/95 hover:bg-[#1D222C] text-[#F3F4F6] border-y border-l border-[#303744] hover:border-[#22D3EE]/60 shadow-2xl shadow-black/60 backdrop-blur-md transition-all duration-200 hover:-translate-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6366F1]"
+                aria-label="Reopen Assistant"
+                className="flex items-center gap-1.5 py-3 px-2 rounded-l-xl bg-card hover:bg-secondary text-foreground border-y border-l border-border hover:border-primary/50 shadow-lg transition-all duration-150 hover:-translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Bot className="w-4 h-4 text-[#22D3EE]" />
-                <span className="text-xs font-semibold tracking-wide text-[#F3F4F6] [writing-mode:vertical-lr] rotate-180 py-1 font-mono">
-                  OpsEngine AI
+                <Bot className="w-4 h-4 text-primary" />
+                <span className="text-xs font-medium tracking-wide [writing-mode:vertical-lr] rotate-180 py-1 font-mono">
+                  Assistant
                 </span>
-                <ChevronRight className="w-3.5 h-3.5 text-[#94A3B8] rotate-180" />
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground rotate-180" />
 
                 {hasUnreadOrActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] self-center mt-1" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary self-center mt-0.5" />
                 )}
               </button>
             </MagneticTooltip>
@@ -127,7 +120,7 @@ export function FloatingAssistant() {
       </AnimatePresence>
 
       {/* =========================================================================
-          State B: Right-Side AI Assistant Drawer (Framer-Motion Glass Drawer)
+          State B: Right-Side Assistant Drawer
           Visible ONLY when drawer is 'open'
           ========================================================================= */}
       <AnimatePresence>
@@ -140,7 +133,7 @@ export function FloatingAssistant() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={minimizeDrawer}
-              className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40 lg:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
               aria-hidden="true"
             />
 
@@ -151,24 +144,24 @@ export function FloatingAssistant() {
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 300 }}
               role="dialog"
-              aria-label="OpsEngine AI Assistant"
-              className="fixed top-0 right-0 h-[100dvh] w-full sm:w-[420px] max-w-full z-50 bg-[#171B27]/95 backdrop-blur-xl border-l border-[#303744] shadow-2xl shadow-black/80 flex flex-col overflow-hidden"
+              aria-label="OpsEngine Assistant"
+              className="fixed top-0 right-0 h-[100dvh] w-full sm:w-[440px] max-w-full z-50 bg-card text-card-foreground border-l border-border shadow-2xl flex flex-col overflow-hidden"
             >
               {/* Drawer Header */}
-              <header className="flex items-center justify-between px-4 py-3 border-b border-[#303744]/80 bg-[#111318]/80 shrink-0">
+              <header className="flex items-center justify-between px-4 py-3.5 border-b border-border bg-card shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6366F1] via-[#4F46E5] to-[#22D3EE] flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                  <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
                     <Bot className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <h3 className="font-semibold text-sm text-[#F3F4F6] tracking-tight">
-                        OpsEngine AI
+                      <h3 className="font-semibold text-sm text-foreground tracking-tight">
+                        OpsEngine Assistant
                       </h3>
-                      <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     </div>
-                    <p className="text-[10px] font-mono text-[#94A3B8]">
-                      Controlled Workspace Intelligence
+                    <p className="text-[11px] font-mono text-muted-foreground">
+                      ReBAC Workspace Boundary
                     </p>
                   </div>
                 </div>
@@ -178,18 +171,18 @@ export function FloatingAssistant() {
                   <button
                     type="button"
                     onClick={minimizeDrawer}
-                    className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#1D222C] transition-colors"
-                    aria-label="Minimize AI Assistant"
-                    title="Minimize to right tab"
+                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                    aria-label="Minimize Assistant"
+                    title="Minimize"
                   >
                     <Minimize2 className="w-4 h-4" />
                   </button>
                   <button
                     type="button"
                     onClick={closeDrawer}
-                    className="p-1.5 rounded-lg text-[#94A3B8] hover:text-[#F3F4F6] hover:bg-[#1D222C] transition-colors"
-                    aria-label="Close AI Assistant"
-                    title="Close AI Assistant"
+                    className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                    aria-label="Close Assistant"
+                    title="Close"
                   >
                     <X className="w-4 h-4" />
                   </button>
