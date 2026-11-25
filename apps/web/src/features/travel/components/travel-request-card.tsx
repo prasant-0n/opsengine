@@ -147,8 +147,8 @@ export function TravelRequestCard({
 
             {/* Live Duty Status Badge */}
             {dutyStatus === "in_transit" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-400/20 text-amber-300 animate-pulse">
-                In Transit (Travel Day)
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                In Transit
               </span>
             )}
             {dutyStatus === "on_site" && (

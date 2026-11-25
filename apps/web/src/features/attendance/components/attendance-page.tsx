@@ -189,18 +189,18 @@ export function AttendancePage() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2">
-              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+              <span className="text-xs font-mono text-muted-foreground">
                 Today · {now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
               </span>
               {getStatusBadge(status)}
             </div>
-            <div className="text-4xl md:text-5xl font-mono font-bold tracking-tight text-foreground">
+            <div className="text-4xl md:text-5xl font-mono font-bold tracking-tight text-foreground tabular-nums">
               {now.toLocaleTimeString("en-US", { hour12: false })}
             </div>
             {status === "checked_in" && (
-              <div className="text-xs font-mono text-emerald-400 flex items-center justify-center md:justify-start gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Active Shift Duration: <span className="font-bold">{elapsedFormatted}</span>
+              <div className="text-xs font-mono text-emerald-500 flex items-center justify-center md:justify-start gap-1.5 tabular-nums">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Active Shift Duration: <span className="font-semibold">{elapsedFormatted}</span>
               </div>
             )}
           </div>

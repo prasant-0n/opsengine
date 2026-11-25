@@ -32,45 +32,45 @@ export function RecognitionFeed({
   return (
     <div className="space-y-6">
       {/* Top Points & Callout Banner */}
-      <div className="bg-gradient-to-r from-pink-950/40 via-purple-950/30 to-slate-900 border border-pink-800/40 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-card border border-border rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400">
-            <Gift className="h-8 w-8" />
+          <div className="p-2.5 rounded-lg bg-secondary text-primary">
+            <Gift className="h-6 w-6" />
           </div>
           <div>
-            <span className="text-xs font-medium text-pink-300">My Reward Points Balance</span>
+            <span className="text-xs font-medium text-muted-foreground">Reward Points Balance</span>
             <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-3xl font-extrabold text-slate-100">{myTotalPoints}</span>
-              <span className="text-xs text-slate-400 font-mono">pts</span>
+              <span className="text-2xl font-bold text-foreground font-mono tabular-nums">{myTotalPoints}</span>
+              <span className="text-xs text-muted-foreground font-mono">pts</span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Redeemable for company swag, tech stipends, or team celebrations.
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Redeemable for company stipends, equipment, or team celebrations.
             </p>
           </div>
         </div>
 
         <button
           onClick={onOpenGiveModal}
-          className="px-4 py-2 rounded-lg text-xs font-semibold bg-pink-600 hover:bg-pink-500 text-white flex items-center gap-1.5 shadow-sm transition-colors"
+          className="btn btn-primary text-xs"
         >
-          <Sparkles className="h-4 w-4" />
+          <Gift className="h-4 w-4" />
           <span>Recognize a Peer</span>
         </button>
       </div>
 
       {/* Recognition Feed */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-          <HeartHandshake className="h-4 w-4 text-pink-400" />
-          <span>Company Recognition & Kudos Timeline</span>
+        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <HeartHandshake className="h-4 w-4 text-primary" />
+          <span>Company Recognition Timeline</span>
         </h3>
 
         {recognitions.length === 0 ? (
-          <div className="text-center py-12 bg-slate-900/50 border border-slate-800 rounded-xl">
-            <Sparkles className="mx-auto h-12 w-12 text-slate-600 mb-3" />
-            <h4 className="text-base font-medium text-slate-300">No recognitions yet</h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Be the first to celebrate a teammate’s outstanding work and award kudos points!
+          <div className="text-center py-12 bg-card border border-border rounded-xl">
+            <Gift className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
+            <h4 className="text-sm font-medium text-foreground">No recognitions yet</h4>
+            <p className="text-xs text-muted-foreground mt-1">
+              Celebrate a teammate's contribution and award kudos points.
             </p>
           </div>
         ) : (
@@ -83,33 +83,33 @@ export function RecognitionFeed({
               return (
                 <div
                   key={rec.id}
-                  className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all shadow-sm"
+                  className="bg-card border border-border rounded-xl p-4 flex flex-col justify-between hover:border-primary/40 transition-colors shadow-sm"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-semibold text-slate-200">{sender}</span>
-                        <span className="text-xs text-slate-500">recognized</span>
-                        <span className="text-xs font-semibold text-pink-300">{recipient}</span>
+                        <span className="text-xs font-semibold text-foreground">{sender}</span>
+                        <span className="text-xs text-muted-foreground">recognized</span>
+                        <span className="text-xs font-semibold text-primary">{recipient}</span>
                       </div>
-                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800/60 font-bold shrink-0">
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-secondary text-primary font-bold shrink-0">
                         +{rec.pointsAwarded} pts
                       </span>
                     </div>
 
                     {badge && (
-                      <div className="flex items-center gap-1.5 text-xs text-blue-400 bg-blue-950/40 border border-blue-900/40 rounded px-2.5 py-1 w-fit">
-                        <Award className="h-3.5 w-3.5" />
-                        <span className="font-semibold">{badge.name}</span>
+                      <div className="flex items-center gap-1.5 text-xs text-foreground bg-secondary rounded px-2.5 py-1 w-fit">
+                        <Award className="h-3.5 w-3.5 text-primary" />
+                        <span className="font-medium">{badge.name}</span>
                       </div>
                     )}
 
-                    <p className="text-xs text-slate-300 bg-slate-800/40 border border-slate-800/80 rounded-lg p-3 italic">
-                      "{rec.message}"
+                    <p className="text-xs text-muted-foreground bg-secondary/50 rounded-lg p-3">
+                      &quot;{rec.message}&quot;
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-500 pt-3 border-t border-slate-800/60 mt-3">
+                  <div className="flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground pt-3 border-t border-border mt-3 font-mono tabular-nums">
                     <Clock className="h-3 w-3" />
                     <span>{new Date(rec.createdAt).toLocaleDateString()}</span>
                   </div>

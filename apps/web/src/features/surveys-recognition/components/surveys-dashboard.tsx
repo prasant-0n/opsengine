@@ -118,45 +118,45 @@ export function SurveysDashboard() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-6 text-slate-100">
+    <div className="space-y-6 max-w-7xl mx-auto text-foreground">
       <div>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors mb-3"
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span>Back to Dashboard</span>
         </Link>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-100 flex items-center gap-2.5">
-              <HeartHandshake className="h-7 w-7 text-pink-400" />
-              <span>Surveys, Pulse & Peer Recognition</span>
+            <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <HeartHandshake className="h-5 w-5 text-primary" />
+              <span>Surveys &amp; Peer Recognition</span>
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              Voice organizational sentiment via anonymous eNPS surveys and celebrate teammate achievements with cultural badges.
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Anonymous sentiment surveys, pulse cycles, and team recognition.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsGiveModalOpen(true)}
-              className="px-4 py-2 rounded-lg text-xs font-semibold bg-pink-600 hover:bg-pink-500 text-white flex items-center gap-1.5 shadow-sm transition-colors"
+              className="btn btn-primary text-xs"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Give Kudos</span>
+              <Gift className="h-4 w-4" />
+              <span>Give Recognition</span>
             </button>
           </div>
         </div>
       </div>
 
       {statusMessage && (
-        <div className="p-3 bg-emerald-950/60 border border-emerald-800 rounded-lg text-xs text-emerald-300 flex items-center justify-between">
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-xs text-emerald-400 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4" />
             <span>{statusMessage}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-emerald-400 hover:text-emerald-200">
+          <button onClick={() => setStatusMessage(null)} className="text-emerald-400 hover:text-foreground">
             ✕
           </button>
         </div>
@@ -164,40 +164,40 @@ export function SurveysDashboard() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between text-muted-foreground mb-2">
             <span className="text-xs font-medium">Active Surveys</span>
-            <MessageSquare className="h-4 w-4 text-blue-400" />
+            <MessageSquare className="h-4 w-4 text-primary" />
           </div>
-          <p className="text-2xl font-bold text-slate-100">{surveys.length}</p>
-          <span className="text-[11px] text-slate-500">Pulse & eNPS cycles</span>
+          <p className="text-2xl font-bold text-foreground font-mono tabular-nums">{surveys.length}</p>
+          <span className="text-[11px] text-muted-foreground">Pulse &amp; eNPS cycles</span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between text-muted-foreground mb-2">
             <span className="text-xs font-medium">Total Recognitions</span>
-            <Sparkles className="h-4 w-4 text-pink-400" />
+            <Gift className="h-4 w-4 text-primary" />
           </div>
-          <p className="text-2xl font-bold text-slate-100">{recognitions.length}</p>
-          <span className="text-[11px] text-slate-500">Kudos shared across teams</span>
+          <p className="text-2xl font-bold text-foreground font-mono tabular-nums">{recognitions.length}</p>
+          <span className="text-[11px] text-muted-foreground">Recognitions shared</span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-medium">My Reward Points</span>
-            <Gift className="h-4 w-4 text-amber-400" />
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between text-muted-foreground mb-2">
+            <span className="text-xs font-medium">Reward Points</span>
+            <Gift className="h-4 w-4 text-amber-500" />
           </div>
-          <p className="text-2xl font-bold text-slate-100">{myTotalPoints}</p>
-          <span className="text-[11px] text-slate-500">Earned kudos balance</span>
+          <p className="text-2xl font-bold text-foreground font-mono tabular-nums">{myTotalPoints}</p>
+          <span className="text-[11px] text-muted-foreground">Earned points balance</span>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-medium">Cultural Badges</span>
-            <HeartHandshake className="h-4 w-4 text-purple-400" />
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between text-muted-foreground mb-2">
+            <span className="text-xs font-medium">Badges</span>
+            <HeartHandshake className="h-4 w-4 text-primary" />
           </div>
-          <p className="text-2xl font-bold text-slate-100">{badges.length}</p>
-          <span className="text-[11px] text-slate-500">Values & excellence pillars</span>
+          <p className="text-2xl font-bold text-foreground font-mono tabular-nums">{badges.length}</p>
+          <span className="text-[11px] text-muted-foreground">Values &amp; excellence pillars</span>
         </div>
       </div>
 

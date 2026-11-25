@@ -47,14 +47,14 @@ export function PayrollDashboard({
           <div className="flex gap-2">
             <button
               onClick={onOpenNewStructure}
-              className="px-3.5 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+              className="btn btn-secondary text-xs"
             >
               <DollarSign className="w-3.5 h-3.5" />
               Configure Salary
             </button>
             <button
               onClick={onOpenNewRun}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-1.5 transition"
+              className="btn btn-primary text-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               New Payroll Run
@@ -138,8 +138,8 @@ export function PayrollDashboard({
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                      {p.status?.toUpperCase()}
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 capitalize">
+                      {p.status?.replace("_", " ")}
                     </span>
                   </td>
                   <td className="p-3 text-right">
@@ -196,8 +196,8 @@ export function PayrollDashboard({
                     {formatCentsToAmount(r.totalNetCents)}
                   </td>
                   <td className="p-3 text-center">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-secondary">
-                      {r.status?.toUpperCase()}
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary text-muted-foreground capitalize">
+                      {r.status?.replace("_", " ")}
                     </span>
                   </td>
                   <td className="p-3 text-right">

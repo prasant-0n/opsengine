@@ -158,18 +158,18 @@ export function TravelDashboard({ currentUserId }: TravelDashboardProps) {
       {/* Top Banner & Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <Plane className="w-7 h-7 text-blue-500" />
-            Corporate Travel & Duty of Care
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <Plane className="w-5 h-5 text-primary" />
+            Corporate Travel &amp; Duty of Care
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Enterprise itinerary tracking, automated per-diem validation, SoD approvals, and expense bridging.
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Itinerary tracking, automated per-diem validation, SoD approvals, and expense reconciliation.
           </p>
         </div>
 
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-2 shadow-lg shadow-blue-600/20 transition-all"
+          className="btn btn-primary text-xs"
         >
           <Plus className="w-4 h-4" /> New Travel Request
         </button>
@@ -177,54 +177,54 @@ export function TravelDashboard({ currentUserId }: TravelDashboardProps) {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div className="p-4 rounded-xl bg-card border border-border">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Total Missions</span>
-            <span className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
+            <span className="text-xs font-medium text-muted-foreground">Total Missions</span>
+            <span className="p-1.5 rounded-lg bg-secondary text-primary">
               <Plane className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-2xl font-bold text-white mt-2">{kpis.totalCount}</div>
-          <p className="text-[11px] text-slate-500 mt-1">Tracked corporate journeys</p>
+          <div className="text-2xl font-bold text-foreground mt-2 font-mono tabular-nums">{kpis.totalCount}</div>
+          <p className="text-[11px] text-muted-foreground mt-1">Tracked corporate journeys</p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div className="p-4 rounded-xl bg-card border border-border">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Live Duty of Care</span>
-            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+            <span className="text-xs font-medium text-muted-foreground">Live Duty of Care</span>
+            <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500">
               <Users className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-2xl font-bold text-emerald-400 mt-2">
+          <div className="text-2xl font-bold text-emerald-500 mt-2 font-mono tabular-nums">
             {kpis.liveTravelersCount}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">Travelers in transit / on-site</p>
+          <p className="text-[11px] text-muted-foreground mt-1">Travelers in transit / on-site</p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div className="p-4 rounded-xl bg-card border border-border">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Pending Approvals</span>
-            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+            <span className="text-xs font-medium text-muted-foreground">Pending Approvals</span>
+            <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500">
               <Clock className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-2xl font-bold text-amber-400 mt-2">
+          <div className="text-2xl font-bold text-amber-500 mt-2 font-mono tabular-nums">
             {kpis.pendingApprovalsCount}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">Awaiting manager / finance</p>
+          <p className="text-[11px] text-muted-foreground mt-1">Awaiting manager / finance</p>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div className="p-4 rounded-xl bg-card border border-border">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Authorized Spend</span>
-            <span className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400">
+            <span className="text-xs font-medium text-muted-foreground">Authorized Spend</span>
+            <span className="p-1.5 rounded-lg bg-secondary text-primary">
               <DollarSign className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-2xl font-bold text-white mt-2">
+          <div className="text-2xl font-bold text-foreground mt-2 font-mono tabular-nums">
             ${kpis.totalSpendDollars}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">Committed travel budget</p>
+          <p className="text-[11px] text-muted-foreground mt-1">Committed travel budget</p>
         </div>
       </div>
 

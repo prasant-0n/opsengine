@@ -70,13 +70,13 @@ export function GiveRecognitionModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-card border border-border rounded-xl max-w-lg w-full p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center gap-2">
-            <HeartHandshake className="h-5 w-5 text-pink-400" />
-            <h3 className="text-base font-semibold text-slate-100">Send Peer Recognition</h3>
+            <HeartHandshake className="h-5 w-5 text-primary" />
+            <h3 className="text-base font-semibold text-foreground">Send Peer Recognition</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-200">
+          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -149,21 +149,20 @@ export function GiveRecognitionModal({
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className="btn btn-secondary text-xs"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-lg text-xs font-semibold bg-pink-600 hover:bg-pink-500 text-white transition-colors shadow-sm flex items-center gap-1.5"
+              className="btn btn-primary text-xs"
             >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>{isSubmitting ? "Awarding..." : "Award Recognition"}</span>
+              <span>{isSubmitting ? "Submitting..." : "Send Recognition"}</span>
             </button>
           </div>
         </form>
