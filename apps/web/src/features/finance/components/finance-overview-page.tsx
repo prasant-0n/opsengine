@@ -75,13 +75,13 @@ export default function FinanceOverviewPage() {
           <div className="panel-head">
             <h2>Outstanding</h2>
           </div>
-          <p className="mono" style={{ fontSize: 24 }}>{formatMoney(outstandingTotal)}</p>
+          <p className="text-2xl font-bold font-mono tabular-nums">{formatMoney(outstandingTotal)}</p>
         </div>
         <div className="panel">
           <div className="panel-head">
             <h2>Overdue</h2>
           </div>
-          <p className="mono" style={{ fontSize: 24 }}>
+          <p className="text-2xl font-bold font-mono tabular-nums text-rose-500">
             {overdue.length} · {formatMoney(overdueTotal)}
           </p>
         </div>
@@ -89,13 +89,13 @@ export default function FinanceOverviewPage() {
           <div className="panel-head">
             <h2>Open receivables</h2>
           </div>
-          <p className="mono" style={{ fontSize: 24 }}>{open.length}</p>
+          <p className="text-2xl font-bold font-mono tabular-nums">{open.length}</p>
         </div>
         <div className="panel">
           <div className="panel-head">
             <h2>Disputes</h2>
           </div>
-          <p className="mono" style={{ fontSize: 24 }}>{disputes.length}</p>
+          <p className="text-2xl font-bold font-mono tabular-nums">{disputes.length}</p>
         </div>
       </div>
 

@@ -28,24 +28,24 @@ interface AuditRow {
 }
 
 const KPIS = [
-  { label: "Check-in", value: "—", note: "attendance module pending", icon: "schedule" },
-  { label: "Tickets", value: "—", note: "work module pending", icon: "checklist" },
-  { label: "Approvals", value: "—", note: "approvals module pending", icon: "task_alt" },
-  { label: "Daily report", value: "—", note: "reports module pending", icon: "edit_note" },
+  { label: "Check-in", value: "—", note: "Daily attendance status", icon: "schedule" },
+  { label: "Tickets", value: "—", note: "Assigned active tasks", icon: "checklist" },
+  { label: "Approvals", value: "—", note: "Pending review actions", icon: "task_alt" },
+  { label: "Daily report", value: "—", note: "Accomplishment status", icon: "edit_note" },
 ];
 
 function KpiCard({ label, value, note, icon }: (typeof KPIS)[number]) {
   return (
-    <div className="kpi-card group cursor-default">
+    <div className="kpi-card">
       <div className="kpi-header">
-        <span className="kpi-label font-label-sm text-muted-foreground group-hover:text-primary transition-colors">
+        <span className="kpi-label font-label-sm text-muted-foreground">
           {label}
         </span>
         <span className="material-symbols-outlined icon-sm kpi-icon" aria-hidden="true">
           {icon}
         </span>
       </div>
-      <div className="kpi-value group-hover:scale-105 transition-transform duration-200 origin-left">
+      <div className="kpi-value font-mono tabular-nums">
         {value}
       </div>
       <div className="kpi-note font-label-sm text-muted-foreground">{note}</div>
@@ -191,9 +191,8 @@ export default function DashboardPage() {
     <div className="page-stack">
       <div className="page-header">
         <div>
-          <h1 className="font-headline-lg flex items-center gap-2">
+          <h1 className="font-headline-lg">
             My Day
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </h1>
           <p className="page-subtitle">
             {whoami
@@ -201,7 +200,7 @@ export default function DashboardPage() {
               : "Loading context…"}
           </p>
         </div>
-        <Badge variant="default" className="shadow-sm">
+        <Badge variant="outline">
           <ShieldCheck className="w-3.5 h-3.5" />
           Enterprise Workspace
         </Badge>
@@ -216,12 +215,12 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <EmptyPanel
           title="Today's work plan"
-          body="No plan items yet — the work module will populate this panel."
+          body="No scheduled plan items for today."
           icon={CalendarCheck}
         />
         <EmptyPanel
           title="Team blockers"
-          body="No blockers reported — the team module will populate this panel."
+          body="No blockers reported for this sprint."
           icon={AlertCircle}
         />
       </div>
