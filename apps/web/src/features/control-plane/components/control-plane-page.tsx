@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { X, Building2, Sliders, ShieldAlert, FileText } from "lucide-react";
 
 export interface WorkspaceItem {
   id: string;
@@ -234,21 +235,21 @@ export function ControlPlanePage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-2xl">
               shield_with_house
             </span>
-            <h1 className="text-xl font-semibold tracking-tight text-on-surface">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
               Platform Control Plane
             </h1>
             <span className="badge badge-primary text-[10px] font-mono">
               Operator Root
             </span>
           </div>
-          <p className="text-xs font-mono text-outline mt-1">
-            PRD Module 0A · Multi-tenant SaaS orchestration, lifecycle state machine &amp; entitlements
+          <p className="text-xs text-muted-foreground mt-1">
+            Multi-tenant SaaS orchestration, lifecycle state machine &amp; entitlements
           </p>
         </div>
 
@@ -264,49 +265,49 @@ export function ControlPlanePage() {
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="card p-4">
-          <span className="text-xs font-mono text-outline uppercase tracking-wider block">
+          <span className="text-xs font-medium text-muted-foreground block">
             Total Workspaces
           </span>
-          <span className="text-2xl font-bold font-mono text-on-surface mt-2 block">
+          <span className="text-2xl font-bold font-mono text-foreground mt-2 block tabular-nums">
             {metrics ? metrics.totalTenants : 0}
           </span>
-          <span className="text-[10px] font-mono text-outline block mt-0.5">
+          <span className="text-[10px] text-muted-foreground block mt-0.5">
             Provisioned SaaS tenants
           </span>
         </div>
 
         <div className="card p-4">
-          <span className="text-xs font-mono text-outline uppercase tracking-wider block">
+          <span className="text-xs font-medium text-muted-foreground block">
             Active Workspaces
           </span>
-          <span className="text-2xl font-bold font-mono text-success mt-2 block">
+          <span className="text-2xl font-bold font-mono text-emerald-500 mt-2 block tabular-nums">
             {metrics ? metrics.activeTenants : 0}
           </span>
-          <span className="text-[10px] font-mono text-outline block mt-0.5">
+          <span className="text-[10px] text-muted-foreground block mt-0.5">
             Operating normally
           </span>
         </div>
 
         <div className="card p-4">
-          <span className="text-xs font-mono text-outline uppercase tracking-wider block">
+          <span className="text-xs font-medium text-muted-foreground block">
             Suspended Tenants
           </span>
-          <span className="text-2xl font-bold font-mono text-error mt-2 block">
+          <span className="text-2xl font-bold font-mono text-destructive mt-2 block tabular-nums">
             {metrics ? metrics.suspendedTenants : 0}
           </span>
-          <span className="text-[10px] font-mono text-outline block mt-0.5">
+          <span className="text-[10px] text-muted-foreground block mt-0.5">
             Sessions terminated
           </span>
         </div>
 
         <div className="card p-4">
-          <span className="text-xs font-mono text-outline uppercase tracking-wider block">
+          <span className="text-xs font-medium text-muted-foreground block">
             Total Subscribed Seats
           </span>
-          <span className="text-2xl font-bold font-mono text-on-surface mt-2 block">
+          <span className="text-2xl font-bold font-mono text-foreground mt-2 block tabular-nums">
             {metrics ? metrics.totalSubscribedSeats : 0}
           </span>
-          <span className="text-[10px] font-mono text-outline block mt-0.5">
+          <span className="text-[10px] text-muted-foreground block mt-0.5">
             Across all plan tiers
           </span>
         </div>
@@ -314,27 +315,27 @@ export function ControlPlanePage() {
 
       {/* Main Workspaces Table */}
       <div className="card overflow-hidden">
-        <div className="p-4 border-b border-outline-20 flex items-center justify-between">
-          <h2 className="text-sm font-semibold font-mono uppercase text-on-surface">
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground">
             Tenant Portfolio &amp; Quotas
           </h2>
-          <span className="text-xs font-mono text-outline">
+          <span className="text-xs font-mono text-muted-foreground">
             Server-side quota enforcement active
           </span>
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-xs font-mono text-outline">
+          <div className="p-8 text-center text-xs text-muted-foreground">
             Loading tenant portfolio...
           </div>
         ) : workspaces.length === 0 ? (
-          <div className="p-8 text-center text-xs font-mono text-outline">
+          <div className="p-8 text-center text-xs text-muted-foreground">
             No tenant workspaces found.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="table w-full text-left text-xs font-mono">
-              <thead className="bg-surface text-outline uppercase text-[10px] border-b border-outline-20">
+              <thead className="bg-secondary/50 text-muted-foreground text-[11px] font-medium border-b border-border">
                 <tr>
                   <th className="p-3">Organization / Slug</th>
                   <th className="p-3">Plan Tier</th>
@@ -344,44 +345,44 @@ export function ControlPlanePage() {
                   <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-20">
+              <tbody className="divide-y divide-border">
                 {workspaces.map((ws) => {
                   const isSuspended = ws.lifecycleStatus === "suspended";
                   return (
-                    <tr key={ws.id} className="hover:bg-card/50 transition-colors">
+                    <tr key={ws.id} className="hover:bg-secondary/30 transition-colors">
                       <td className="p-3">
-                        <div className="font-semibold text-on-surface text-sm">
+                        <div className="font-semibold text-foreground text-sm font-sans">
                           {ws.name}
                         </div>
-                        <div className="text-[11px] text-outline">
+                        <div className="text-[11px] text-muted-foreground font-mono">
                           {ws.slug} {ws.domain ? `· ${ws.domain}` : ""}
                         </div>
-                        <div className="text-[10px] text-outline">
+                        <div className="text-[10px] text-muted-foreground font-mono">
                           ID: {ws.tenantId.slice(0, 13)}...
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <span className="badge badge-outline uppercase text-[10px]">
+                        <span className="badge badge-outline capitalize text-[11px]">
                           {ws.subscription.planTier}
                         </span>
-                        <div className="text-[10px] text-outline mt-1">
+                        <div className="text-[10px] text-muted-foreground mt-1">
                           Status: {ws.subscription.status}
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="flex items-center justify-between text-[11px] mb-1">
+                        <div className="flex items-center justify-between text-[11px] mb-1 tabular-nums">
                           <span>{ws.utilization.activeSeats} / {ws.subscription.seatLimit} seats</span>
                           <span>{ws.utilization.seatUsagePercent}%</span>
                         </div>
-                        <div className="w-28 bg-surface rounded-full h-1.5 overflow-hidden border border-outline-20">
+                        <div className="w-28 bg-secondary rounded-full h-1.5 overflow-hidden border border-border">
                           <div
                             className={`h-full ${
                               ws.utilization.seatUsagePercent > 90
-                                ? "bg-error"
+                                ? "bg-destructive"
                                 : ws.utilization.seatUsagePercent > 70
-                                ? "bg-warning"
+                                ? "bg-amber-500"
                                 : "bg-primary"
                             }`}
                             style={{ width: `${ws.utilization.seatUsagePercent}%` }}
@@ -390,21 +391,21 @@ export function ControlPlanePage() {
                       </td>
 
                       <td className="p-3">
-                        <div className="flex items-center justify-between text-[11px] mb-1">
+                        <div className="flex items-center justify-between text-[11px] mb-1 tabular-nums">
                           <span>{formatBytes(ws.utilization.storageUsedBytes)}</span>
                           <span>{ws.utilization.storageUsagePercent}%</span>
                         </div>
-                        <div className="w-28 bg-surface rounded-full h-1.5 overflow-hidden border border-outline-20">
+                        <div className="w-28 bg-secondary rounded-full h-1.5 overflow-hidden border border-border">
                           <div
                             className={`h-full ${
                               ws.utilization.storageUsagePercent > 90
-                                ? "bg-error"
+                                ? "bg-destructive"
                                 : "bg-primary"
                             }`}
                             style={{ width: `${ws.utilization.storageUsagePercent}%` }}
                           />
                         </div>
-                        <span className="text-[10px] text-outline mt-0.5 block">
+                        <span className="text-[10px] text-muted-foreground mt-0.5 block tabular-nums">
                           of {formatBytes(ws.subscription.storageLimitBytes)}
                         </span>
                       </td>
@@ -412,13 +413,13 @@ export function ControlPlanePage() {
                       <td className="p-3">
                         <span
                           className={`badge ${
-                            isSuspended ? "badge-error" : "badge-success"
-                          } uppercase text-[10px]`}
+                            isSuspended ? "badge-error" : "badge-tertiary"
+                          } capitalize text-[11px]`}
                         >
                           {ws.lifecycleStatus}
                         </span>
                         {ws.suspendedReason && (
-                          <div className="text-[10px] text-error mt-1 max-w-[140px] truncate" title={ws.suspendedReason}>
+                          <div className="text-[10px] text-destructive mt-1 max-w-[140px] truncate" title={ws.suspendedReason}>
                             {ws.suspendedReason}
                           </div>
                         )}
@@ -475,23 +476,40 @@ export function ControlPlanePage() {
 
       {/* Provision Tenant Modal */}
       {showProvisionModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="card max-w-lg w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-outline-20 pb-3">
-              <h3 className="font-semibold text-base text-on-surface">
-                Provision New SaaS Tenant
-              </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="provision-modal-title"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 id="provision-modal-title" className="font-semibold text-base text-foreground tracking-tight">
+                    Provision New SaaS Tenant
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Set up isolated workspace boundary, tenant routing slug, and initial root administrator.
+                  </p>
+                </div>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowProvisionModal(false)}
-                className="text-outline hover:text-on-surface"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary transition-colors"
+                aria-label="Close dialog"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleProvision} className="space-y-3">
+            <form onSubmit={handleProvision} className="space-y-3.5">
               <div>
-                <label className="text-xs font-mono text-outline block mb-1">
+                <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                   Organization Name *
                 </label>
                 <input
@@ -504,9 +522,9 @@ export function ControlPlanePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-mono text-outline block mb-1">
+                  <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                     Workspace Slug *
                   </label>
                   <input
@@ -515,12 +533,12 @@ export function ControlPlanePage() {
                     onChange={(e) => setProvSlug(e.target.value)}
                     placeholder="wayne.opsengine.enterprise"
                     required
-                    className="input w-full"
+                    className="input w-full font-mono text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-outline block mb-1">
+                  <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                     Custom Domain (Optional)
                   </label>
                   <input
@@ -528,13 +546,13 @@ export function ControlPlanePage() {
                     value={provDomain}
                     onChange={(e) => setProvDomain(e.target.value)}
                     placeholder="wayne.com"
-                    className="input w-full"
+                    className="input w-full font-mono text-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-mono text-outline block mb-1">
+                <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                   Plan Tier *
                 </label>
                 <select
@@ -548,13 +566,13 @@ export function ControlPlanePage() {
                 </select>
               </div>
 
-              <div className="border-t border-outline-20 pt-3 space-y-3">
-                <span className="text-xs font-mono uppercase text-outline block">
+              <div className="border-t border-border pt-3.5 space-y-3">
+                <span className="text-xs font-semibold text-foreground uppercase tracking-wide block">
                   Initial Tenant Administrator
                 </span>
 
                 <div>
-                  <label className="text-xs font-mono text-outline block mb-1">
+                  <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                     Admin Email *
                   </label>
                   <input
@@ -563,12 +581,12 @@ export function ControlPlanePage() {
                     onChange={(e) => setProvAdminEmail(e.target.value)}
                     placeholder="admin@wayne.com"
                     required
-                    className="input w-full"
+                    className="input w-full font-mono text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-outline block mb-1">
+                  <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                     Initial Password (Optional — auto-generated if blank)
                   </label>
                   <input
@@ -576,23 +594,23 @@ export function ControlPlanePage() {
                     value={provAdminPassword}
                     onChange={(e) => setProvAdminPassword(e.target.value)}
                     placeholder="Leave empty for secure default"
-                    className="input w-full"
+                    className="input w-full font-mono text-xs"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-outline-20">
+              <div className="flex justify-end gap-2 pt-3.5 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowProvisionModal(false)}
-                  className="btn btn-outline"
+                  className="btn btn-secondary text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="btn btn-primary"
+                  className="btn btn-primary text-xs"
                 >
                   {submitting ? "Provisioning..." : "Provision Workspace"}
                 </button>
@@ -604,23 +622,40 @@ export function ControlPlanePage() {
 
       {/* Subscription Edit Modal */}
       {showSubscriptionModal && selectedWs && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="card max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-outline-20 pb-3">
-              <h3 className="font-semibold text-base text-on-surface">
-                Manage Plan &amp; Quotas: {selectedWs.name}
-              </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="subscription-modal-title"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 id="subscription-modal-title" className="font-semibold text-base text-foreground tracking-tight">
+                    Manage Plan &amp; Quotas
+                  </h3>
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                    {selectedWs.name} · {selectedWs.slug}
+                  </p>
+                </div>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowSubscriptionModal(false)}
-                className="text-outline hover:text-on-surface"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary transition-colors"
+                aria-label="Close dialog"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <div>
-                <label className="text-xs font-mono text-outline block mb-1">
+                <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                   Plan Tier
                 </label>
                 <select
@@ -635,7 +670,7 @@ export function ControlPlanePage() {
               </div>
 
               <div>
-                <label className="text-xs font-mono text-outline block mb-1">
+                <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                   Seat Limit (Active Employees)
                 </label>
                 <input
@@ -643,12 +678,12 @@ export function ControlPlanePage() {
                   min="1"
                   value={subSeats}
                   onChange={(e) => setSubSeats(parseInt(e.target.value, 10))}
-                  className="input w-full"
+                  className="input w-full font-mono tabular-nums text-xs"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-outline block mb-1">
+                <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                   Storage Quota (GB)
                 </label>
                 <input
@@ -656,15 +691,15 @@ export function ControlPlanePage() {
                   min="1"
                   value={subStorageGB}
                   onChange={(e) => setSubStorageGB(parseInt(e.target.value, 10))}
-                  className="input w-full"
+                  className="input w-full font-mono tabular-nums text-xs"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-outline-20">
+              <div className="flex justify-end gap-2 pt-3.5 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowSubscriptionModal(false)}
-                  className="btn btn-outline"
+                  className="btn btn-secondary text-xs"
                 >
                   Cancel
                 </button>
@@ -672,7 +707,7 @@ export function ControlPlanePage() {
                   type="button"
                   disabled={submitting}
                   onClick={handleSaveSubscription}
-                  className="btn btn-primary"
+                  className="btn btn-primary text-xs"
                 >
                   {submitting ? "Saving..." : "Update Entitlements"}
                 </button>
@@ -684,37 +719,54 @@ export function ControlPlanePage() {
 
       {/* Support Break-Glass Modal */}
       {showSupportModal && selectedWs && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="card max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-outline-20 pb-3">
-              <h3 className="font-semibold text-base text-on-surface">
-                Operator Support Break-Glass
-              </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="support-modal-title"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
+                  <ShieldAlert className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 id="support-modal-title" className="font-semibold text-base text-foreground tracking-tight">
+                    Operator Support Break-Glass
+                  </h3>
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                    Audited emergency session for {selectedWs.slug}
+                  </p>
+                </div>
+              </div>
               <button
+                type="button"
                 onClick={() => setShowSupportModal(false)}
-                className="text-outline hover:text-on-surface"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary transition-colors"
+                aria-label="Close dialog"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3.5">
               <div className="alert alert-warning text-xs font-mono">
                 Support break-glass access is time-limited (1 hour) and permanently recorded in the immutable audit trail.
               </div>
 
               {issuedSupportToken ? (
                 <div className="space-y-2">
-                  <span className="text-xs font-mono text-outline block">
+                  <span className="text-xs font-medium text-foreground/80 block">
                     Issued Break-Glass Token (Expires in 60 mins):
                   </span>
-                  <div className="p-3 bg-surface rounded border border-outline-20 font-mono text-xs break-all text-primary select-all">
+                  <div className="p-3 bg-secondary rounded-lg border border-border font-mono text-xs break-all text-primary select-all">
                     {issuedSupportToken}
                   </div>
                 </div>
               ) : (
                 <div>
-                  <label className="text-xs font-mono text-outline block mb-1">
+                  <label className="text-xs font-medium text-foreground/80 block mb-1.5">
                     Authorized Business Justification / Ticket # *
                   </label>
                   <textarea
@@ -728,11 +780,11 @@ export function ControlPlanePage() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-outline-20">
+              <div className="flex justify-end gap-2 pt-3.5 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowSupportModal(false)}
-                  className="btn btn-outline"
+                  className="btn btn-secondary text-xs"
                 >
                   Close
                 </button>
@@ -741,7 +793,7 @@ export function ControlPlanePage() {
                     type="button"
                     disabled={submitting || !supportReason.trim()}
                     onClick={handleCreateSupportSession}
-                    className="btn btn-primary"
+                    className="btn btn-primary text-xs"
                   >
                     {submitting ? "Issuing..." : "Generate Session"}
                   </button>
@@ -754,53 +806,65 @@ export function ControlPlanePage() {
 
       {/* Export Archive Modal */}
       {showExportModal && exportedData && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="card max-w-xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-outline-20 pb-3">
-              <div>
-                <h3 className="font-semibold text-base text-on-surface">
-                  Tenant Data Export Archive
-                </h3>
-                <p className="text-xs font-mono text-outline">
-                  Export ID: {exportedData.exportId}
-                </p>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="export-modal-title"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 id="export-modal-title" className="font-semibold text-base text-foreground tracking-tight">
+                    Tenant Data Export Archive
+                  </h3>
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                    Export ID: {exportedData.exportId}
+                  </p>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={() => setShowExportModal(false)}
-                className="text-outline hover:text-on-surface"
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary transition-colors"
+                aria-label="Close dialog"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 font-mono text-xs">
-              <div className="grid grid-cols-2 gap-2 bg-surface p-3 rounded border border-outline-20">
+              <div className="grid grid-cols-2 gap-2 bg-secondary/50 p-3 rounded-lg border border-border">
                 <div>
-                  <span className="text-outline block">Total Records:</span>
-                  <span className="font-bold text-on-surface">
+                  <span className="text-muted-foreground block">Total Records:</span>
+                  <span className="font-bold text-foreground tabular-nums">
                     {exportedData.recordCount} items
                   </span>
                 </div>
                 <div>
-                  <span className="text-outline block">Expires In:</span>
-                  <span className="text-on-surface">7 Days</span>
+                  <span className="text-muted-foreground block">Expires In:</span>
+                  <span className="text-foreground">7 Days</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-outline block mb-1">
+                <span className="text-muted-foreground block mb-1">
                   JSON Archive Preview:
                 </span>
-                <pre className="p-3 bg-surface rounded border border-outline-20 max-h-60 overflow-y-auto text-[11px] text-outline">
+                <pre className="p-3 bg-secondary/50 rounded-lg border border-border max-h-60 overflow-y-auto text-[11px] text-foreground font-mono">
                   {JSON.stringify(exportedData.archive, null, 2)}
                 </pre>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-outline-20">
+              <div className="flex justify-end gap-2 pt-3.5 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowExportModal(false)}
-                  className="btn btn-outline"
+                  className="btn btn-secondary text-xs"
                 >
                   Close
                 </button>
