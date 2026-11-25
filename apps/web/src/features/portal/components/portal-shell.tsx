@@ -30,20 +30,20 @@ export function PortalShell({
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Top Navigation Bar */}
-      <header className="border-b bg-card/80 backdrop-blur sticky top-0 z-40">
+      <header className="border-b bg-card sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
-              <Building2 className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-sm">
+              <Building2 className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-base tracking-tight">{accountName}</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                <span className="font-semibold text-sm tracking-tight">{accountName}</span>
+                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-secondary text-muted-foreground border border-border">
                   Client Portal
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">OpsEngine Customer Collaboration Desk</p>
+              <p className="text-xs text-muted-foreground">Customer Collaboration Desk</p>
             </div>
           </div>
 
@@ -59,7 +59,7 @@ export function PortalShell({
         </div>
 
         {/* Tab Links */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 border-t border-border/40 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 border-t border-border overflow-x-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -67,9 +67,9 @@ export function PortalShell({
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex items-center gap-2 py-3 px-4 text-xs font-semibold border-b-2 transition whitespace-nowrap ${
+                className={`flex items-center gap-2 py-3 px-4 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
                   isActive
-                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                    ? "border-primary text-foreground font-semibold"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >

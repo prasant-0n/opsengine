@@ -37,15 +37,15 @@ export function PortalInvoicesTab({ invoices }: InvoicesTabProps) {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50 text-xs font-medium text-muted-foreground border-b uppercase">
+              <thead className="bg-muted/50 text-xs font-medium text-muted-foreground border-b">
                 <tr>
-                  <th className="py-3 px-4">Invoice #</th>
-                  <th className="py-3 px-4">Issued On</th>
-                  <th className="py-3 px-4">Due Date</th>
-                  <th className="py-3 px-4">Total Amount</th>
-                  <th className="py-3 px-4">Outstanding</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Payment</th>
+                  <th className="py-3 px-4 font-medium">Invoice #</th>
+                  <th className="py-3 px-4 font-medium">Issued On</th>
+                  <th className="py-3 px-4 font-medium">Due Date</th>
+                  <th className="py-3 px-4 font-medium">Total Amount</th>
+                  <th className="py-3 px-4 font-medium">Outstanding</th>
+                  <th className="py-3 px-4 font-medium">Status</th>
+                  <th className="py-3 px-4 text-right font-medium">Payment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

@@ -45,7 +45,7 @@ export function PortalTicketsTab({
         </div>
         <button
           onClick={onOpenNewTicketModal}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center gap-1.5"
+          className="btn btn-primary text-xs"
         >
           <Plus className="w-4 h-4" />
           Create Support Request
