@@ -42,9 +42,10 @@ export async function POST(req: NextRequest) {
   const contextSummary = `Organization Active Employees: ${employees}
 Unpaid Invoices: ${JSON.stringify(invoices)}
 Active Projects: ${JSON.stringify(projects)}
-User Roles: ${ctx.roles.join(", ")}`;
+User Roles: ${ctx.roles.map((r: any) => (typeof r === "string" ? r : r.key)).join(", ")}`;
 
-  const responseText = await queryGemini(prompt, contextSummary);
+  const toneMode = typeof body.toneMode === "string" ? body.toneMode : "standard";
+  const result = await queryGemini(prompt, contextSummary, toneMode);
 
   await prisma.auditEvent.create({
     data: {
@@ -53,9 +54,9 @@ User Roles: ${ctx.roles.join(", ")}`;
       eventType: "AI_ASSISTANT_QUERY",
       resourceType: "ai_assistant",
       decision: "allow",
-      metadata: { promptLength: prompt.length },
+      metadata: { promptLength: prompt.length, toneMode, model: result.model },
     },
   });
 
-  return NextResponse.json({ response: responseText });
+  return NextResponse.json({ response: result.text, model: result.model });
 }

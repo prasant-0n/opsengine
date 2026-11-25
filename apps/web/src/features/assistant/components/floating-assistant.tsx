@@ -20,6 +20,7 @@ export function FloatingAssistant() {
     openDrawer,
     closeDrawer,
     minimizeDrawer,
+    toggleDrawer,
     canUse,
     enabled,
     messages,
@@ -28,9 +29,13 @@ export function FloatingAssistant() {
   const drawerRef = React.useRef<HTMLDivElement>(null);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
 
-  // Close drawer on Escape
+  // Global shortcut: Cmd/Ctrl + J to toggle, Escape to close/minimize
   React.useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") {
+        e.preventDefault();
+        toggleDrawer();
+      }
       if (e.key === "Escape" && drawerState === "open") {
         minimizeDrawer();
         triggerRef.current?.focus();
@@ -38,7 +43,7 @@ export function FloatingAssistant() {
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [drawerState, minimizeDrawer]);
+  }, [drawerState, minimizeDrawer, toggleDrawer]);
 
   // If user does not have permission or AI is explicitly disabled, do not render launcher
   if (!canUse || enabled === false) {
